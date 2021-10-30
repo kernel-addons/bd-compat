@@ -1,0 +1,97 @@
+.bdcompat-addon-panel {
+    color: #ddd;
+}
+
+.bdcompat-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: var(--font-display);
+    color: var(--header-primary);
+}
+
+.bdcompat-card-scroller {
+    display: flex;
+    flex-direction: column;
+}
+
+.bdcompat-addon-card {
+    position: relative;
+    border-radius: 4px;
+    background: var(--background-tertiary);
+    flex-grow: 1;
+    padding: 15px;
+    padding-bottom: 10px;
+    margin: 10px 10px 10px 0;
+    transition: box-shadow .2s ease-out,transform .2s ease-out,background .2s ease-out,opacity .2s ease-in,-webkit-box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+}
+
+.bdcompat-addon-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--elevation-high);
+}
+
+.bdcompat-card-name {
+    font-weight: 600;
+    font-family: var(--font-display);
+}
+
+.bdcompat-card-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: thin solid var(--background-modifier-accent);
+}
+
+.bdcompat-card-version, .bdcompat-card-author {
+    padding-left: 5px;
+    color: var(--text-muted);
+}
+
+.bdcompat-card-tools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    display: flex;
+    border-radius: 4px;
+    background: var(--background-secondary-alt);
+    box-shadow: var(--elevation-medium);
+}
+
+.bdcompat-toolbutton {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.bdcompat-toolbutton:hover {
+    background: var(--background-modifier-hover);
+}
+
+.bdcompat-toolbutton:active {
+    color: var(--interactive-active);
+    background-color: var(--background-modifier-active);
+}
+
+.bdcompat-toolbutton:active svg {
+    transform: translateY(1px);
+}
+
+.bdcompat-card-desc {
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: thin solid var(--background-modifier-accent);
+}
+
+.bdcompat-footer > div {
+    margin-left: auto;
+}
