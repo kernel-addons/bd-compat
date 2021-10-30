@@ -5,12 +5,15 @@ const request = function (url, options, callback, method = "") {
 
     const eventName = "request-" + Math.random().toString(36).slice(2, 10);
     BDCompatNative.IPC.once(eventName, (error, res, body) => {
-        const resp = new Response(body, JSON.parse(res));
+        res = JSON.parse(res);
+        const resp = new Response(body, res);
         
         Object.defineProperties(resp, {
             url: {value: url},
             type: {value: method.toLowerCase() || "default"}
-        });                                                                      
+        });     
+        
+        Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
 
         callback(error, resp, body);
     });
