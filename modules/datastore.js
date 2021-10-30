@@ -43,6 +43,8 @@ export default class DataStore {
     }
 
     static tryLoadPluginData(pluginName) {
+        this.pluginData[pluginName] = {};
+        
         try {
             const data = JSON.parse(fs.readFileSync(path.join(this.dataFolder, `${pluginName}.json`), "utf8"));
             this.pluginData[pluginName] = data;
@@ -52,8 +54,6 @@ export default class DataStore {
 
             Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
         }
-
-        this.pluginData[pluginName] = {};
     }
 
     static saveData(pluginName, data) {

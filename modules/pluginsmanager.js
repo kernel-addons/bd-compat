@@ -65,7 +65,7 @@ export default class PluginsManager {
     }
 
     static compile(filecontent, name) {
-        return `((module, exports, __dirname, __filename) => {\n${filecontent}\nif (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}\n})//# sourceURL=kernel://bd-compat/plugins/${name}.plugin.js`;
+        return `((module, exports, __dirname, __filename, global) => {\n${filecontent}\nif (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}\n})//# sourceURL=kernel://bd-compat/plugins/${name}.plugin.js`;
     }
 
     static resolve(idOrFileOrAddon) {
@@ -81,7 +81,7 @@ export default class PluginsManager {
         if (this.resolve(meta.name) || this.resolve(meta.filename)) throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 
         let exports = {};
-        try {eval(this.compile(filecontent, meta.name))(exports, exports, path.dirname(location), location);}
+        try {eval(this.compile(filecontent, meta.name))(exports, exports, path.dirname(location), location, window);}
         catch (error) {
             Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
         }
@@ -151,7 +151,7 @@ export default class PluginsManager {
             if (typeof (addon.instance.stop) === "function") addon.instance.stop();
             if (showToast) {
                 Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-                Toasts.show(`${addon.name} could not be stopped!`);
+                Toasts.show(`${addon.name} has been stopped!`);
             }
         } catch (error) {
             Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
