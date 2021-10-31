@@ -32,7 +32,6 @@ export default function ToastsContainer({useStore, setState}) {
         onRemove: () => {
             setState(state => {
                 const index = state.toasts.indexOf(element);
-                console.log({index});
                 if (index < 0) return;
 
                 return {

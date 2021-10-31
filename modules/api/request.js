@@ -1,3 +1,14 @@
+export class RequestResponse extends Response {
+    constructor(res) {
+        super(res);
+        this.res = res;
+    }
+
+    get headers() {return ;}
+
+    get statusCode() {return this.res.status;}
+}
+
 const request = function (url, options, callback, method = "") {
     if (typeof (options) === "function") {
         callback = options;
@@ -10,7 +21,8 @@ const request = function (url, options, callback, method = "") {
         
         Object.defineProperties(resp, {
             url: {value: url},
-            type: {value: method.toLowerCase() || "default"}
+            type: {value: method.toLowerCase() || "default"},
+            headers: {value: Object.fromEntries(Array.from(resp.headers))}
         });     
         
         Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
@@ -28,7 +40,7 @@ const request = function (url, options, callback, method = "") {
     `);
 };
 
-Object.assign(request, Object.fromEntries(["get", "put", "post", "delete"].map(method => [
+Object.assign(request, Object.fromEntries(["get", "put", "post", "delete", "head"].map(method => [
     method,
     function (url, options, callback) {
         return request(url, options, callback, method);
