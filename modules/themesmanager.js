@@ -10,7 +10,32 @@ export default class ThemesManager {
     static folder = DataStore.themesFolder;
     static extension = ".theme.css";
 
+    static listeners = {};
+
     static addons = [];
+
+    static times = {};
+
+    static on(event, callback) {
+        if (!this.listeners[event]) this.listeners[event] = new Set();
+
+        return this.listeners[event].add(callback), this.off.bind(this, event, callback);
+    }
+
+    static off(event, callback) {
+        if (!this.listeners[event]) return;
+
+        return this.listeners[event].delete(callback);
+    }
+
+    static dispatch(event, ...args) {
+        if (!this.listeners[event]) return;
+
+        for (const listener of this.listeners[event]) {
+            try {listener(...args);}
+            catch (error) {Logger.error("Emitter", error);}
+        }
+    }
 
     static initialize() {
         this.addonState = DataStore.getAddonState("themes");
@@ -42,12 +67,15 @@ export default class ThemesManager {
             // await new Promise(r => setTimeout(r, 100));
             try {
                 const stats = fs.statSync(absolutePath);
-                if (!stats.isFile()) return;
-                if (eventType == "rename") this.loadAddon(absolutePath, true);
+                if (!stats.isFile() || !stats.mtime) return;
+                if (this.times[filename] === stats.mtime.getTime()) return;
+                this.times[filename] = stats.mtime.getTime();
+
+                if (eventType == "rename") this.loadTheme(absolutePath, true);
                 if (eventType == "change") this.reloadAddon(absolutePath, true);
             }
             catch (err) {
-                if (err.code !== "ENOENT") return;
+                if (fs.existsSync(absolutePath)) return;
                 this.unloadAddon(absolutePath, true);
             }
         });
@@ -56,30 +84,52 @@ export default class ThemesManager {
     static loadAllThemes() {
         for (const filename of fs.readdirSync(this.folder, "utf8")) {
             const location = path.resolve(this.folder, filename);
-            if (!filename.endsWith(this.extension) || !fs.statSync(location).isFile()) continue;
+            const stats = fs.statSync(location);
+            if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
+            this.times[filename] = stats.mtime.getTime();
 
             try {
-                this.loadTheme(location);
+                this.loadTheme(location, false);
+                this.dispatch("updated");
             } catch (error) {
                 Logger.error("ThemesManager", `Failed to load ${filename}:`, error);                
             }
         }
     }
 
-    static loadTheme(location) {
+    static loadTheme(location, showToast = true) {
         const filecontent = fs.readFileSync(location, "utf8");
         const meta = Utilities.parseMETA(filecontent);
         meta.filename = path.basename(location);
         meta.path = location;
+        meta.css = filecontent;
 
         if (this.resolve(meta.name)) throw new Error(`A theme with name ${meta.name} already exists!`);
         this.addons.push(meta);
 
-        meta.css = filecontent;
+        if (!(meta.name in this.addonState)) {
+            this.addonState[meta.name] = false;
+            DataStore.saveAddonState("themes", this.addonState);
+        }
 
         if (this.addonState[meta.name]) {
-            this.applyTheme(meta);
+            this.applyTheme(meta, showToast);
         }
+
+        return meta;
+    }
+
+    static unloadAddon(addon, showToast = true) {
+        const theme = this.resolve(addon);
+        if (!theme) return
+
+        this.removeTheme(theme, false);
+        this.addons.splice(this.addons.indexOf(theme), 1);
+        if (showToast) {
+            Logger.log("ThemesManager", `${theme.name} was unloaded!`);
+            Toasts.show(`${theme.name} was unloaded!`);
+        } 
+        this.dispatch("updated");
     }
 
     static applyTheme(addon, showToast = true) {
@@ -128,6 +178,7 @@ export default class ThemesManager {
         this.addonState[theme.name] = true;
         
         DataStore.saveAddonState("themes", this.addonState);
+        this.dispatch("toggled", theme.name, true);
     }
 
     static disableAddon(addon) {
@@ -141,6 +192,7 @@ export default class ThemesManager {
         this.addonState[theme.name] = false;
         
         DataStore.saveAddonState("themes", this.addonState);
+        this.disableAddon("toggled", theme.name, false);
     }
 
     static toggleAddon(addon) {

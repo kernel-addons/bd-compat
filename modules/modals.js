@@ -3,10 +3,17 @@ import ErrorBoundary from "../ui/errorboundary.js";
 import DiscordModules from "./discord.js";
 import Logger from "./logger.js";
 import memoize from "./memoize.js";
+import Toasts from "./toasts.js";
 import Webpack from "./webpack.js";
 
 export default class Modals {
     static get ModalsAPI() {return memoize(this, "ModalsAPI", () => Webpack.findByProps("openModal", "useModalsStore"));}
+
+    static get ModalComponents() {return memoize(this, "ModalComponents", () => Webpack.findByProps("ModalRoot", "ModalHeader"));}
+
+    static get Forms() {return memoize(this, "Forms", () => Webpack.findByProps("FormTitle", "FormItem"));}
+
+    static get Button() {return memoize(this, "Button", () => Webpack.findByProps("DropdownSizes"));}
 
     static get ConfirmationModal() {return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal"));}
 
@@ -27,18 +34,5 @@ export default class Modals {
 
     static alert(title, content) {
         return this.showConfirmationModal(title, content, {cancelText: null});
-    }
-
-    static showAddonSettings(addon) {
-        let element;
-        try {element = addon.instance.getSettingsPanel();}
-        catch (error) {Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);}
-
-        if (Element.prototype.isPrototypeOf(element)) element = React.createElement(DOMWrapper, {}, element);
-        else if (typeof (element) === "function") element = React.createElement(element, {});
-
-        this.showConfirmationModal(`${addon.name}-settings`, React.createElement(ErrorBoundary(), {
-            children: element
-        }), {cancelText: null});
     }
 }

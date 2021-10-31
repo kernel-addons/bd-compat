@@ -13,12 +13,20 @@ import ThemesManager from "./modules/themesmanager.js";
 import Toasts from "./modules/toasts.js";
 import Webpack, {Events} from "./modules/webpack.js";
 import AddonPanel from "./ui/addonpanel.js";
+import SettingsPanel from "./ui/settings.js";
 
 const SettingsSections = [
     {section: "DIVIDER"},
     {
         section: "HEADER",
         label: "BDCompat"
+    },
+    {
+        id: "bdcompat-settings-settings",
+        section: "BDCompatSettings",
+        label: "Settings",
+        className: "bdcompat-settings-item-settings",
+        element: () => DiscordModules.React.createElement(SettingsPanel, {})
     },
     {
         id: "bdcompat-settings-plugins",

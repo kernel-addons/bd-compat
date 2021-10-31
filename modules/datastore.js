@@ -40,11 +40,19 @@ export default class DataStore {
                 Logger.error("DataStore", `Failed to create missing themes folder:`, error);
             }
         }
+
+        if (!fs.existsSync(this.dataFolder)) {
+            try {
+                fs.mkdirSync(this.dataFolder);
+            } catch (error) {
+                Logger.error("DataStore", `Failed to create missing config folder:`, error);
+            }
+        }
     }
 
     static tryLoadPluginData(pluginName) {
         this.pluginData[pluginName] = {};
-        
+
         try {
             const data = JSON.parse(fs.readFileSync(path.join(this.dataFolder, `${pluginName}.json`), "utf8"));
             this.pluginData[pluginName] = data;
@@ -65,10 +73,10 @@ export default class DataStore {
     }
 
     static setPluginData(pluginName, key, value) {
-        const data = Object.assign({}, this.pluginData[pluginName]?.settings, {[key]: value});
+        const data = {settings: Object.assign({}, this.pluginData[pluginName]?.settings, {[key]: value})};
         this.pluginData[pluginName] = data;
 
-        this.saveData(pluginName, {settings: data});
+        this.saveData(pluginName, data);
     }
 
     static getPluginData(pluginName, key) {

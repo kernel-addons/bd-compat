@@ -22,7 +22,7 @@ export function ToolButton({label, icon, onClick, danger = false, disabled = fal
         size: Button.Sizes.NONE,
         onClick: onClick,
         disabled
-    }, React.createElement(Icon, {name: icon, color: danger ? "#ed4245" : void 0, width: 24, height: 24})));
+    }, React.createElement(Icon, {name: icon, color: danger ? "#ed4245" : void 0, width: 20, height: 20})));
 };
 
 export function ButtonWrapper({value, onChange, disabled}) {
@@ -39,8 +39,16 @@ export function ButtonWrapper({value, onChange, disabled}) {
     });
 };
 
-export default function AddonCard({addon, manager}) {
+export default function AddonCard({addon, manager, openSettings, hasSettings, type}) {
     const {React} = DiscordModules;
+    const [, forceUpdate] = React.useReducer(n => n + 1, 0);
+
+    React.useEffect(() => {
+        return manager.on("toggled", name => {
+            if (name !== addon.name) return;
+            forceUpdate();
+        });
+    }, [addon, manager]);
 
     return React.createElement("div", {
         className: "bdcompat-addon-card " + addon.name.replace(/ /g, "-"),
@@ -51,27 +59,33 @@ export default function AddonCard({addon, manager}) {
                     React.createElement(ToolButton, {
                         label: "Settings",
                         icon: "Gear",
-                        disabled: typeof(addon.instance?.getSettingsPanel) !== "function",
-                        onClick: () => Modals.showAddonSettings(addon)
+                        disabled: !hasSettings,
+                        onClick: openSettings
                     }),
                     React.createElement(ToolButton, {
                         label: "Reload",
                         icon: "Replay",
                         onClick: () => manager.reloadAddon(addon)
+                    }),
+                    React.createElement(ToolButton, {
+                        label: "Open Path",
+                        icon: "Folder",
+                        onClick: () => {
+                            BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`);
+                        }
+                    }),
+                    React.createElement(ToolButton, {
+                        label: "Delete",
+                        icon: "Trash",
+                        danger: true,
+                        onClick: () => {
+                            Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
+                                onConfirm: () => {
+                                    BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`);
+                                }
+                            });
+                        }
                     })
-                    // React.createElement(ToolButton, {
-                    //     label: "Open Path",
-                    //     icon: "Folder",
-                    //     onClick: () => {
-                    //         openItem(addon.path);
-                    //     }
-                    // }),
-                    // React.createElement(ToolButton, {
-                    //     label: "Delete",
-                    //     icon: "Trash",
-                    //     danger: true,
-                    //     onClick: () => window.KernelSettings.trashItem(pkg.path)
-                    // })
                 ]
             }),
             React.createElement("div", {
