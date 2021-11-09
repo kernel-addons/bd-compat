@@ -1,4 +1,4 @@
-/// <reference path="../../types.d.ts" />
+/// <reference path="../../../../types.d.ts" />
 
 export default class fs {
     static readFileSync(path, options = "utf8") {

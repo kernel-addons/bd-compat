@@ -1,1 +1,10 @@
-./plugins/*
+# Ignore those
+plugins
+_plugins
+themes
+config
+# Add to whitelist
+!plugins/.gitkeep
+!themes/.gitkeep
+!config/.gitkeep
+node_modules

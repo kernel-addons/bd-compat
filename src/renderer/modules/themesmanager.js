@@ -127,7 +127,7 @@ export default class ThemesManager {
         this.addons.splice(this.addons.indexOf(theme), 1);
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} was unloaded!`);
-            Toasts.show(`${theme.name} was unloaded!`);
+            Toasts.show(`${theme.name} was unloaded!`, {type: "info"});
         } 
         this.dispatch("updated");
     }
@@ -138,7 +138,7 @@ export default class ThemesManager {
 
         theme.element = DOM.injectCSS(theme.name + "theme", theme.css);
         if (showToast) {
-            Toasts.show(`${theme.name} has been applied!`);
+            Toasts.show(`${theme.name} has been applied!`, {type: "success"});
             Logger.log("ThemesManager", `${theme.name} has been applied!`);
         }
     }
@@ -152,7 +152,7 @@ export default class ThemesManager {
 
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} has been removed!`);
-            Toasts.show(`${theme.name} has been removed!`);
+            Toasts.show(`${theme.name} has been removed!`, {type: "info"});
         }
     }
 
@@ -164,7 +164,7 @@ export default class ThemesManager {
         this.applyTheme(theme, false);
 
         Logger.log("ThemesManager", `${theme.name} was reloaded!`);
-        Toasts.show(`${theme.name} was reloaded!`);
+        Toasts.show(`${theme.name} was reloaded!`, {type: "success"});
     }
 
     static enableAddon(addon) {
@@ -187,7 +187,7 @@ export default class ThemesManager {
 
         this.removeTheme(theme, false);
         Logger.log("ThemesManager", `${theme.name} has been removed!`);
-        Toasts.show(`${theme.name} has been removed.`);
+        Toasts.show(`${theme.name} has been removed.`, {type: "info"});
 
         this.addonState[theme.name] = false;
         

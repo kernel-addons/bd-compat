@@ -1,0 +1,34 @@
+{
+  "name": "bd-compat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "build-renderer": "rollup -c --mode=renderer",
+    "build-main": "rollup -c --mode=main",
+    "build-preload": "rollup -c --mode=preload",
+    "dist": "npm run build-renderer && npm run build-main && npm run build-preload"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strencher-kernel/bd-compat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/strencher-kernel/bd-compat/issues"
+  },
+  "homepage": "https://github.com/strencher-kernel/bd-compat#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@swc/core": "^1.2.106",
+    "esformatter-quotes": "^1.1.0",
+    "rollup": "^2.59.0",
+    "rollup-plugin-esformatter": "^2.0.1",
+    "rollup-plugin-swc": "^0.2.0"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3"
+  }
+}

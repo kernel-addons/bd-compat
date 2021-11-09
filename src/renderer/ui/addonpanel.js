@@ -28,7 +28,7 @@ export default function AddonPanel({type, manager}) {
                     React.createElement("span", {
                         className: "bdcompat-FlexCenter",
                         children: [
-                            type[0].toUpperCase() + type.slice(1) + "s",
+                            `${type[0].toUpperCase() + type.slice(1)}s - ${manager.addons.length}`,
                             pluginSettings && React.createElement("span", {
                                 className: "bdcompat-FlexCenter",
                                 children: [

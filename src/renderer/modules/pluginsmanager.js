@@ -69,8 +69,8 @@ export default class PluginsManager {
                 if (this.times[filename] === stats.mtime.getTime()) return;
                 this.times[filename] = stats.mtime.getTime();
 
-                if (eventType == "rename") this.loadAddon(absolutePath, true);
-                if (eventType == "change") this.reloadAddon(absolutePath, true);
+                if (eventType === "rename") this.loadAddon(absolutePath, true);
+                if (eventType === "change") this.reloadAddon(absolutePath, true);
             }
             catch (err) {
                 if (fs.existsSync(absolutePath)) return;
@@ -100,10 +100,10 @@ export default class PluginsManager {
     }
 
     static resolve(idOrFileOrAddon) {
-        return this.addons.find(addon => addon.id === idOrFileOrAddon || addon.name === idOrFileOrAddon || addon.path === idOrFileOrAddon || addon === idOrFileOrAddon);
+        return this.addons.find(addon => addon.name === idOrFileOrAddon || addon.path === idOrFileOrAddon || addon === idOrFileOrAddon);
     }
 
-    static loadAddon(location, showToast = true) {
+    static loadAddon(location, showToast = true, showStart = true) {
         const filecontent = fs.readFileSync(location, "utf8");
         const meta = Utilities.parseMETA(filecontent);
         meta.filename = path.basename(location);
@@ -145,7 +145,7 @@ export default class PluginsManager {
             }
             this.addons.push(meta);
 
-            if (this.addonState[meta.name]) this.startPlugin(meta);
+            if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
         } catch (error) {
             Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
         }
@@ -153,14 +153,16 @@ export default class PluginsManager {
         if (meta.instance) return meta;
     }
 
-    static unloadAddon(idOrFileOrAddon) {
+    static unloadAddon(idOrFileOrAddon, showToast = true) {
         const addon = this.resolve(idOrFileOrAddon);
         if (!addon) return;
 
         this.stopPlugin(addon, false);
         this.addons.splice(this.addons.indexOf(addon), 1);
-        Logger.log("PluginsManager", `${addon.name} was unloaded!`);
-        Toasts.show(`${addon.name} was unloaded!`);
+        if (showToast) {
+            Logger.log("PluginsManager", `${addon.name} was unloaded!`);
+            Toasts.show(`${addon.name} was unloaded!`, {type: "info"});
+        }
         this.dispatch("updated");
     }
 
@@ -172,11 +174,11 @@ export default class PluginsManager {
             if (typeof(addon.instance.start) === "function") addon.instance.start();
             if (showToast) {
                 Logger.log("PluginsManager", `${addon.name} has been started!`);
-                Toasts.show(`${addon.name} has been started!`);
+                Toasts.show(`${addon.name} has been started!`, {type: "info"});
             }
         } catch (error) {
             Logger.error("PluginsManager", `Unable to fire start() for ${addon.name}:`, error);
-            Toasts.show(`${addon.name} could not be started!`);
+            Toasts.show(`${addon.name} could not be started!`, {type: "error"});
             return false;
         }
 
@@ -191,7 +193,7 @@ export default class PluginsManager {
             if (typeof (addon.instance.stop) === "function") addon.instance.stop();
             if (showToast) {
                 Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-                Toasts.show(`${addon.name} has been stopped!`);
+                Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
             }
         } catch (error) {
             Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
@@ -218,7 +220,7 @@ export default class PluginsManager {
         const success = this.startPlugin(addon, false);
         if (success) {
             Logger.log("PluginsManager", `${addon.name} has been enabled!`);
-            Toasts.show(`${addon.name} has been enabled!`);
+            Toasts.show(`${addon.name} has been enabled!`, {type: "info"});
         }
 
         this.addonState[addon.name] = success;
@@ -235,7 +237,7 @@ export default class PluginsManager {
         const success = this.stopPlugin(addon, false);
         if (success) {
             Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-            Toasts.show(`${addon.name} has been stopped!`);
+            Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
         }
         
         this.addonState[addon.name] = false;
@@ -252,10 +254,9 @@ export default class PluginsManager {
 
     static reloadAddon(idOrFileOrAddon) {
         const addon = this.resolve(idOrFileOrAddon);
-        const success = this.stopPlugin(addon, false);
-        if (!success) return;
+        this.unloadAddon(addon, false);
 
-        this.startPlugin(addon, false);
+        this.loadAddon(addon.path, false,  false);
         Toasts.show(`${addon.name} was reloaded!`, {type: "success"});
         Logger.log("PluginsManager", `${addon.name} was reloaded!`);
     }
