@@ -1,10 +1,10 @@
 import IPC, {events} from "./ipc";
 import {contextBridge, ipcRenderer} from "electron";
 import HookOnSwitch from "./switch";
-import {cloneObject} from "./util";
 import Module from "module";
 import path from "path";
 import * as IPCEvents from "../common/IPCEvents";
+import Process from "./process";
 
 
 // Attach onSwitch() event
@@ -37,4 +37,4 @@ Object.defineProperties(window, {
     }
 });
 contextBridge.exposeInMainWorld("BDCompatNative", API);
-contextBridge.exposeInMainWorld("process", cloneObject(process));
+contextBridge.exposeInMainWorld("process", Process);

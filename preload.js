@@ -49,6 +49,8 @@ function HookOnSwitch() {
 	electron.ipcRenderer.send("bdcompat-setup-onSwitch");
 }
 
+const GET_APP_PATH = "bdcompat-get-app-path";
+
 function getKeys(object) {
 	const keys = [];
 	for (const key in object) keys.push(key);
@@ -70,7 +72,8 @@ function cloneObject(target, newObject = {
 	}, newObject);
 }
 
-const GET_APP_PATH = "bdcompat-get-app-path";
+const Process = cloneObject(process);
+Process.env.injDir = __dirname;
 
 // Attach onSwitch() event
 HookOnSwitch();
@@ -99,4 +102,4 @@ Object.defineProperties(window, {
 	}
 });
 electron.contextBridge.exposeInMainWorld("BDCompatNative", API);
-electron.contextBridge.exposeInMainWorld("process", cloneObject(process));
+electron.contextBridge.exposeInMainWorld("process", Process);
