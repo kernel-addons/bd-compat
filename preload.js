@@ -84,7 +84,7 @@ const API = {
 	IPC: IPC
 };
 // @ts-ignore - Push modules
-Module__default["default"].globalPaths.push(path__default["default"].resolve(API.getAppPath(), "resources", "app-original.asar", "node_modules"));
+Module__default["default"].globalPaths.push(path__default["default"].resolve(API.getAppPath(), "node_modules"));
 // Expose Native bindings and cloned process global.
 Object.defineProperties(window, {
 	BDCompatNative: {
