@@ -69,7 +69,7 @@ export default class BdApi {
     static suppressErrors(method, message) {
         return (...args) => {
             try {return method(...args);}
-            catch {Logger.error("SuppressErrors", message);}
+            catch (error) {Logger.error("SuppressErrors", message, error);}
         };
     }
 
