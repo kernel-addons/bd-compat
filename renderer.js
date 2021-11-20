@@ -1351,8 +1351,8 @@ class BdApi {
 		return (...args) => {
 			try {
 				return method(...args);
-			} catch (e) {
-				Logger.error("SuppressErrors", message);
+			} catch (error) {
+				Logger.error("SuppressErrors", message, error);
 			}
 		};
 	}
