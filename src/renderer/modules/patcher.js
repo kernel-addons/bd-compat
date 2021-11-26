@@ -63,6 +63,7 @@ export default class Patcher {
             children: []
         }
         module[functionName] = this.makeOverride(patch);
+        module[functionName].originalFunction = patch.originalFunction;
         return this._patches.push(patch), patch;
     }
 

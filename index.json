@@ -1,6 +1,6 @@
 {
     "name": "BDCompat",
     "author": "Strencher",
-    "id": "bd-compat",
+    "id": "strencher.bdcompat",
     "description": "Allows you to load BetterDiscord plugins within Kernel."
 }

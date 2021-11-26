@@ -7,13 +7,9 @@ import Utilities from "./utilities.js";
 
 export default class PluginsManager {
     static listeners = {};
-
     static folder = DataStore.pluginsFolder;
-
     static extension = ".plugin.js";
-
     static addons = []; 
-
     static times = {};
 
     static on(event, callback) {
@@ -54,11 +50,8 @@ export default class PluginsManager {
     }
 
     static watchAddons() {
-        let lastCall = new Date();
-
         this.watcher = fs.watch(this.folder, {persistent: false}, (eventType, filename) => {
-            if (!eventType || !filename || new Date() - lastCall < 100) return;
-            lastCall = new Date();
+            if (!eventType || !filename) return;
             const absolutePath = path.resolve(this.folder, filename);
             if (!filename.endsWith(this.extension)) return;
             

@@ -11,10 +11,10 @@ export default args => {
 
     return defineConfig({
         input: `./src/${mode}/index.ts`,
-        external: ["electron", "fs", "path", "module"],
+        external: ["electron", "fs", "path", "module", "sucrase", "sass", "inspector"],
         output: {
             format: mode === "renderer" ? "esm" : "commonjs",
-            file: `${mode}.js`
+            file: `./dist/${mode}.js`
         },
 
         plugins: [
@@ -43,10 +43,9 @@ export default args => {
                 }
             })
         ],
-        onwarn: (message) => {
-            if (IGNORED_WARNINGS.includes(message.code)) return; // Hide this annoying thing
-            return console.error(message);
-            console.error(message.message, "\n", message.loc.file + ":" + message.loc.line + ":", message.loc.column, "\n", message.frame);
-        }
+        // onwarn: (message) => {
+        //     if (IGNORED_WARNINGS.includes(message.code)) return; // Hide this annoying thing
+        //     return console.error(message);
+        // }
     });
 };

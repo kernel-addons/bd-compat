@@ -11,7 +11,7 @@ import PluginsManager from "./modules/pluginsmanager.js";
 import Require from "./modules/require.js";
 import ThemesManager from "./modules/themesmanager.js";
 import Toasts from "./modules/toasts.js";
-import Webpack, {Events} from "./modules/webpack.js";
+import Webpack from "./modules/webpack.js";
 import AddonPanel from "./ui/addonpanel.js";
 import SettingsPanel from "./ui/settings.js";
 import {Buffer} from "./modules/buffer.js";
@@ -48,12 +48,16 @@ const SettingsSections = [
 export default new class BDCompat {
     styles = ["./ui/toast.css", "./ui/addons.css"];
 
-    start() {Webpack.once(Events.LOADED, this.onStart.bind(this));}
+    start() {Webpack.whenReady.then(this.onStart.bind(this));}
 
     onStart() {
         this.polyfillWebpack();
-        (window as any).require = Require;
-        (window as any).Buffer = Buffer;
+        if (!Reflect.has(window, "__BDCOMPAT_LEAKED__")) {
+            (window as any).require = Require;
+            (window as any).Buffer = Buffer;
+        }
+
+        (window as any).React = DiscordModules.React;
 
         this.exposeBdApi();
 
@@ -89,7 +93,7 @@ export default new class BDCompat {
 
         window.webpackJsonp.length = 10000; // In case plugins are waiting for that.
         window.webpackJsonp.flat = () => window.webpackJsonp;
-        // eslint-disable-next-line no-empty-pattern
+
         window.webpackJsonp.push = ([[], module, [[id]]]) => {
             return module[id]({}, {}, Webpack.request(false));
         };
@@ -110,7 +114,7 @@ export default new class BDCompat {
         const SettingsView = Webpack.findByDisplayName("SettingsView");
 
         Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
-            if (!Array.isArray(res) || !res.some(e => e?.section?.toLowerCase() === "changelog") || res.some(s => s?.id === "kernel-settings")) return;
+            if (!Array.isArray(res) || !res.some(e => e?.section?.toLowerCase() === "changelog") || res.some(s => s?.id === "bdcompat-settings-settings")) return;
 
             const index = res.findIndex(s => s?.section?.toLowerCase() === "changelog") - 1;
             if (index < 0) return;

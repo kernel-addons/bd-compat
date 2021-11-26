@@ -60,13 +60,15 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
 
         
         this.once(Events.CREATE, async () => {
-            const [Dispatcher, Constants] = await this.findByProps(
+            const [Dispatcher, {ActionTypes} = {}] = await this.findByProps(
                 ["dirtyDispatch"], ["API_HOST", "ActionTypes"],
-                {cache: false, bulk: true, wait: true}
+                {cache: false, bulk: true, wait: true, forever: true}
             );
             
-            Dispatcher.subscribe(Constants.ActionTypes.TRACK, listener = listener.bind(null, true, Dispatcher, Constants.ActionTypes));
+            Dispatcher.subscribe(ActionTypes.TRACK, listener = listener.bind(null, true, Dispatcher, ActionTypes));
         });
+
+        this.whenReady = this.wait();
     }
 
     dispatch(event, ...args) {
@@ -97,8 +99,8 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
         });
     }
 
-    async waitFor(filter, {retries = 100, all, delay = 50} = {}) {
-        for (let i = 0; i < retries; i++) {
+    async waitFor(filter, {forever = false, retries = 100, all, delay = 100} = {}) {
+        for (let i = 0; (i < retries) || forever; i++) {
             const module = this.findModule(filter, all, false);
             if (module) return module;
             await new Promise(res => setTimeout(res, delay));
@@ -143,7 +145,7 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
     findModules(filter) {return this.findModule(filter, {all: true});}
 
     bulk(...options) {
-        const [filters, {cache = true, wait = false}] = this.#parseOptions(options);
+        const [filters, {cache = true, wait = false, forever = false}] = this.#parseOptions(options);
         const found = new Array(filters.length);
         const searchFunction = wait ? this.waitFor : this.findModule;
 
@@ -160,7 +162,7 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
             }
 
             return true;
-        }, {all: true, cache});
+        }, {all: true, cache, forever});
 
         if (wait) return returnValue.then(() => found);
 
@@ -168,7 +170,7 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
     }
 
     findByProps(...options) {
-        const [props, {bulk = false, cache = true, wait = false}] = this.#parseOptions(options);
+        const [props, {bulk = false, cache = true, wait = false, forever = true}] = this.#parseOptions(options);
         const filter = (props, module) => module && props.every(prop => prop in module);
         
         return bulk
@@ -179,7 +181,7 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
     }
 
     findByDisplayName(...options) {
-        const [displayNames, {all = false, bulk = false, default: defaultExport = false, cache = true, wait = false}] = this.#parseOptions(options);
+        const [displayNames, {all = false, bulk = false, default: defaultExport = false, cache = true, wait = false, forever = false}] = this.#parseOptions(options);
 
         const filter = (name, module) => defaultExport
             ? module?.default?.displayName === name
@@ -190,6 +192,30 @@ const Webpack = window.Webpack ?? (window.Webpack = new class Webpack {
             : wait
                 ? this.waitFor(filter.bind(null, displayNames[0]), {all})
                 : this.findModule(filter.bind(null, displayNames[0]), false, cache);
+    }
+
+    findByIndex(index, {cache = true} = {}) {return this.request(cache).c[index]?.exports;}
+
+    findIndex(filter, {cache = true} = {}) {
+        const modules = this.request(cache).c;
+
+        const wrappedFilter = (module) => {
+            try {return filter(module);}
+            catch (error) {return false;}
+        };
+
+        for (const index in modules) {
+            if (!modules[index]) continue;
+            const exports = modules[index].exports;
+            if (!exports) continue;
+            if (wrappedFilter(exports)) return index;
+            if (exports.__esModule && exports.default && wrappedFilter(exports.default)) return index;
+            if (exports.__esModule && typeof (exports.default) === "object") {
+                for (const value of Object.values(exports.default)) {
+                    if (wrappedFilter(value)) return index;
+                }
+            }
+        }
     }
 
     async wait(callback) {

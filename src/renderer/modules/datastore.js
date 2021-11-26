@@ -94,7 +94,7 @@ export default class DataStore {
 
         if (!this.pluginData[pluginName]) return;
 
-        delete this.pluginData[pluginName].settings[key];
+        if (typeof(this.pluginData[pluginName]?.settings?.[key])) delete this.pluginData[pluginName].settings?.[key];
         this.saveData(pluginName, this.pluginData[pluginName]);
     }
 }

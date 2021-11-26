@@ -1,11 +1,11 @@
 import IPC, {events} from "./ipc";
-import {contextBridge, ipcRenderer} from "electron";
+import {ipcRenderer} from "electron";
 import HookOnSwitch from "./switch";
 import Module from "module";
 import path from "path";
 import * as IPCEvents from "../common/IPCEvents";
 import Process from "./process";
-
+import {exposeGlobal, hasLeak} from "./util";
 
 // Attach onSwitch() event
 HookOnSwitch();
@@ -17,6 +17,9 @@ const API = {
     executeJS(js: string) {
         return eval(js);
     },
+    hasLeak() {
+        return hasLeak();
+    },
     IPC: IPC
 };
 
@@ -24,17 +27,12 @@ const API = {
 Module.globalPaths.push(path.resolve(API.getAppPath(), "node_modules"));
 
 // Expose Native bindings and cloned process global.
-Object.defineProperties(window, {
-    BDCompatNative: {
-        value: API,
-        configurable: false,
-        writable: false
-    },
-    BDCompatEvents: {
-        value: events,
-        configurable: false,
-        writable: false
-    }
-});
-contextBridge.exposeInMainWorld("BDCompatNative", API);
-contextBridge.exposeInMainWorld("process", Process);
+exposeGlobal("BDCompatNative", API);
+exposeGlobal("BDCompatEvents", events, false);
+
+if (!process.contextIsolated) exposeGlobal("process", Process, false);
+if (hasLeak()) {
+    exposeGlobal("require", require);
+    exposeGlobal("Buffer", Buffer);
+    exposeGlobal("__BDCOMPAT_LEAKED__", true);
+}

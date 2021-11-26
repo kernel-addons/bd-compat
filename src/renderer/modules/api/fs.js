@@ -1,6 +1,6 @@
 /// <reference path="../../../../types.d.ts" />
 
-export default class fs {
+class fs {
     static readFileSync(path, options = "utf8") {
         return BDCompatNative.executeJS(`require("fs").readFileSync(${JSON.stringify(path)}, ${JSON.stringify(options)});`);
     }
@@ -65,3 +65,5 @@ export default class fs {
         `);
     }
 }
+
+export default typeof(__BDCOMPAT_LEAKED__) === "undefined" ? fs : window.require("fs");

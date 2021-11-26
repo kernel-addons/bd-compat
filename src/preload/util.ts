@@ -1,3 +1,7 @@
+// @ts-nocheck
+
+import {contextBridge, webFrame} from "electron";
+
 export function getKeys(object: object) {
     const keys = [];
 
@@ -17,3 +21,22 @@ export function cloneObject(target: any, newObject = {}, keys?: string[]) {
         return clone;
     }, newObject);
 };
+
+export function hasLeak(): boolean {
+    return webFrame?.top?.context != null;
+};
+
+export function exposeGlobal(key: string, namespace: any, everywhere = true) {
+    if (hasLeak()) {
+        webFrame.top.context.window[key] = namespace;
+    } else {
+        contextBridge.exposeInMainWorld(key, namespace);
+    }
+
+    if (everywhere) window[key] = namespace;
+};
+
+Object.assign(window, {
+    __cloneObject: cloneObject,
+    __getKeys: getKeys
+});
