@@ -15,6 +15,7 @@ import Webpack from "./modules/webpack.js";
 import AddonPanel from "./ui/addonpanel.js";
 import SettingsPanel from "./ui/settings.js";
 import {Buffer} from "./modules/buffer.js";
+import Logger from "./modules/logger.js";
 
 const SettingsSections = [
     {section: "DIVIDER"},
@@ -100,11 +101,11 @@ export default new class BDCompat {
     }
 
     appendStyles() {
-        const root = BDCompatNative.executeJS("__dirname");
+        const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`);
 
         for (const [index, style] of this.styles.entries()) {
             const location = path.resolve(root, "src", "renderer", style);
-            if (!fs.existsSync(location)) return; // TODO: Bail out
+            if (!fs.existsSync(location)) return Logger.error("Styles", `The stylesheet at ${location} doesn't exists.`);
 
             DOM.injectCSS("BDCompat-internal" + index, fs.readFileSync(location, "utf8"));
         }
