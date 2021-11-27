@@ -3053,10 +3053,10 @@ var index = new class BDCompat {
 		};
 	}
 	appendStyles() {
-		const root = BDCompatNative.executeJS("__dirname");
+		const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`);
 		for (const [index, style] of this.styles.entries()) {
 			const location = path.resolve(root, "src", "renderer", style);
-			if (!fs$1.existsSync(location)) return; // TODO: Bail out
+			if (!fs$1.existsSync(location)) return Logger.error("Styles", `The stylesheet at ${location} doesn't exists.`);
 			DOM.injectCSS("BDCompat-internal" + index, fs$1.readFileSync(location, "utf8"));
 		}
 	}
