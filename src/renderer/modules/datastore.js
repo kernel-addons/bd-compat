@@ -4,7 +4,7 @@ import Logger from "./logger.js";
 
 export default class DataStore {
     static pluginData = {};
-    static pluginsFolder = path.resolve(BDCompatNative.executeJS("__dirname"), "plugins");
+    static pluginsFolder = path.resolve(BDCompatNative.executeJS("__dirname"), "..",  "plugins");
     static themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
     static dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
 
