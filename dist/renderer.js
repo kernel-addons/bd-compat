@@ -183,7 +183,7 @@ class DataStore {
 }
 DataStore.pluginData = {
 };
-DataStore.pluginsFolder = path.resolve(BDCompatNative.executeJS("__dirname"), "plugins");
+DataStore.pluginsFolder = path.resolve(BDCompatNative.executeJS("__dirname"), "..", "plugins");
 DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
 DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
 
