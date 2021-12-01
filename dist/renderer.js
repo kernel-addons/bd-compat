@@ -219,6 +219,7 @@ function _classPrivateMethodGet(receiver, privateSet, fn) {
 	}
 	return fn;
 }
+// @ts-nocheck
 if (typeof Array.prototype.at !== "function") {
 	Array.prototype.at = function(index) {
 		return index < 0 ? this[this.length - Math.abs(index)] : this[index];
@@ -234,274 +235,265 @@ const Events = {
 	PUSH: "PUSH",
 	LOADED: "LOADED"
 };
-var _Webpack;
-const Webpack1 = (_Webpack = window.Webpack) !== null && _Webpack !== void 0 ? _Webpack : window.Webpack = new (function() {
-	var _parseOptions = new WeakSet();
-	class Webpack {
-		get Events() {
-			return Events;
+var _parseOptions = new WeakSet();
+class WebpackModule {
+	get Events() {
+		return Events;
+	}
+	get chunkName() {
+		return "webpackChunkdiscord_app";
+	}
+	get id() {
+		return "kernel-req" + Math.random().toString().slice(2, 5);
+	}
+	dispatch(event, ...args1) {
+		if (!(event in _classPrivateFieldGet(this, _events)))
+			throw new Error(`Unknown Event: ${event}`);
+		for (const callback of _classPrivateFieldGet(this, _events)[event]) {
+			try {
+				callback(...args1);
+			} catch (err) {
+				console.error(err);
+			}
 		}
-		get chunkName() {
-			return "webpackChunkdiscord_app";
+	}
+	on(event1, callback) {
+		if (!(event1 in _classPrivateFieldGet(this, _events)))
+			throw new Error(`Unknown Event: ${event1}`);
+		return _classPrivateFieldGet(this, _events)[event1].add(callback), () => this.off(event1, callback);
+	}
+	off(event2, callback1) {
+		if (!(event2 in _classPrivateFieldGet(this, _events)))
+			throw new Error(`Unknown Event: ${event2}`);
+		return _classPrivateFieldGet(this, _events)[event2].delete(callback1);
+	}
+	once(event3, callback2) {
+		const unlisten = this.on(event3, (...args) => {
+			unlisten();
+			callback2(...args);
+		});
+	}
+	async waitFor(filter3, {retries =100, all =false, delay =50} = {
+		}) {
+		for (let i = 0; i < retries; i++) {
+			const module = this.findModule(filter3, {
+				all,
+				cache: false
+			});
+			if (module) return module;
+			await new Promise((res) => setTimeout(res, delay)
+			);
 		}
-		get id() {
-			return "kernel-req" + Math.random().toString().slice(2, 5);
+	}
+	request(cache2 = true) {
+		if (cache2 && _classPrivateFieldGet(this, _cache)) return _classPrivateFieldGet(this, _cache);
+		let req = void 0;
+		if ("webpackChunkdiscord_app" in window && webpackChunkdiscord_app != null) {
+			const chunk = [
+				[
+					this.id
+				],
+				{
+				},
+				(__webpack_require__) => req = __webpack_require__
+			];
+			webpackChunkdiscord_app.push(chunk);
+			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
 		}
-		dispatch(event4, ...args1) {
-			if (!(event4 in _classPrivateFieldGet(this, _events)))
-				throw new Error(`Unknown Event: ${event4}`);
-			for (const callback of _classPrivateFieldGet(this, _events)[event4]) {
-				try {
-					callback(...args1);
-				} catch (err) {
-					console.error(err);
+		_classPrivateFieldSet(this, _cache, req);
+		return req;
+	}
+	findModule(filter1, {all: all1 = false, cache: cache1 = true, force =false} = {
+		}) {
+		if (typeof filter1 !== "function") return void 0;
+		const __webpack_require__ = this.request(cache1);
+		const found = [];
+		const wrapFilter = function(module) {
+			try {
+				return filter1(module);
+			} catch (e) {
+				return false;
+			}
+		};
+		for (const id in __webpack_require__.c) {
+			var module1 = __webpack_require__.c[id].exports;
+			if (!module1) continue;
+			switch (typeof module1) {
+				case "object": {
+					if (wrapFilter(module1)) {
+						if (!all1) return module1;
+						found.push(module1);
+					}
+					if (module1.__esModule && module1.default != null && wrapFilter(module1.default)) {
+						if (!all1) return module1.default;
+						found.push(module1.default);
+					}
+					if (force && module1.__esModule)
+						for (const key in module1) {
+							if (!module1[key]) continue;
+							if (wrapFilter(module1[key])) {
+								if (!all1) return module1[key];
+								found.push(module1[key]);
+							}
+					}
+					break;
+				}
+				case "function": {
+					if (wrapFilter(module1)) {
+						if (!all1) return module1;
+						found.push(module1);
+					}
+					break;
 				}
 			}
 		}
-		on(event1, callback) {
-			if (!(event1 in _classPrivateFieldGet(this, _events)))
-				throw new Error(`Unknown Event: ${event1}`);
-			return _classPrivateFieldGet(this, _events)[event1].add(callback), () => this.off(event1, callback);
-		}
-		off(event2, callback1) {
-			if (!(event2 in _classPrivateFieldGet(this, _events)))
-				throw new Error(`Unknown Event: ${event2}`);
-			return _classPrivateFieldGet(this, _events)[event2].delete(callback1);
-		}
-		once(event3, callback2) {
-			const unlisten = this.on(event3, (...args) => {
-				unlisten();
-				callback2(...args);
-			});
-		}
-		async waitFor(filter3, {forever =false, retries =100, all, delay =100} = {
-			}) {
-			for (let i = 0; i < retries || forever; i++) {
-				const module = this.findModule(filter3, all, false);
-				if (module) return module;
-				await new Promise((res) => setTimeout(res, delay)
-				);
-			}
-		}
-		request(cache = true) {
-			if (cache && _classPrivateFieldGet(this, _cache)) return _classPrivateFieldGet(this, _cache);
-			let req = void 0;
-			if ("webpackChunkdiscord_app" in window && webpackChunkdiscord_app != null) {
-				const chunk = [
-					[
-						this.id
-					],
-					{
-					},
-					(__webpack_require__) => req = __webpack_require__
-				];
-				webpackChunkdiscord_app.push(chunk);
-				webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
-			}
-			_classPrivateFieldSet(this, _cache, req);
-			return req;
-		}
-		findModule(filter1, {all: all1 = false, cache: cache1 = true} = {
-			}) {
-			const __webpack_require__ = this.request(cache1);
-			const found = [];
-			const wrapFilter = (module) => {
+		return all1 ? found : found[0];
+	}
+	findModules(filter2) {
+		return this.findModule(filter2, {
+			all: true
+		});
+	}
+	bulk(...options) {
+		const [filters, {wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options);
+		const found = new Array(filters.length);
+		const searchFunction = wait ? this.waitFor : this.findModule;
+		const returnValue = searchFunction.call(this, (module) => {
+			const matches = filters.filter((filter) => {
 				try {
-					return filter1(module);
+					return filter(module);
 				} catch (e) {
 					return false;
 				}
-			};
-			for (let i in __webpack_require__.c) {
-				var m = __webpack_require__.c[i].exports;
-				if ((typeof m == "object" || typeof m == "function") && wrapFilter(m)) found.push(m);
-				if (m === null || m === void 0 ? void 0 : m.__esModule) {
-					for (let j in m)
-						if ((typeof m[j] == "object" || typeof m[j] == "function") && wrapFilter(m[j])) found.push(m[j]);
-				}
+			});
+			if (!matches.length) return false;
+			for (const filter4 of matches) {
+				found[filters.indexOf(filter4)] = module;
 			}
-			return all1 ? found : found.at(0);
-		}
-		findModules(filter2) {
-			return this.findModule(filter2, {
-				all: true
-			});
-		}
-		bulk(...options) {
-			const [filters, {cache =true, wait =false, forever =false}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options);
-			const found = new Array(filters.length);
-			const searchFunction = wait ? this.waitFor : this.findModule;
-			const returnValue = searchFunction.call(this, (module) => {
-				const matches = filters.filter((filter) => {
-					try {
-						return filter(module);
-					} catch (e) {
-						return false;
-					}
-				});
-				if (!matches.length) return false;
-				for (const filter4 of matches) {
-					found[filters.indexOf(filter4)] = module;
-				}
-				return true;
-			}, {
-				all: true,
-				cache,
-				forever
-			});
-			if (wait) return returnValue.then(() => found
-				);
-			return found;
-		}
-		findByProps(...options1) {
-			const [props1, {bulk =false, cache =true, wait =false, forever =true}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options1);
-			const filter = (props, module) => module && props.every((prop) => prop in module
+			return found.filter(Boolean).length === filters.length;
+		}, rest);
+		if (wait) return returnValue.then(() => found
 			);
-			return bulk ? this.bulk(...props1.map((props) => filter.bind(null, props)
-			).concat({
-				cache,
-				wait
-			})) : wait ? this.waitFor(filter.bind(null, props1)) : this.findModule(filter.bind(null, props1), false, cache);
-		}
-		findByDisplayName(...options2) {
-			const [displayNames, {all =false, bulk =false, default: defaultExport = false, cache =true, wait =false, forever =false}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options2);
-			const filter = (name, module) => {
-				var ref;
-				return defaultExport ? (module === null || module === void 0 ? void 0 : (ref = module.default) === null || ref === void 0 ? void 0 : ref.displayName) === name : (module === null || module === void 0 ? void 0 : module.displayName) === name;
-			};
-			return bulk ? this.bulk(...displayNames.map((name) => filter.bind(null, name)
-			).concat({
-				wait,
-				cache
-			})) : wait ? this.waitFor(filter.bind(null, displayNames[0]), {
-				all
-			}) : this.findModule(filter.bind(null, displayNames[0]), false, cache);
-		}
-		findByIndex(index, {cache: cache2 = true} = {
-			}) {
+		return found;
+	}
+	findByProps(...options1) {
+		const [props1, {bulk =false, wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options1);
+		const filter = (props, module) => module && props.every((prop) => prop in module
+		);
+		return bulk ? this.bulk(...props1.map((props) => filter.bind(null, props)
+		).concat({
+			wait,
+			...rest
+		})) : wait ? this.waitFor(filter.bind(null, props1)) : this.findModule(filter.bind(null, props1), rest);
+	}
+	findByDisplayName(...options2) {
+		const [displayNames, {bulk =false, default: defaultExport = false, wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options2);
+		const filter = (name, module) => {
 			var ref;
-			return (ref = this.request(cache2).c[index]) === null || ref === void 0 ? void 0 : ref.exports;
-		}
-		findIndex(filter5, {cache: cache3 = true} = {
-			}) {
-			const modules = this.request(cache3).c;
-			const wrappedFilter = (module) => {
-				try {
-					return filter5(module);
-				} catch (error) {
-					return false;
-				}
-			};
-			for (const index in modules) {
-				if (!modules[index]) continue;
-				const exports = modules[index].exports;
-				if (!exports) continue;
-				if (wrappedFilter(exports)) return index;
-				if (exports.__esModule && exports.default && wrappedFilter(exports.default)) return index;
-				if (exports.__esModule && typeof exports.default === "object") {
-					for (const value of Object.values(exports.default)) {
-						if (wrappedFilter(value)) return index;
-					}
-				}
-			}
-		}
-		async wait(callback3) {
-			return new Promise((resolve) => {
-				this.once(Events.LOADED, () => {
-					resolve();
-					typeof callback3 === "function" && callback3();
-				});
-			});
-		}
-		get whenExists() {
-			return new Promise((resolve) => {
-				this.once(Events.CREATE, resolve);
-			});
-		}
-		constructor() {
-			_events.set(this, {
-				writable: true,
-				value: Object.fromEntries(Object.keys(Events).map((key) => [
-					key,
-					new Set()
-				]
-				))
-			});
-			_cache.set(this, {
-				writable: true,
-				value: null
-			});
-			_parseOptions.add(this);
-			Object.defineProperty(window, this.chunkName, {
-				get() {
-					return void 0;
-				},
-				set: (value) => {
-					setImmediate(() => {
-						this.dispatch(Events.CREATE);
-					});
-					const originalPush = value.push;
-					value.push = (...values) => {
-						this.dispatch(Events.LENGTH_CHANGE, value.length + values.length);
-						this.dispatch(Events.PUSH, values);
-						return Reflect.apply(originalPush, value, values);
-					};
-					Object.defineProperty(window, this.chunkName, {
-						value,
-						configurable: true,
-						writable: true
-					});
-					return value;
-				},
-				configurable: true
-			});
-			let listener = (shouldUnsubscribe, Dispatcher, ActionTypes, event) => {
-				if ((event === null || event === void 0 ? void 0 : event.event) !== "app_ui_viewed") return;
-				if (shouldUnsubscribe) {
-					Dispatcher.unsubscribe(ActionTypes.TRACK, listener);
-				}
-				this.dispatch(Events.LOADED);
-			};
-			this.once(Events.CREATE, async () => {
-				const [Dispatcher, {ActionTypes} = {
-					}] = await this.findByProps([
-					"dirtyDispatch"
-				], [
-					"API_HOST",
-					"ActionTypes"
-				], {
-					cache: false,
-					bulk: true,
-					wait: true,
-					forever: true
-				});
-				Dispatcher.subscribe(ActionTypes.TRACK, listener = listener.bind(null, true, Dispatcher, ActionTypes));
-			});
-			this.whenReady = this.wait();
-		}
+			return defaultExport ? (module === null || module === void 0 ? void 0 : (ref = module.default) === null || ref === void 0 ? void 0 : ref.displayName) === name : (module === null || module === void 0 ? void 0 : module.displayName) === name;
+		};
+		return bulk ? this.bulk(...displayNames.map((name) => filter.bind(null, name)
+		).concat({
+			wait,
+			cache
+		})) : wait ? this.waitFor(filter.bind(null, displayNames[0]), rest) : this.findModule(filter.bind(null, displayNames[0]), rest);
 	}
-	var _events = new WeakMap();
-	var _cache = new WeakMap();
-	function parseOptions(args, filter = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
-	) {
-		return [
-			args,
-			filter(args.at(-1)) ? args.pop() : {
-			}
-		];
+	async wait(callback3 = null) {
+		return new Promise((resolve) => {
+			this.once(Events.LOADED, () => {
+				resolve();
+				typeof callback3 === "function" && callback3();
+			});
+		});
 	}
-	return Webpack;
-}());
+	get whenExists() {
+		return new Promise((resolve) => {
+			this.once(Events.CREATE, resolve);
+		});
+	}
+	constructor() {
+		_events.set(this, {
+			writable: true,
+			value: Object.fromEntries(Object.keys(Events).map((key) => [
+				key,
+				new Set()
+			]
+			))
+		});
+		_cache.set(this, {
+			writable: true,
+			value: null
+		});
+		_parseOptions.add(this);
+		this.whenReady = null;
+		Object.defineProperty(window, this.chunkName, {
+			get() {
+				return void 0;
+			},
+			set: (value) => {
+				setImmediate(() => {
+					this.dispatch(Events.CREATE);
+				});
+				const originalPush = value.push;
+				value.push = (...values) => {
+					this.dispatch(Events.LENGTH_CHANGE, value.length + values.length);
+					this.dispatch(Events.PUSH, values);
+					return Reflect.apply(originalPush, value, values);
+				};
+				Object.defineProperty(window, this.chunkName, {
+					value,
+					configurable: true,
+					writable: true
+				});
+				return value;
+			},
+			configurable: true
+		});
+		let listener = (shouldUnsubscribe, Dispatcher, ActionTypes, event) => {
+			if (shouldUnsubscribe) {
+				Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
+			}
+			this.dispatch(Events.LOADED);
+		};
+		this.once(Events.PUSH, async () => {
+			const [Dispatcher, Constants] = await this.findByProps([
+				"dirtyDispatch"
+			], [
+				"API_HOST",
+				"ActionTypes"
+			], {
+				cache: false,
+				bulk: true,
+				wait: true
+			});
+			Dispatcher.subscribe(Constants.ActionTypes.START_SESSION, listener = listener.bind(null, true, Dispatcher, Constants.ActionTypes));
+		});
+	}
+}
+var _events = new WeakMap();
+var _cache = new WeakMap();
+function parseOptions(args, filter = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
+) {
+	return [
+		args,
+		filter(args.at(-1)) ? args.pop() : {
+		}
+	];
+}
+var _Webpack;
+const Webpack = (_Webpack = window.Webpack) !== null && _Webpack !== void 0 ? _Webpack : window.Webpack = new WebpackModule;
+if (!Webpack.whenReady)
+	Webpack.whenReady = Webpack.wait();
 
 class DiscordModules {
 	/**@returns {typeof import("react")} */
 	static get React() {
-		return memoize(this, "React", () => Webpack1.findByProps("createElement", "createContext")
+		return memoize(this, "React", () => Webpack.findByProps("createElement", "createContext")
 		);
 	}
 	/**@returns {typeof import("react-dom")} */
 	static get ReactDOM() {
-		return memoize(this, "ReactDOM", () => Webpack1.findByProps("findDOMNode", "render", "createPortal")
+		return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal")
 		);
 	}
 }
@@ -532,28 +524,28 @@ class DOM {
 
 class Modals {
 	static get ModalsAPI() {
-		return memoize(this, "ModalsAPI", () => Webpack1.findByProps("openModal", "useModalsStore")
+		return memoize(this, "ModalsAPI", () => Webpack.findByProps("openModal", "useModalsStore")
 		);
 	}
 	static get ModalComponents() {
-		return memoize(this, "ModalComponents", () => Webpack1.findByProps("ModalRoot", "ModalHeader")
+		return memoize(this, "ModalComponents", () => Webpack.findByProps("ModalRoot", "ModalHeader")
 		);
 	}
 	static get Forms() {
-		return memoize(this, "Forms", () => Webpack1.findByProps("FormTitle", "FormItem")
+		return memoize(this, "Forms", () => Webpack.findByProps("FormTitle", "FormItem")
 		);
 	}
 	static get Button() {
-		return memoize(this, "Button", () => Webpack1.findByProps("DropdownSizes")
+		return memoize(this, "Button", () => Webpack.findByProps("DropdownSizes")
 		);
 	}
 	static get ConfirmationModal() {
-		return memoize(this, "ConfirmationModal", () => Webpack1.findByDisplayName("ConfirmModal")
+		return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal")
 		);
 	}
 	/**@returns {typeof import("react")} */
 	static get Text() {
-		return memoize(this, "Text", () => Webpack1.findByDisplayName("Text")
+		return memoize(this, "Text", () => Webpack.findByDisplayName("Text")
 		);
 	}
 	static showConfirmationModal(title, content, options = {
@@ -1371,19 +1363,19 @@ class BdApi {
 		return Toasts$1.show(content2, options1);
 	}
 	static findModule(filter) {
-		return Webpack1.findModule(filter);
+		return Webpack.findModule(filter);
 	}
 	static findAllModules(filter1) {
-		return Webpack1.findModules(filter1);
+		return Webpack.findModules(filter1);
 	}
 	static findModuleByProps(...props) {
-		return Webpack1.findByProps(...props);
+		return Webpack.findByProps(...props);
 	}
 	static findModuleByDisplayName(displayName) {
-		return Webpack1.findByDisplayName(displayName);
+		return Webpack.findByDisplayName(displayName);
 	}
 	static findModuleByPrototypes(...protos) {
-		return Webpack1.findModule((m) => typeof m === "function" && protos.every((proto) => proto in m.prototype
+		return Webpack.findModule((m) => typeof m === "function" && protos.every((proto) => proto in m.prototype
 		)
 		);
 	}
@@ -1691,7 +1683,7 @@ class Components {
 	static byProps(...props) {
 		const name = props.join(":");
 		if (_classStaticPrivateFieldSpecGet(this, Components, __cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack1.findModule((m) => props.every((p) => p in m
+		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack.findModule((m) => props.every((p) => p in m
 			) && typeof m === "function"
 		);
 		return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
@@ -1699,7 +1691,7 @@ class Components {
 	static get(name, filter = (_) => _
 	) {
 		if (_classStaticPrivateFieldSpecGet(this, Components, __cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack1.findModule((m) => m.displayName === name && filter(m)
+		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack.findModule((m) => m.displayName === name && filter(m)
 		);
 		return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
 	}
@@ -3009,7 +3001,7 @@ const SettingsSections = [
 ];
 var index = new class BDCompat {
 	start() {
-		Webpack1.whenReady.then(this.onStart.bind(this));
+		Webpack.whenReady.then(this.onStart.bind(this));
 	}
 	onStart() {
 		this.polyfillWebpack();
@@ -3049,7 +3041,7 @@ var index = new class BDCompat {
 		window.webpackJsonp.push = ([[], module, [[id]]]) => {
 			return module[id]({
 			}, {
-			}, Webpack1.request(false));
+			}, Webpack.request(false));
 		};
 	}
 	appendStyles() {
@@ -3061,7 +3053,7 @@ var index = new class BDCompat {
 		}
 	}
 	patchSettingsView() {
-		const SettingsView = Webpack1.findByDisplayName("SettingsView");
+		const SettingsView = Webpack.findByDisplayName("SettingsView");
 		Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
 			if (!Array.isArray(res) || !res.some((e) => {
 					var ref;
