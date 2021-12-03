@@ -583,11 +583,9 @@ class Patcher {
 			for (const beforePatch of patch.children.filter((e) => e.type === "before"
 			)) {
 				try {
-					const tempReturn = beforePatch.callback(this, arguments, patch.originalFunction.bind(this));
-					if (tempReturn != undefined)
-						returnValue = tempReturn;
+					beforePatch.callback(this, arguments);
 				} catch (error) {
-					console.error("Patch:" + patch.functionName, error);
+					Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${beforePatch.caller}:`, error);
 				}
 			}
 			const insteadPatches = patch.children.filter((e) => e.type === "instead"
@@ -598,10 +596,10 @@ class Patcher {
 				for (const insteadPatch of insteadPatches) {
 					try {
 						const tempReturn = insteadPatch.callback(this, arguments, patch.originalFunction.bind(this));
-						if (tempReturn != undefined)
+						if (typeof tempReturn !== "undefined")
 							returnValue = tempReturn;
 					} catch (error) {
-						console.error("Patch:" + patch.functionName, error);
+						Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${insteadPatch.caller}:`, error);
 					}
 			}
 			for (const afterPatch of patch.children.filter((e) => e.type === "after"
@@ -609,10 +607,10 @@ class Patcher {
 				try {
 					const tempReturn = afterPatch.callback(this, arguments, returnValue, (ret) => returnValue = ret
 					);
-					if (tempReturn != undefined)
+					if (typeof tempReturn !== "undefined")
 						returnValue = tempReturn;
 				} catch (error) {
-					console.error("Patch:" + patch.functionName, error);
+					Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${afterPatch.caller}:`, error);
 				}
 			}
 			return returnValue;
@@ -632,7 +630,9 @@ class Patcher {
 			children: []
 		};
 		module[functionName] = this.makeOverride(patch);
-		module[functionName].originalFunction = patch.originalFunction;
+		Object.assign(module[functionName], patch.originalFunction, {
+			__originalFunction: patch.originalFunction
+		});
 		return this._patches.push(patch), patch;
 	}
 	static doPatch(caller2, module1, functionName1, callback, type = "after", options = {
@@ -930,29 +930,30 @@ class PluginsManager {
 			}
 		}
 	}
-	static compile(filecontent, name) {
-		return `((module, exports, __dirname, __filename, global) => {
+	static compile(filecontent, name, location) {
+		return `(function (module, exports, __dirname, __filename, global) {
 ${filecontent}
 if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}
-})//# sourceURL=kernel://bd-compat/plugins/${name}.plugin.js`;
+})
+//# sourceURL=${_.escape(location)}`;
 	}
 	static resolve(idOrFileOrAddon) {
 		return this.addons.find((addon) => addon.name === idOrFileOrAddon || addon.path === idOrFileOrAddon || addon === idOrFileOrAddon
 		);
 	}
-	static loadAddon(location, showToast = true, showStart = true) {
-		const filecontent = fs$1.readFileSync(location, "utf8");
+	static loadAddon(location1, showToast = true, showStart = true) {
+		const filecontent = fs$1.readFileSync(location1, "utf8");
 		const meta = Utilities.parseMETA(filecontent);
-		meta.filename = path.basename(location);
-		meta.path = location;
+		meta.filename = path.basename(location1);
+		meta.path = location1;
 		if (this.resolve(meta.name) || this.resolve(meta.filename))
 			throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 		let exports = {
 		};
 		try {
-			eval(this.compile(filecontent, meta.name))(exports, exports, path.dirname(location), location, window);
+			window.eval(this.compile(filecontent, meta.name, location1))(exports, exports, path.dirname(location1), location1, window);
 		} catch (error) {
-			Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
+			Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location1)}:`, error);
 		}
 		meta.exports = exports.toString().split(" ")[0] === "class" ? exports : exports.__esModule ? exports.default || exports.exports.default : exports.exports;
 		try {
