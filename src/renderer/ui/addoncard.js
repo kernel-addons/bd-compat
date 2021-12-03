@@ -71,7 +71,7 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
                         label: "Open Path",
                         icon: "Folder",
                         onClick: () => {
-                            BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`);
+                            BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`, new Error().stack);
                         }
                     }),
                     React.createElement(ToolButton, {
@@ -81,7 +81,7 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
                         onClick: () => {
                             Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
                                 onConfirm: () => {
-                                    BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`);
+                                    BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`, new Error().stack);
                                 }
                             });
                         }

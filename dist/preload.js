@@ -1,7 +1,7 @@
 "use strict";
 
 var electron = require("electron");
-var Module = require("module");
+var NodeModule = require("module");
 var path = require("path");
 
 function _interopDefaultLegacy(e) {
@@ -10,7 +10,7 @@ function _interopDefaultLegacy(e) {
 	};
 }
 
-var Module__default = /*#__PURE__*/ _interopDefaultLegacy(Module);
+var NodeModule__default = /*#__PURE__*/ _interopDefaultLegacy(NodeModule);
 var path__default = /*#__PURE__*/ _interopDefaultLegacy(path);
 
 const events = {
@@ -50,6 +50,7 @@ function HookOnSwitch() {
 }
 
 const GET_APP_PATH = "bdcompat-get-app-path";
+const EXPOSE_PROCESS_GLOBAL = "bdcompat-expose-process-global";
 
 // @ts-nocheck
 function getKeys(object) {
@@ -72,17 +73,10 @@ function cloneObject(target, newObject = {
 		return clone;
 	}, newObject);
 }
-function hasLeak() {
-	var ref;
-	return (electron.webFrame === null || electron.webFrame === void 0 ? void 0 : (ref = electron.webFrame.top) === null || ref === void 0 ? void 0 : ref.context) != null;
-}
-function exposeGlobal(key, namespace, everywhere = true) {
-	if (hasLeak()) {
-		electron.webFrame.top.context.window[key] = namespace;
-	} else {
-		electron.contextBridge.exposeInMainWorld(key, namespace);
-	}
-	if (everywhere)
+function exposeGlobal(key, namespace, {preload =true, renderer =true} = {
+	}) {
+	if (renderer) electron.contextBridge.exposeInMainWorld(key, namespace);
+	if (preload)
 		window[key] = namespace;
 }
 Object.assign(window, {
@@ -93,28 +87,44 @@ Object.assign(window, {
 const Process = cloneObject(process);
 Process.env.injDir = __dirname;
 
+const Module = NodeModule__default["default"];
 // Attach onSwitch() event
 HookOnSwitch();
 const API = {
 	getAppPath() {
 		return electron.ipcRenderer.sendSync(GET_APP_PATH);
 	},
-	executeJS(js) {
-		return eval(js);
+	getBasePath() {
+		return path__default["default"].resolve(__dirname, "..");
 	},
-	hasLeak() {
-		return hasLeak();
+	executeJS(js, stack) {
+		return eval(`
+            try {
+                ${js}
+            } catch (error) {
+                console.groupCollapsed("%c[BDCompatNative::executeJS] Fatal Error:%c", "color: red; background: #290000", "background: #290000", error.message);
+                console.error("Caller stack:", Object.assign(new Error(error.name), {stack: stack}));
+                console.error("Preload stack:", error);
+                console.groupEnd();
+                throw error;
+            }
+        `);
 	},
 	IPC: IPC
 };
 // @ts-ignore - Push modules
-Module__default["default"].globalPaths.push(path__default["default"].resolve(API.getAppPath(), "node_modules"));
-// Expose Native bindings and cloned process global.
+{
+	const appPath = path__default["default"].resolve(API.getAppPath(), "node_modules");
+	if (Module.globalPaths.indexOf(appPath) < 0) Module.globalPaths.push(appPath);
+} // Expose Native bindings and cloned process global.
 exposeGlobal("BDCompatNative", API);
-exposeGlobal("BDCompatEvents", events, false);
-if (!process.contextIsolated) exposeGlobal("process", Process, false);
-if (hasLeak()) {
-	exposeGlobal("require", require);
-	exposeGlobal("Buffer", Buffer);
-	exposeGlobal("__BDCOMPAT_LEAKED__", true);
+exposeGlobal("BDCompatEvents", events, {
+	renderer: false
+});
+if (!process.contextIsolated) {
+	IPC.once(EXPOSE_PROCESS_GLOBAL, () => {
+		exposeGlobal("process", Process, {
+			preload: false
+		});
+	});
 }

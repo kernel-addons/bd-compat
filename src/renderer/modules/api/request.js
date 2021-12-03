@@ -38,7 +38,7 @@ const request = function (url, options, callback, method = "") {
             BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(res), body);   
             delete BDCompatEvents["${eventName}"]; // No memory leak    
         });
-    `);
+    `, new Error().stack);
 };
 
 Object.assign(request,

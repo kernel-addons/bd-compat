@@ -44,7 +44,7 @@ export default function AddonPanel({type, manager}) {
                     !pluginSettings && React.createElement(ToolButton, {
                         label: "Open Folder",
                         icon: "Folder",
-                        onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(manager.folder)})`)
+                        onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(manager.folder)})`, new Error().stack)
                     })
                 ]
             }),
@@ -61,7 +61,7 @@ export default function AddonPanel({type, manager}) {
                         hasSettings: typeof(addon.instance?.getSettingsPanel) === "function",
                         openSettings: () => {
                             let element;
-                            try {element = addon.instance.getSettingsPanel();}
+                            try {element = addon.instance.getSettingsPanel.apply(addon.instance, []);}
                             catch (error) {
                                 Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
                                 return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {type: "error"});

@@ -4,7 +4,7 @@ import Logger from "./logger.js";
 
 export default class DataStore {
     static pluginData = {};
-    static pluginsFolder = path.resolve(BDCompatNative.executeJS("__dirname"), "..",  "plugins");
+    static pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins");
     static themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
     static dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
 
@@ -73,7 +73,7 @@ export default class DataStore {
     }
 
     static setPluginData(pluginName, key, value) {
-        const data = {settings: Object.assign({}, this.pluginData[pluginName]?.settings, {[key]: value})};
+        const data = Object.assign({}, this.pluginData[pluginName], {[key]: value});
         this.pluginData[pluginName] = data;
 
         this.saveData(pluginName, data);
@@ -84,7 +84,7 @@ export default class DataStore {
             this.tryLoadPluginData(pluginName);
         }
 
-        return this.pluginData[pluginName].settings?.[key];
+        return this.pluginData[pluginName]?.[key];
     }
 
     static deletePluginData(pluginName, key) {
@@ -94,7 +94,7 @@ export default class DataStore {
 
         if (!this.pluginData[pluginName]) return;
 
-        if (typeof(this.pluginData[pluginName]?.settings?.[key])) delete this.pluginData[pluginName].settings?.[key];
+        if (typeof(this.pluginData[pluginName]?.[key]) !== "undefined") delete this.pluginData[pluginName]?.[key];
         this.saveData(pluginName, this.pluginData[pluginName]);
     }
 }

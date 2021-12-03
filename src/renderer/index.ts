@@ -53,12 +53,11 @@ export default new class BDCompat {
 
     onStart() {
         this.polyfillWebpack();
-        if (!Reflect.has(window, "__BDCOMPAT_LEAKED__")) {
-            (window as any).require = Require;
-            (window as any).Buffer = Buffer;
-        }
-
-        (window as any).React = DiscordModules.React;
+        Object.assign(window, {
+            require: Require,
+            Buffer: Buffer,
+            React: DiscordModules.React
+        });
 
         this.exposeBdApi();
 
@@ -101,7 +100,7 @@ export default new class BDCompat {
     }
 
     appendStyles() {
-        const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`);
+        const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`, new Error().stack);
 
         for (const [index, style] of this.styles.entries()) {
             const location = path.resolve(root, "src", "renderer", style);

@@ -29,23 +29,21 @@ export class WebpackModule {
         Object.defineProperty(window, this.chunkName, {
             get() {return void 0;},
             set: (value) => {
-                setImmediate(() => {
-                    this.dispatch(Events.CREATE);
+                Object.defineProperty(window, this.chunkName, {
+                    value,
+                    configurable: true,
+                    writable: true
                 });
 
                 const originalPush = value.push;
                 value.push = (...values) => {
                     this.dispatch(Events.LENGTH_CHANGE, value.length + values.length);
                     this.dispatch(Events.PUSH, values);
-
+                    
                     return Reflect.apply(originalPush, value, values);
                 };
-
-                Object.defineProperty(window, this.chunkName, {
-                    value,
-                    configurable: true,
-                    writable: true
-                });
+                
+                this.dispatch(Events.CREATE);
                 return value;
             },
             configurable: true
@@ -120,7 +118,7 @@ export class WebpackModule {
             webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
         }
 
-        this.#cache = req;
+        if (cache) this.#cache = req;
         return req;
     }
 

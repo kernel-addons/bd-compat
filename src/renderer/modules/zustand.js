@@ -3,7 +3,6 @@ import DiscordModules from "./discord.js";
 /**
  * Creates a updateable react store with a remote api.
  * @param {Any} state Intitial State of your store
- * @returns {[(factory = _ => _) => JSON.Element, Api]}
  */
 export default function createStore(state) {
     const {useEffect, useReducer} = DiscordModules.React;

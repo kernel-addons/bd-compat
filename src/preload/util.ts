@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import {contextBridge, webFrame} from "electron";
+import {contextBridge} from "electron";
 
 export function getKeys(object: object) {
     const keys = [];
@@ -22,18 +22,9 @@ export function cloneObject(target: any, newObject = {}, keys?: string[]) {
     }, newObject);
 };
 
-export function hasLeak(): boolean {
-    return webFrame?.top?.context != null;
-};
-
-export function exposeGlobal(key: string, namespace: any, everywhere = true) {
-    if (hasLeak()) {
-        webFrame.top.context.window[key] = namespace;
-    } else {
-        contextBridge.exposeInMainWorld(key, namespace);
-    }
-
-    if (everywhere) window[key] = namespace;
+export function exposeGlobal(key: string, namespace: any, {preload = true, renderer = true} = {}) {
+    if (renderer) contextBridge.exposeInMainWorld(key, namespace);
+    if (preload) window[key] = namespace;
 };
 
 Object.assign(window, {

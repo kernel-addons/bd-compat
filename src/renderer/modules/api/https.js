@@ -45,7 +45,7 @@ export function get(url, options, res) {
                 });
             }
         });
-    `);
+    `, new Error().stack);
 
     return res(emitter), emitter;
 }

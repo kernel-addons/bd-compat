@@ -1,3 +1,4 @@
+import path from "./api/path.js";
 import DataStore from "./datastore.js";
 import DiscordModules from "./discord.js";
 import DOM from "./dom.js";
@@ -43,6 +44,8 @@ export default class BdApi {
     static disableSetting() {}
 
     static enableSetting() {}
+
+    static __getPluginConfigPath(plugin) {return console.log({plugin}), path.resolve(this.Plugins.folder, "..", "config", `${plugin}.json`);}
 
     static injectCSS(id, css) {return DOM.injectCSS(id, css);}
 

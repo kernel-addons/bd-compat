@@ -1,1 +1,1 @@
-export default typeof(__BDCOMPAT_LEAKED__) === "undefined" ? BDCompatNative.executeJS(`require("path")`) : window.require("path");
+export default typeof(__BDCOMPAT_LEAKED__) === "undefined" ? BDCompatNative.executeJS(`require("path")`, new Error().stack) : window.require("path");
