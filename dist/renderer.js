@@ -296,7 +296,7 @@ class WebpackModule {
 			webpackChunkdiscord_app.push(chunk);
 			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
 		}
-		_classPrivateFieldSet(this, _cache, req);
+		if (cache2) _classPrivateFieldSet(this, _cache, req);
 		return req;
 	}
 	findModule(filter1, {all: all1 = false, cache: cache1 = true, force =false} = {

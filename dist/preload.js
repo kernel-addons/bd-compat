@@ -103,7 +103,7 @@ const API = {
                 ${js}
             } catch (error) {
                 console.groupCollapsed("%c[BDCompatNative::executeJS] Fatal Error:%c", "color: red; background: #290000", "background: #290000", error.message);
-                console.error("Caller stack:", Object.assign(new Error(error.name), {stack: stack}));
+                console.error("Caller stack:", Object.assign(new Error(error.message), {stack: stack}));
                 console.error("Preload stack:", error);
                 console.groupEnd();
                 throw error;
