@@ -108,43 +108,37 @@ class DataStore {
 		}
 	}
 	static initialize() {
-		if (!fs$1.existsSync(this.pluginsFolder)) {
+		const folders = [
+			"config",
+			"plugins",
+			"themes"
+		];
+		Logger.log("DataStore", "Ensuring directories...");
+		for (const folder of folders) {
+			const location = path.resolve(BDCompatNative.getBasePath(), folder);
+			if (fs$1.existsSync(location)) continue;
 			try {
-				fs$1.mkdirSync(this.pluginsFolder);
+				fs$1.mkdirSync(location);
 			} catch (error) {
-				Logger.error("DataStore", `Failed to create missing plugins folder:`, error);
-			}
-		}
-		if (!fs$1.existsSync(this.themesFolder)) {
-			try {
-				fs$1.mkdirSync(this.themesFolder);
-			} catch (error) {
-				Logger.error("DataStore", `Failed to create missing themes folder:`, error);
-			}
-		}
-		if (!fs$1.existsSync(this.dataFolder)) {
-			try {
-				fs$1.mkdirSync(this.dataFolder);
-			} catch (error) {
-				Logger.error("DataStore", `Failed to create missing config folder:`, error);
+				Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
 			}
 		}
 	}
 	static tryLoadPluginData(pluginName) {
 		this.pluginData[pluginName] = {
 		};
+		const config = path.join(this.pluginsFolder, `${pluginName}.config.json`);
 		try {
-			const data = JSON.parse(fs$1.readFileSync(path.join(this.dataFolder, `${pluginName}.json`), "utf8"));
+			if (!fs$1.existsSync(config)) return null;
+			const data = JSON.parse(fs$1.readFileSync(config, "utf8"));
 			this.pluginData[pluginName] = data;
-			return;
 		} catch (error) {
-			if (error.message.startsWith("ENOENT:")) return;
 			Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
 		}
 	}
 	static saveData(pluginName1, data) {
 		try {
-			fs$1.writeFileSync(path.resolve(this.dataFolder, `${pluginName1}.json`), JSON.stringify(data, null, "\t"), "utf8");
+			fs$1.writeFileSync(path.resolve(this.pluginsFolder, `${pluginName1}.config.json`), JSON.stringify(data, null, "\t"), "utf8");
 		} catch (error) {
 			Logger.error("DataStore", `Failed to save PluginData for ${pluginName1}:`, error);
 		}
