@@ -25,48 +25,37 @@ export default class DataStore {
     }
 
     static initialize() {
-        if (!fs.existsSync(this.pluginsFolder)) {
-            try {
-                fs.mkdirSync(this.pluginsFolder);
-            } catch (error) {
-                Logger.error("DataStore", `Failed to create missing plugins folder:`, error);
-            }
-        }
+        const folders = ["config", "plugins", "themes"];
 
-        if (!fs.existsSync(this.themesFolder)) {
-            try {
-                fs.mkdirSync(this.themesFolder);
-            } catch (error) {
-                Logger.error("DataStore", `Failed to create missing themes folder:`, error);
-            }
-        }
+        Logger.log("DataStore", "Ensuring directories...");
+        for (const folder of folders) {
+            const location = path.resolve(BDCompatNative.getBasePath(), folder);
+            if (fs.existsSync(location)) continue;
 
-        if (!fs.existsSync(this.dataFolder)) {
             try {
-                fs.mkdirSync(this.dataFolder);
+                fs.mkdirSync(location);
             } catch (error) {
-                Logger.error("DataStore", `Failed to create missing config folder:`, error);
+                Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
             }
         }
     }
 
     static tryLoadPluginData(pluginName) {
         this.pluginData[pluginName] = {};
+        const config = path.join(this.pluginsFolder, `${pluginName}.config.json`);
 
         try {
-            const data = JSON.parse(fs.readFileSync(path.join(this.dataFolder, `${pluginName}.json`), "utf8"));
+            if (!fs.existsSync(config)) return null;
+            const data = JSON.parse(fs.readFileSync(config, "utf8"));
             this.pluginData[pluginName] = data;
-            return;
         } catch (error) {
-            if (error.message.startsWith("ENOENT:")) return;
-
             Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
         }
     }
 
     static saveData(pluginName, data) {
         try {
-            fs.writeFileSync(path.resolve(this.dataFolder, `${pluginName}.json`), JSON.stringify(data, null, "\t"), "utf8");
+            fs.writeFileSync(path.resolve(this.pluginsFolder, `${pluginName}.config.json`), JSON.stringify(data, null, "\t"), "utf8");
         } catch (error) {
             Logger.error("DataStore", `Failed to save PluginData for ${pluginName}:`, error);
         }
