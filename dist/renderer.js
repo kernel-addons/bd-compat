@@ -123,6 +123,17 @@ class DataStore {
 				Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
 			}
 		}
+		Logger.log("DataStore", "Loading settings...");
+		try {
+			if (!fs$1.existsSync(this.settingsFile)) fs$1.writeFileSync(this.settingsFile, "{}", "utf8");
+			var ref;
+			this.settingsData = (ref = this.loadData("settings")) !== null && ref !== void 0 ? ref : {
+			};
+		} catch (error) {
+			Logger.error("DataStore", "Failed to load settings:", error);
+			this.settingsData = {
+			};
+		}
 	}
 	static tryLoadPluginData(pluginName) {
 		this.pluginData[pluginName] = {
@@ -130,52 +141,74 @@ class DataStore {
 		const config = path.join(this.pluginsFolder, `${pluginName}.config.json`);
 		try {
 			if (!fs$1.existsSync(config)) return null;
-			const data = JSON.parse(fs$1.readFileSync(config, "utf8"));
-			this.pluginData[pluginName] = data;
+			this.pluginData[pluginName] = this.loadData(pluginName, this.pluginsFolder, ".config.json");
 		} catch (error) {
 			Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
 		}
 	}
-	static saveData(pluginName1, data) {
+	static saveData(type2, data, _path = DataStore.dataFolder, extension = ".json") {
 		try {
-			fs$1.writeFileSync(path.resolve(this.pluginsFolder, `${pluginName1}.config.json`), JSON.stringify(data, null, "\t"), "utf8");
+			fs$1.writeFileSync(path.resolve(_path, `${type2}${extension}`), JSON.stringify(data, null, "\t"), "utf8");
 		} catch (error) {
-			Logger.error("DataStore", `Failed to save PluginData for ${pluginName1}:`, error);
+			Logger.error("DataStore", "Failed to save data:", error);
 		}
 	}
-	static setPluginData(pluginName2, key, value) {
+	static loadData(type3, _path1 = DataStore.dataFolder, extension1 = ".json") {
+		try {
+			return JSON.parse(fs$1.readFileSync(path.resolve(_path1, `${type3}${extension1}`), "utf8"));
+		} catch (error) {
+			Logger.error("DataStore", "Failed to load data:", error);
+		}
+	}
+	static setPluginData(pluginName1, key, value) {
 		const data = Object.assign({
-		}, this.pluginData[pluginName2], {
+		}, this.pluginData[pluginName1], {
 			[key]: value
 		});
-		this.pluginData[pluginName2] = data;
-		this.saveData(pluginName2, data);
+		this.pluginData[pluginName1] = data;
+		this.saveData(pluginName1, data, this.pluginsFolder, ".config.json");
 	}
-	static getPluginData(pluginName3, key1) {
+	static getPluginData(pluginName2, key1) {
 		var ref;
+		if (!this.pluginData[pluginName2]) {
+			this.tryLoadPluginData(pluginName2);
+		}
+		return (ref = this.pluginData[pluginName2]) === null || ref === void 0 ? void 0 : ref[key1];
+	}
+	static setSettings(id, value1) {
+		const newSettings = Object.assign({
+		}, this.settingsData, {
+			[id]: value1
+		});
+		try {
+			this.saveData("settings", newSettings);
+		} catch (error) {
+			Logger.error("DataStore", "Failed to save settings:", error);
+		}
+	}
+	static getSettings() {
+		return this.settingsData;
+	}
+	static deletePluginData(pluginName3, key2) {
+		var ref,
+			ref1;
 		if (!this.pluginData[pluginName3]) {
 			this.tryLoadPluginData(pluginName3);
 		}
-		return (ref = this.pluginData[pluginName3]) === null || ref === void 0 ? void 0 : ref[key1];
-	}
-	static deletePluginData(pluginName4, key2) {
-		var ref,
-			ref1;
-		if (!this.pluginData[pluginName4]) {
-			this.tryLoadPluginData(pluginName4);
-		}
-		if (!this.pluginData[pluginName4]) return;
-		if (typeof ((ref = this.pluginData[pluginName4]) === null || ref === void 0 ? void 0 : ref[key2]) !== "undefined")
-			(ref1 = this.pluginData[pluginName4]) === null || ref1 === void 0 ? void 0 :
+		if (!this.pluginData[pluginName3]) return;
+		if (typeof ((ref = this.pluginData[pluginName3]) === null || ref === void 0 ? void 0 : ref[key2]) !== "undefined")
+			(ref1 = this.pluginData[pluginName3]) === null || ref1 === void 0 ? void 0 :
 				delete ref1[key2];
-		this.saveData(pluginName4, this.pluginData[pluginName4]);
+		this.saveData(pluginName3, this.pluginData[pluginName3]);
 	}
 }
 DataStore.pluginData = {
 };
+DataStore.settingsData = null;
 DataStore.pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins");
 DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
 DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
+DataStore.settingsFile = path.resolve(DataStore.dataFolder, "settings.json");
 
 function memoize(target, key, getter) {
 	const value = getter();
@@ -276,7 +309,7 @@ class WebpackModule {
 		}
 	}
 	request(cache2 = true) {
-		if (cache2 && _classPrivateFieldGet(this, _cache)) return _classPrivateFieldGet(this, _cache);
+		if (cache2 && _classPrivateFieldGet(this, _cache$1)) return _classPrivateFieldGet(this, _cache$1);
 		let req = void 0;
 		if ("webpackChunkdiscord_app" in window && webpackChunkdiscord_app != null) {
 			const chunk = [
@@ -290,7 +323,7 @@ class WebpackModule {
 			webpackChunkdiscord_app.push(chunk);
 			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
 		}
-		if (cache2) _classPrivateFieldSet(this, _cache, req);
+		if (cache2) _classPrivateFieldSet(this, _cache$1, req);
 		return req;
 	}
 	findModule(filter1, {all: all1 = false, cache: cache1 = true, force =false} = {
@@ -307,7 +340,7 @@ class WebpackModule {
 		};
 		for (const id in __webpack_require__.c) {
 			var module1 = __webpack_require__.c[id].exports;
-			if (!module1) continue;
+			if (!module1 || module1 === window) continue;
 			switch (typeof module1) {
 				case "object": {
 					if (wrapFilter(module1)) {
@@ -410,7 +443,7 @@ class WebpackModule {
 			]
 			))
 		});
-		_cache.set(this, {
+		_cache$1.set(this, {
 			writable: true,
 			value: null
 		});
@@ -459,7 +492,7 @@ class WebpackModule {
 	}
 }
 var _events = new WeakMap();
-var _cache = new WeakMap();
+var _cache$1 = new WeakMap();
 function parseOptions(args, filter = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
 ) {
 	return [
@@ -483,6 +516,19 @@ class DiscordModules {
 	static get ReactDOM() {
 		return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal")
 		);
+	}
+	static get Toasts() {
+		return memoize(this, "Toasts", () => {
+			return Webpack.findByProps([
+				"createToast"
+			], [
+				"showToast"
+			], {
+				bulk: true
+			}).reduce((api, sub) => Object.assign(api, sub)
+				, {
+				});
+		});
 	}
 }
 
@@ -668,6 +714,133 @@ class Patcher {
 }
 Patcher._patches = [];
 
+var Toasts$2 = {
+	settings: [
+		{
+			name: "Show Toasts",
+			note: "Show any types of toasts.",
+			value: true,
+			id: "showToasts",
+			type: "switch"
+		},
+		{
+			name: "Use builtin toasts",
+			note: "Makes BDCompat use discord's builtin toasts instead.",
+			value: true,
+			id: "useBuiltinToasts",
+			type: "switch"
+		},
+		{
+			name: "Show Toasts on",
+			type: "category",
+			requires: [
+				"showToasts"
+			],
+			items: [
+				{
+					name: "Show Toasts on plugin start/stop",
+					id: "showToastsPluginStartStop",
+					type: "switch",
+					value: true
+				},
+				{
+					name: "Show Toasts on plugin load/unload",
+					id: "showToastsPluginLoad",
+					type: "switch",
+					value: true
+				},
+				{
+					name: "Show Toasts on plugin reload",
+					id: "showToastsPluginReload",
+					type: "switch",
+					value: true
+				},
+				{
+					name: "Show Toasts on plugin enable/disable",
+					id: "showToastsPluginState",
+					type: "switch",
+					value: true
+				}
+			]
+		}
+	]
+};
+var defaultSettings = {
+	Toasts: Toasts$2
+};
+
+class SettingsManager {
+	static get items() {
+		return defaultSettings;
+	}
+	static initialize() {
+		this.states = DataStore.getSettings();
+		const loadSetting = (settings, requires = []) => {
+			for (const setting of settings) {
+				if (setting.type === "category") {
+					loadSetting(setting.items, setting.requires);
+					continue;
+				}
+				this.settings[setting.id] = {
+					type: setting.type,
+					get value() {
+						var _id;
+						return (_id = SettingsManager.states[setting.id]) !== null && _id !== void 0 ? _id : setting.value;
+					},
+					requires: requires
+				};
+			}
+		};
+		for (let collectionId in this.defaultSettings) {
+			const collection = this.defaultSettings[collectionId];
+			if (!collection.settings) continue;
+			loadSetting(collection.settings);
+		}
+	}
+	static setSetting(id2, value) {
+		this.states[id2] = value;
+		DataStore.setSettings(id2, value);
+		this.alertListeners(id2, value);
+	}
+	static isEnabled(id1) {
+		const setting = this.settings[id1];
+		if (!setting) return false;
+		return setting.value && setting.requires.every((id) => this.isEnabled(id)
+			);
+	}
+	// Listener stuff
+	static addListener(callback) {
+		this.listeners.add(callback);
+		return () => this.removeListener(callback);
+	}
+	static removeListener(callback1) {
+		return this.listeners.delete(callback1);
+	}
+	static alertListeners(...args) {
+		for (const callback of this.listeners) {
+			try {
+				callback(...args);
+			} catch (error) {
+				Logger.error("SettingsManager", "Could not fire listener:", error);
+			}
+		}
+	}
+	static useState(factory) {
+		const [state, setState] = React.useState(factory());
+		React.useEffect(() => {
+			return this.addListener(() => setState(factory())
+			);
+		});
+		return state;
+	}
+}
+SettingsManager.listeners = new Set();
+SettingsManager.defaultSettings = defaultSettings;
+SettingsManager.states = {
+};
+SettingsManager.settings = {
+};
+
 function Toast({type, children, timeout, onRemove}) {
 	const {React} = DiscordModules;
 	const [closing, setClosing] = React.useState(false);
@@ -776,6 +949,21 @@ function createStore(state) {
 	return useState;
 }
 
+class Converter {
+	static convertType(type1) {
+		switch (
+		type1 === null || type1 === void 0 ? void 0 : type1.toLowerCase()) {
+			case "info":
+				return DiscordModules.Toasts.ToastType.MESSAGE;
+			case "error":
+				return DiscordModules.Toasts.ToastType.FAILURE;
+			case "success":
+				return DiscordModules.Toasts.ToastType.SUCCESS;
+			default:
+				return DiscordModules.Toasts.ToastType.MESSAGE;
+		}
+	}
+}
 class Toasts$1 {
 	static dispose() {
 		return DiscordModules.ReactDOM.unmountComponentAtNode(this.container);
@@ -797,17 +985,31 @@ class Toasts$1 {
 			setState: Api.setState
 		}), this.container);
 	}
-	static show(content, options = {
+	static showDiscordToast(content, options) {
+		try {
+			setImmediate(() => {
+				const type = Converter.convertType(options.type);
+				const toast = DiscordModules.Toasts.createToast(content, type);
+				DiscordModules.Toasts.showToast(toast);
+			});
+			return;
+		} catch (error) {
+			Logger.error("Toasts", "Failed to show discord's toast:", error);
+		}
+	}
+	static show(content1, options1 = {
 		}) {
+		if (!SettingsManager.isEnabled("showToasts")) return;
+		if (SettingsManager.isEnabled("useBuiltinToasts")) return this.showDiscordToast(content1, options1);
 		// NotLikeThis
 		setImmediate(() => {
 			this.API.setState((state) => ({
 				...state,
 				id: Math.random().toString(36).slice(2),
 				toasts: state.toasts.concat({
-					content,
+					content: content1,
 					timeout: 3000,
-					...options
+					...options1
 				})
 			})
 			);
@@ -849,6 +1051,21 @@ class Utilities {
 		parsed[key] = value.trim();
 		delete parsed[""];
 		return parsed;
+	}
+	static joinClassNames(...classNames /* : (string | [boolean, string])[] */ ) {
+		let className = [];
+		for (const item of classNames) {
+			if (typeof item === "string") {
+				className.push(item);
+				continue;
+			}
+			if (Array.isArray(item)) {
+				const [should, name] = item;
+				if (!should) continue;
+				className.push(name);
+			}
+		}
+		return className.join(" ");
 	}
 }
 Utilities.metaSplitRegex = /[^\S\r\n]*?\r?(?:\r\n|\n)[^\S\r\n]*?\*[^\S\r\n]?/;
@@ -957,7 +1174,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 				try {
 					instance.load(meta);
 					Logger.log("PluginsManager", `${meta.name} was loaded!`);
-					if (showToast) Toasts$1.show(`${meta.name} was loaded!`, {
+					if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts$1.show(`${meta.name} was loaded!`, {
 							type: "success"
 						});
 				} catch (error) {
@@ -988,9 +1205,9 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		this.addons.splice(this.addons.indexOf(addon), 1);
 		if (showToast1) {
 			Logger.log("PluginsManager", `${addon.name} was unloaded!`);
-			Toasts$1.show(`${addon.name} was unloaded!`, {
-				type: "info"
-			});
+			if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts$1.show(`${addon.name} was unloaded!`, {
+					type: "info"
+				});
 		}
 		this.dispatch("updated");
 	}
@@ -1001,9 +1218,9 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 			if (typeof addon.instance.start === "function") addon.instance.start();
 			if (showToast2) {
 				Logger.log("PluginsManager", `${addon.name} has been started!`);
-				Toasts$1.show(`${addon.name} has been started!`, {
-					type: "info"
-				});
+				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts$1.show(`${addon.name} has been started!`, {
+						type: "info"
+					});
 			}
 		} catch (error) {
 			Logger.error("PluginsManager", `Unable to fire start() for ${addon.name}:`, error);
@@ -1021,9 +1238,9 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 			if (typeof addon.instance.stop === "function") addon.instance.stop();
 			if (showToast3) {
 				Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-				Toasts$1.show(`${addon.name} has been stopped!`, {
-					type: "info"
-				});
+				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts$1.show(`${addon.name} has been stopped!`, {
+						type: "info"
+					});
 			}
 		} catch (error) {
 			Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
@@ -1047,9 +1264,9 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		const success = this.startPlugin(addon, false);
 		if (success) {
 			Logger.log("PluginsManager", `${addon.name} has been enabled!`);
-			Toasts$1.show(`${addon.name} has been enabled!`, {
-				type: "info"
-			});
+			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts$1.show(`${addon.name} has been enabled!`, {
+					type: "info"
+				});
 		}
 		this.addonState[addon.name] = success;
 		DataStore.saveAddonState("plugins", this.addonState);
@@ -1062,9 +1279,9 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		const success = this.stopPlugin(addon, false);
 		if (success) {
 			Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-			Toasts$1.show(`${addon.name} has been stopped!`, {
-				type: "info"
-			});
+			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts$1.show(`${addon.name} has been stopped!`, {
+					type: "info"
+				});
 		}
 		this.addonState[addon.name] = false;
 		DataStore.saveAddonState("plugins", this.addonState);
@@ -1082,7 +1299,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		Toasts$1.show(`${addon.name} was reloaded!`, {
 			type: "success"
 		});
-		Logger.log("PluginsManager", `${addon.name} was reloaded!`);
+		if (SettingsManager.isEnabled("showToastsPluginReload")) Logger.log("PluginsManager", `${addon.name} was reloaded!`);
 	}
 	static onSwitch() {
 		for (const plugin of this.addons) {
@@ -1675,21 +1892,31 @@ function _classStaticPrivateFieldSpecGet(receiver, classConstructor, descriptor)
 class Components {
 	static byProps(...props) {
 		const name = props.join(":");
-		if (_classStaticPrivateFieldSpecGet(this, Components, __cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack.findModule((m) => props.every((p) => p in m
+		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
+		_classStaticPrivateFieldSpecGet(this, Components, _cache)[name] = Webpack.findModule((m) => props.every((p) => p in m
 			) && typeof m === "function"
 		);
-		return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
 	}
-	static get(name, filter = (_) => _
+	static get(name, filter1 = (_) => _
 	) {
-		if (_classStaticPrivateFieldSpecGet(this, Components, __cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, __cache)[name] = Webpack.findModule((m) => m.displayName === name && filter(m)
+		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
+		_classStaticPrivateFieldSpecGet(this, Components, _cache)[name] = Webpack.findModule((m) => m.displayName === name && filter1(m)
 		);
-		return _classStaticPrivateFieldSpecGet(this, Components, __cache)[name];
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
+	}
+	static bulk(id, ...filters) {
+		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[id]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[id];
+		_classStaticPrivateFieldSpecGet(this, Components, _cache)[id] = Webpack.bulk(...filters.map((filter) => {
+			if (typeof filter === "string") return (m) => m.displayName === filter && typeof m === "function";
+			if (Array.isArray(filter)) return (m) => filter.every((p) => p in m
+				);
+			return filter;
+		}));
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[id];
 	}
 }
-var __cache = {
+var _cache = {
 	writable: true,
 	value: {
 	}
@@ -1957,15 +2184,101 @@ function AddonPanel({type, manager}) {
 	});
 }
 
+function _extends() {
+	_extends = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends.apply(this, arguments);
+}
+function SwitchItem({id, name, ...props}) {
+	const SwitchForm = Components.get("SwitchItem");
+	const value = SettingsManager.useState(() => SettingsManager.isEnabled(id)
+	);
+	return ( /*#__PURE__*/ React.createElement(SwitchForm, _extends({
+	}, props, {
+		value: value,
+		onChange: () => {
+			SettingsManager.setSetting(id, !value);
+		}
+	}), name));
+}
+function renderItems(items) {
+	return items.map((item, i) => {
+		switch (item.type) {
+			case "category":
+				return React.createElement(Category, Object.assign({
+				}, item, {
+					key: "category-" + i
+				}));
+			case "switch":
+				return React.createElement(SwitchItem, Object.assign({
+				}, item, {
+					key: item.id
+				}));
+			default:
+				return null;
+		}
+	});
+}
+function Category({name, requires, items}) {
+	const [opened, setOpened] = React.useState(false);
+	const [FormTitle, Caret] = Components.bulk("CategoryComponent", "FormTitle", "Caret");
+	const isDisabled = SettingsManager.useState(() => !requires.every((id) => SettingsManager.isEnabled(id)
+	)
+	);
+	const isOpened = React.useMemo(() => opened && !isDisabled
+		, [
+			isDisabled,
+			opened
+		]);
+	return ( /*#__PURE__*/ React.createElement("div", {
+		className: Utilities.joinClassNames("bd-category", [
+			isOpened,
+			"bd-category-opened"
+		], [
+			isDisabled,
+			"bd-category-disabled"
+		])
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bd-category-header",
+		onClick: () => setOpened(!opened)
+	}, /*#__PURE__*/ React.createElement(FormTitle, {
+		tag: FormTitle.Tags.H3
+	}, name), /*#__PURE__*/ React.createElement(Caret, {
+		className: "bd-caret",
+		direction: isOpened ? Caret.Directions.DOWN : Caret.Directions.LEFT
+	})), /*#__PURE__*/ React.createElement("div", {
+		className: "bd-category-body"
+	}, isOpened && renderItems(items))));
+}
 function SettingsPanel() {
+	const [ChannelCategory, FormTitle] = Components.bulk("SettingsPanel", "ChannelCategory", "FormTitle");
 	return DiscordModules.React.createElement("div", {
 		className: "bdcompat-settings-panel",
 		children: [
 			DiscordModules.React.createElement("div", {
 				className: "bdcompat-title"
 			}, "Settings"),
-			DiscordModules.React.createElement("p", {
-			}, "Settings :)")
+			Object.entries(SettingsManager.items).map(([collection, {settings}]) => {
+				return [
+						/*#__PURE__*/ React.createElement(FormTitle, {
+						className: "bd-collection-title",
+						tag: FormTitle.Tags.H2,
+						key: "title-" + collection
+					}, /*#__PURE__*/ React.createElement(ChannelCategory, {
+						color: "var(--text-muted)"
+					}), collection),
+					...renderItems(settings)
+				];
+			})
 		]
 	});
 }
@@ -3006,6 +3319,7 @@ var index = new class BDCompat {
 		this.exposeBdApi();
 		this.patchSettingsView();
 		DataStore.initialize();
+		SettingsManager.initialize();
 		Toasts$1.initialize();
 		this.appendStyles();
 		ThemesManager.initialize();
@@ -3065,7 +3379,8 @@ var index = new class BDCompat {
 	constructor() {
 		this.styles = [
 			"./ui/toast.css",
-			"./ui/addons.css"
+			"./ui/addons.css",
+			"./ui/settings.css"
 		];
 	}
 };
