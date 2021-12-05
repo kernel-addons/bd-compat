@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@rollup/plugin-json': ^4.1.0
   '@rollup/plugin-node-resolve': ^13.0.6
   '@swc/core': ^1.2.106
   buffer: ^6.0.3
@@ -13,6 +14,7 @@ dependencies:
   buffer: 6.0.3
 
 devDependencies:
+  '@rollup/plugin-json': 4.1.0_rollup@2.60.0
   '@rollup/plugin-node-resolve': 13.0.6_rollup@2.60.0
   '@swc/core': 1.2.109
   esformatter-quotes: 1.1.0
@@ -30,6 +32,15 @@ packages:
     resolution: {integrity: sha512-R5wEmm8nbuQU0YGGmYVjEc0OHtYsuXdpRG+Ut/3wZ9XAvQWyThN08bTh2cBJgoZxHQUPtvRfeQuxcAgLuiBISg==}
     dependencies:
       '@napi-rs/triples': 1.0.3
+    dev: true
+
+  /@rollup/plugin-json/4.1.0_rollup@2.60.0:
+    resolution: {integrity: sha512-yfLbTdNS6amI/2OpmbiBoW12vngr5NW2jCJVZSBEz+H5KfUJZ2M7sDjk0U6GOOdCWFVScShte29o9NezJ53TPw==}
+    peerDependencies:
+      rollup: ^1.20.0 || ^2.0.0
+    dependencies:
+      '@rollup/pluginutils': 3.1.0_rollup@2.60.0
+      rollup: 2.60.0
     dev: true
 
   /@rollup/plugin-node-resolve/13.0.6_rollup@2.60.0:
