@@ -2,6 +2,7 @@ import fs from "./api/fs.js";
 import path from "./api/path.js";
 import DataStore from "./datastore.js";
 import Logger from "./logger.js";
+import SettingsManager from "./settingsmanager";
 import Toasts from "./toasts.js";
 import Utilities from "./utilities.js";
 
@@ -123,7 +124,7 @@ export default class PluginsManager {
                 try {
                     instance.load(meta);
                     Logger.log("PluginsManager", `${meta.name} was loaded!`);
-                    if (showToast) Toasts.show(`${meta.name} was loaded!`, {type: "success"});
+                    if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${meta.name} was loaded!`, {type: "success"});
                 } catch (error) {
                     Logger.error("PluginsManager", `Unable to fire load() for ${meta.name || meta.filename}:`, error);
                 }
@@ -154,7 +155,7 @@ export default class PluginsManager {
         this.addons.splice(this.addons.indexOf(addon), 1);
         if (showToast) {
             Logger.log("PluginsManager", `${addon.name} was unloaded!`);
-            Toasts.show(`${addon.name} was unloaded!`, {type: "info"});
+            if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${addon.name} was unloaded!`, {type: "info"});
         }
         this.dispatch("updated");
     }
@@ -167,7 +168,7 @@ export default class PluginsManager {
             if (typeof(addon.instance.start) === "function") addon.instance.start();
             if (showToast) {
                 Logger.log("PluginsManager", `${addon.name} has been started!`);
-                Toasts.show(`${addon.name} has been started!`, {type: "info"});
+                if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been started!`, {type: "info"});
             }
         } catch (error) {
             Logger.error("PluginsManager", `Unable to fire start() for ${addon.name}:`, error);
@@ -186,7 +187,7 @@ export default class PluginsManager {
             if (typeof (addon.instance.stop) === "function") addon.instance.stop();
             if (showToast) {
                 Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-                Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
+                if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
             }
         } catch (error) {
             Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
@@ -213,7 +214,7 @@ export default class PluginsManager {
         const success = this.startPlugin(addon, false);
         if (success) {
             Logger.log("PluginsManager", `${addon.name} has been enabled!`);
-            Toasts.show(`${addon.name} has been enabled!`, {type: "info"});
+            if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been enabled!`, {type: "info"});
         }
 
         this.addonState[addon.name] = success;
@@ -230,7 +231,7 @@ export default class PluginsManager {
         const success = this.stopPlugin(addon, false);
         if (success) {
             Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-            Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
+            if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
         }
         
         this.addonState[addon.name] = false;
@@ -251,7 +252,7 @@ export default class PluginsManager {
 
         this.loadAddon(addon.path, false,  false);
         Toasts.show(`${addon.name} was reloaded!`, {type: "success"});
-        Logger.log("PluginsManager", `${addon.name} was reloaded!`);
+        if (SettingsManager.isEnabled("showToastsPluginReload")) Logger.log("PluginsManager", `${addon.name} was reloaded!`);
     }
 
     static onSwitch() {

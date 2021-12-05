@@ -4,9 +4,11 @@ import Logger from "./logger.js";
 
 export default class DataStore {
     static pluginData = {};
+    static settingsData = null;
     static pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins");
     static themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
     static dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
+    static settingsFile = path.resolve(DataStore.dataFolder, "settings.json");
 
     static getAddonState(type) {
         try {
@@ -38,6 +40,16 @@ export default class DataStore {
                 Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
             }
         }
+
+        Logger.log("DataStore", "Loading settings...");
+
+        try {
+            if (!fs.existsSync(this.settingsFile)) fs.writeFileSync(this.settingsFile, "{}", "utf8");
+            this.settingsData = this.loadData("settings") ?? {};
+        } catch (error) {
+            Logger.error("DataStore", "Failed to load settings:", error);
+            this.settingsData = {};
+        }
     }
 
     static tryLoadPluginData(pluginName) {
@@ -46,18 +58,25 @@ export default class DataStore {
 
         try {
             if (!fs.existsSync(config)) return null;
-            const data = JSON.parse(fs.readFileSync(config, "utf8"));
-            this.pluginData[pluginName] = data;
+            this.pluginData[pluginName] = this.loadData(pluginName, this.pluginsFolder, ".config.json");
         } catch (error) {
             Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
         }
     }
 
-    static saveData(pluginName, data) {
+    static saveData(type, data, _path = DataStore.dataFolder, extension = ".json") {
         try {
-            fs.writeFileSync(path.resolve(this.pluginsFolder, `${pluginName}.config.json`), JSON.stringify(data, null, "\t"), "utf8");
+            fs.writeFileSync(path.resolve(_path, `${type}${extension}`), JSON.stringify(data, null, "\t"), "utf8");
         } catch (error) {
-            Logger.error("DataStore", `Failed to save PluginData for ${pluginName}:`, error);
+            Logger.error("DataStore", "Failed to save data:", error);
+        }
+    }
+
+    static loadData(type, _path = DataStore.dataFolder, extension = ".json") {
+        try {
+            return JSON.parse(fs.readFileSync(path.resolve(_path, `${type}${extension}`), "utf8"));
+        } catch (error) {
+            Logger.error("DataStore", "Failed to load data:", error);
         }
     }
 
@@ -65,7 +84,7 @@ export default class DataStore {
         const data = Object.assign({}, this.pluginData[pluginName], {[key]: value});
         this.pluginData[pluginName] = data;
 
-        this.saveData(pluginName, data);
+        this.saveData(pluginName, data, this.pluginsFolder, ".config.json");
     }
 
     static getPluginData(pluginName, key) {
@@ -75,6 +94,18 @@ export default class DataStore {
 
         return this.pluginData[pluginName]?.[key];
     }
+
+    static setSettings(id, value) {
+        const newSettings = Object.assign({}, this.settingsData, {[id]: value});
+        
+        try {
+            this.saveData("settings", newSettings);
+        } catch (error) {
+            Logger.error("DataStore", "Failed to save settings:", error);
+        }
+    }
+
+    static getSettings() {return this.settingsData;}
 
     static deletePluginData(pluginName, key) {
         if (!this.pluginData[pluginName]) {

@@ -2,6 +2,7 @@ import swc from "rollup-plugin-swc";
 import {defineConfig} from "rollup";
 import esFormatter from "rollup-plugin-esformatter";
 import {nodeResolve} from "@rollup/plugin-node-resolve";
+import json from "@rollup/plugin-json";
 
 const IGNORED_WARNINGS = ["EVAL", "THIS_IS_UNDEFINED"];
 
@@ -18,9 +19,10 @@ export default args => {
         },
 
         plugins: [
+            json(),
             nodeResolve({
                 browser: mode === "renderer",
-                extensions: [".ts", ".tsx", ".js", ".jsx"],
+                extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
                 preferBuiltins: false
             }),
             esFormatter({

@@ -1,0 +1,51 @@
+{
+    "Toasts": {
+        "settings": [
+            {
+                "name": "Show Toasts",
+                "note": "Show any types of toasts.",
+                "value": true,
+                "id": "showToasts",
+                "type": "switch"
+            },
+            {
+                "name": "Use builtin toasts",
+                "note": "Makes BDCompat use discord's builtin toasts instead.",
+                "value": true,
+                "id": "useBuiltinToasts",
+                "type": "switch"
+            },
+            {
+                "name": "Show Toasts on",
+                "type": "category",
+                "requires": ["showToasts"],
+                "items": [
+                    {
+                        "name": "Show Toasts on plugin start/stop",
+                        "id": "showToastsPluginStartStop",
+                        "type": "switch",
+                        "value": true
+                    },
+                    {
+                        "name": "Show Toasts on plugin load/unload",
+                        "id": "showToastsPluginLoad",
+                        "type": "switch",
+                        "value": true
+                    },
+                    {
+                        "name": "Show Toasts on plugin reload",
+                        "id": "showToastsPluginReload",
+                        "type": "switch",
+                        "value": true
+                    },
+                    {
+                        "name": "Show Toasts on plugin enable/disable",
+                        "id": "showToastsPluginState",
+                        "type": "switch",
+                        "value": true
+                    }
+                ]
+            }
+        ]
+    }
+}

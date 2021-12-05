@@ -16,6 +16,7 @@ import AddonPanel from "./ui/addonpanel.js";
 import SettingsPanel from "./ui/settings.js";
 import {Buffer} from "./modules/buffer.js";
 import Logger from "./modules/logger.js";
+import SettingsManager from "./modules/settingsmanager.js";
 
 const SettingsSections = [
     {section: "DIVIDER"},
@@ -47,7 +48,7 @@ const SettingsSections = [
 ];
 
 export default new class BDCompat {
-    styles = ["./ui/toast.css", "./ui/addons.css"];
+    styles = ["./ui/toast.css", "./ui/addons.css", "./ui/settings.css"];
 
     start() {Webpack.whenReady.then(this.onStart.bind(this));}
 
@@ -64,6 +65,7 @@ export default new class BDCompat {
         this.patchSettingsView();
 
         DataStore.initialize();
+        SettingsManager.initialize();
         Toasts.initialize();
         this.appendStyles();
 

@@ -42,4 +42,23 @@ export default class Utilities {
 
         return parsed;
     }
+
+    static joinClassNames(...classNames/* : (string | [boolean, string])[] */) {
+        let className = [];
+    
+        for (const item of classNames) {
+            if (typeof (item) === "string") {
+                className.push(item);
+                continue;
+            }
+    
+            if (Array.isArray(item)) {
+                const [should, name] = item;
+                if (!should) continue;
+                className.push(name);
+            }
+        }
+    
+        return className.join(" ");
+    }
 }
