@@ -1,5 +1,5 @@
 import memoize from "./memoize.js";
-import Webpack from "./webpack.js";
+import Webpack from "./webpack";
 
 export default class DiscordModules {
     /**@returns {typeof import("react")} */
@@ -8,9 +8,60 @@ export default class DiscordModules {
     /**@returns {typeof import("react-dom")} */
     static get ReactDOM() {return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal"));}
 
+    static get Tooltips() {return memoize(this, "Tooltips", () => Webpack.findByProps("TooltipContainer"));}
+
+    static get DiscordProviders() {
+        return memoize(this, "DiscordProviders", () => {
+            const [
+                {AccessibilityPreferencesContext: {Provider: AccessibilityProvider}} = {
+                    AccessibilityPreferencesContext: {}
+                },
+                Layers,
+                {LayerClassName} = {}
+            ] = Webpack.findByProps(
+                ["AccessibilityPreferencesContext"],
+                ["AppReferencePositionLayer"],
+                ["LayerClassName"],
+                {bulk: true}
+            );
+
+            return {
+                AccessibilityProvider,
+                LayerProvider: Layers.AppLayerProvider().props.layerContext.Provider,
+                container: document.querySelector(`#app-mount > .${LayerClassName}`)
+            };
+        });
+    }
+
     static get Toasts() {
         return memoize(this, "Toasts", () => {
-            return Webpack.findByProps(["createToast"], ["showToast"], {bulk: true}).reduce((api, sub) => Object.assign(api, sub), {});
+            return Object.assign({}, ...Webpack.findByProps(["createToast"], ["showToast"], {bulk: true}));
+        });
+    }
+
+    static get PrivateChannelActions() {return memoize(this, "PrivateChannelActions", () => Webpack.findByProps("openPrivateChannel"));}
+
+    static get Dispatcher() {return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch"));}
+
+    static get InviteActions() {return memoize(this, "InviteActions", () => Webpack.findByProps("resolveInvite"));}
+
+    static get ContextMenu() {
+        return memoize(this, "ContextMenu", () => {
+            const [ContextMenuActions, ContextMenuComponents] = Webpack.findByProps(["openContextMenu"], ["MenuItem", "default"], {bulk: true});
+
+            const output = {
+                open: ContextMenuActions.openContextMenu,
+                close: ContextMenuActions.closeContextMenu,
+                Menu: ContextMenuComponents.default
+            };
+
+            for (let key in ContextMenuComponents) {
+                if (!key.startsWith("Menu")) continue;
+
+                output[key.slice("Menu".length)] = ContextMenuComponents[key];
+            }
+
+            return output;
         });
     }
 }

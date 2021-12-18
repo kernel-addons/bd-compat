@@ -3,9 +3,9 @@ import DiscordModules from "./discord.js";
 /**
  * Creates a updateable react store with a remote api.
  * @param {Any} state Intitial State of your store
+ * @returns {Any}
  */
 export default function createStore(state) {
-    const {useEffect, useReducer} = DiscordModules.React;
     const listeners = new Set();
 
     const Api = Object.freeze({
@@ -31,9 +31,9 @@ export default function createStore(state) {
     });
 
     function useState(factory = _ => _) {
-        const [, forceUpdate] = useReducer(e => e + 1, 0);
+        const [, forceUpdate] = DiscordModules.React.useReducer(e => e + 1, 0);
 
-        useEffect(() => {
+        DiscordModules.React.useEffect(() => {
             const handler = () => forceUpdate();
 
             listeners.add(handler);

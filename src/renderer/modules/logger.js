@@ -12,7 +12,7 @@ export default class Logger {
 
     static _log(type, module, ...nessage) {
         type = this._parseType(type);
-        console[type](`%c[Kernel:BDCompat]%c %c[${module}]%c`, "color: #A8D46B; font-weight: 700;", "", "color: #A8D46B", "", ...nessage);
+        console[type](`%c[BetterDiscord]%c %c[${module}]%c`, "color: #3e82e5; font-weight: 700;", "", "color: #3e82e5", "", ...nessage);
     }
 
     static log(module, ...message) {this._log("log", module, ...message);}

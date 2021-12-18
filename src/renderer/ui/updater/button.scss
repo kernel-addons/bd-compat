@@ -1,0 +1,32 @@
+.bd-updater-button {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 12px;
+    background: var(--background-floating);
+    border-radius: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--elevation-high);
+    cursor: pointer;
+    z-index: 999;
+
+    &::before {
+        content: attr(data-updates);
+        position: absolute;
+        background: #ed3245;
+        padding: 2px;
+        width: 11px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        font-size: 12px;
+        justify-content: center;
+        color: #ddd;
+        border-radius: 100px;
+        top: 4px;
+        border: 4px solid var(--background-floating);
+        right: 4px;
+    }
+}

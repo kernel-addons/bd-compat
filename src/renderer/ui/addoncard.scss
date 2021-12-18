@@ -1,0 +1,93 @@
+.bd-addon-card {
+    background: var(--background-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+
+    .bd-addoncard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background: var(--background-secondary-alt);
+
+        .bd-addoncard-info {
+            display: inline-flex;
+    
+            .bd-addon-version {
+                margin: 0 4px;
+                color: var(--text-muted);
+            }
+    
+            .bd-addon-name {
+                font-weight: 700;
+                color: var(--text-normal);
+            }
+
+            .bd-addon-author {
+                color: var(--text-normal);
+
+                .bd-author-text {
+                    color: var(--text-muted);
+                }
+
+                a:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    
+        .bd-addoncard-icon {
+            margin-right: 5px;
+            display: inline-flex;
+            color: var(--text-normal);
+        }
+    }
+
+    .bd-addon-description {
+        padding: 15px;
+    }
+
+    .bd-addon-footer {
+        padding: 15px;
+        display: flex;
+        padding-top: 0;
+        justify-content: space-between;
+
+        .bd-toolbar {
+            display: inline-flex;
+            border-radius: 4px;
+            overflow: hidden;
+
+            .bd-toolbutton {
+                padding: 5px;
+                background: #3E82E5;
+                border-radius: 0;
+                transition: background .1s;
+
+                &:hover {
+                    &.bd-danger {
+                        background: lighten(#f04747, 5%);
+                    }
+
+                    &.bd-toolbutton:not(.bd-danger) {
+                        background: lighten(#3E82E5, 5%);
+                    }
+                }
+
+                &.bd-danger {
+                    background: #f04747;
+                }
+            }
+        }
+
+        .bd-support-bar {
+            display: flex;
+            align-items: center;
+
+            .bd-addon-support-button {
+                margin-right: 5px;
+            }
+        }
+    }
+}

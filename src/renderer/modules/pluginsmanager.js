@@ -100,8 +100,11 @@ export default class PluginsManager {
     static loadAddon(location, showToast = true, showStart = true) {
         const filecontent = fs.readFileSync(location, "utf8");
         const meta = Utilities.parseMETA(filecontent);
-        meta.filename = path.basename(location);
-        meta.path = location;
+        Object.assign(meta, {
+            filename: path.basename(location),
+            path: location,
+            filecontent
+        });
 
         if (this.resolve(meta.name) || this.resolve(meta.filename)) throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 

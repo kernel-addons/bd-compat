@@ -11,41 +11,47 @@ import PluginsManager from "./modules/pluginsmanager.js";
 import Require from "./modules/require.js";
 import ThemesManager from "./modules/themesmanager.js";
 import Toasts from "./modules/toasts.js";
-import Webpack from "./modules/webpack.js";
+import Webpack from "./modules/webpack";
 import AddonPanel from "./ui/addonpanel.js";
 import SettingsPanel from "./ui/settings.js";
 import {Buffer} from "./modules/buffer.js";
 import Logger from "./modules/logger.js";
 import SettingsManager from "./modules/settingsmanager.js";
+import AddonUpdater from "./modules/addonupdater.js";
+import * as IPCEvents from "../common/IPCEvents";
 
 const SettingsSections = [
     {section: "DIVIDER"},
     {
         section: "HEADER",
-        label: "BDCompat"
+        label: "BetterDiscord"
     },
     {
         id: "bdcompat-settings-settings",
-        section: "BDCompatSettings",
+        section: "settings",
         label: "Settings",
         className: "bdcompat-settings-item-settings",
         element: () => DiscordModules.React.createElement(SettingsPanel, {})
     },
     {
         id: "bdcompat-settings-plugins",
-        section: "BDCompatPlugins",
+        section: "plugins",
         label: "Plugins",
         className: "bdcompat-settings-item-plugins",
         element: () => DiscordModules.React.createElement(AddonPanel, {manager: PluginsManager, type: "plugin"})
     },
     {
         id: "bdcompat-settings-themes",
-        section: "BDCompatThemes",
+        section: "themes",
         label: "Themes",
         className: "bdcompat-settings-item-themes",
         element: () => DiscordModules.React.createElement(AddonPanel, {manager: ThemesManager, type: "theme"})
     }
 ];
+
+if (!window.process) {
+    BDCompatNative.IPC.dispatch(IPCEvents.EXPOSE_PROCESS_GLOBAL);
+}
 
 export default new class BDCompat {
     styles = ["./ui/toast.css", "./ui/addons.css", "./ui/settings.css"];
@@ -71,6 +77,7 @@ export default new class BDCompat {
 
         ThemesManager.initialize();
         PluginsManager.initialize();
+        AddonUpdater.initialize();
     }
 
     exposeBdApi() {
@@ -102,14 +109,11 @@ export default new class BDCompat {
     }
 
     appendStyles() {
-        const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`, new Error().stack);
+        const dist = BDCompatNative.executeJS("__dirname", new Error().stack);
+        const stylesPath = path.resolve(dist, "style.css");
+        if (!fs.existsSync(stylesPath)) return;
 
-        for (const [index, style] of this.styles.entries()) {
-            const location = path.resolve(root, "src", "renderer", style);
-            if (!fs.existsSync(location)) return Logger.error("Styles", `The stylesheet at ${location} doesn't exists.`);
-
-            DOM.injectCSS("BDCompat-internal" + index, fs.readFileSync(location, "utf8"));
-        }
+        DOM.injectCSS("core", fs.readFileSync(stylesPath, "utf8"));
     }
 
     patchSettingsView() {

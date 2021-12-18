@@ -8,7 +8,7 @@ import Patcher from "./patcher.js";
 import PluginsManager from "./pluginsmanager.js";
 import ThemesManager from "./themesmanager.js";
 import Toasts from "./toasts.js";
-import Webpack from "./webpack.js";
+import Webpack from "./webpack";
 
 const createAddonAPI = manager => new class AddonAPI {
     get folder() {return manager.folder}

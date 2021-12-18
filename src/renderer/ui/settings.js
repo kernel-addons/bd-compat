@@ -2,6 +2,7 @@ import DiscordModules from "../modules/discord.js";
 import SettingsManager from "../modules/settingsmanager";
 import Utilities from "../modules/utilities.js";
 import Components from "./components.js";
+import "./settings.scss";
 
 export function SwitchItem({id, name, ...props}) {
     const SwitchForm = Components.get("SwitchItem");

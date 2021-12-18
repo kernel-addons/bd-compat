@@ -1,4 +1,5 @@
 import DiscordModules from "../modules/discord.js";
+import "./toasts.scss";
 
 export function Toast({type, children, timeout, onRemove}) {
     const {React} = DiscordModules;

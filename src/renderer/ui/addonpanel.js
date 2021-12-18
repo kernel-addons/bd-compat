@@ -1,9 +1,10 @@
 import DiscordModules from "../modules/discord.js"
 import Logger from "../modules/logger.js";
-import AddonCard, {ToolButton} from "./addoncard.js";
+import AddonCard, {ToolButton} from "./addoncard";
 import Components from "./components.js";
 import DOMWrapper from "./domwrapper.js";
 import ErrorBoundary from "./errorboundary.js";
+import "./addons.scss";
 
 export default function AddonPanel({type, manager}) {
     const {React} = DiscordModules;
@@ -73,7 +74,7 @@ export default function AddonPanel({type, manager}) {
                             // Bruh
                             if (!element) {
                                 Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
-                                return void Toasts.show(`Unable to open settings panel fro ${addon.name}.`, {type: "error"});
+                                return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {type: "error"});
                             }
 
                             if (!element) return;

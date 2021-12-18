@@ -4,7 +4,7 @@ import DiscordModules from "./discord.js";
 import Logger from "./logger.js";
 import memoize from "./memoize.js";
 import Toasts from "./toasts.js";
-import Webpack from "./webpack.js";
+import Webpack from "./webpack";
 
 export default class Modals {
     static get ModalsAPI() {return memoize(this, "ModalsAPI", () => Webpack.findByProps("openModal", "useModalsStore"));}
