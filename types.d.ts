@@ -9,3 +9,5 @@ declare const BDCompatNative: {
         dispatch(event: string, ...args: any[]): void;
     }
 };
+
+declare const React: typeof import("react");

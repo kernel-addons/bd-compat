@@ -3,6 +3,7 @@ import {defineConfig} from "rollup";
 import esFormatter from "rollup-plugin-esformatter";
 import {nodeResolve} from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
+import scss from "rollup-plugin-scss";
 
 const IGNORED_WARNINGS = ["EVAL", "THIS_IS_UNDEFINED"];
 
@@ -19,6 +20,10 @@ export default args => {
         },
 
         plugins: [
+            scss({
+                output: "./dist/style.css",
+                runtime: require("sass")
+            }),
             json(),
             nodeResolve({
                 browser: mode === "renderer",
