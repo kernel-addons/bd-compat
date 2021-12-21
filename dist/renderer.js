@@ -1637,8 +1637,8 @@ class BdApi {
 			return false;
 		}
 	}
-	static loadData(pluginName, key) {
-		return DataStore.getPluginData(pluginName, key);
+	static loadData(pluginName, key3) {
+		return DataStore.getPluginData(pluginName, key3);
 	}
 	static saveData(pluginName1, key1, value) {
 		return DataStore.setPluginData(pluginName1, key1, value);
@@ -1733,6 +1733,14 @@ BdApi.Patcher = {
 	]
 	))
 };
+Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {
+	descriptors[key] = Object.assign({
+	}, Object.getOwnPropertyDescriptor(BdApi, key), {
+		enumerable: true
+	});
+	return descriptors;
+}, {
+}));
 
 var electron = {
 	shell: BDCompatNative.executeJS(`require("electron").shell`, new Error().stack),
