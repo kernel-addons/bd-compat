@@ -74,7 +74,7 @@ class Logger {
 	}
 	static _log(type1, module, ...nessage) {
 		type1 = this._parseType(type1);
-		console[type1](`%c[Kernel:BDCompat]%c %c[${module}]%c`, "color: #A8D46B; font-weight: 700;", "", "color: #A8D46B", "", ...nessage);
+		console[type1](`%c[BetterDiscord]%c %c[${module}]%c`, "color: #3e82e5; font-weight: 700;", "", "color: #3e82e5", "", ...nessage);
 	}
 	static log(module1, ...message) {
 		this._log("log", module1, ...message);
@@ -219,29 +219,6 @@ function memoize(target, key, getter) {
 	return value;
 }
 
-function _classPrivateFieldGet(receiver, privateMap) {
-	if (!privateMap.has(receiver)) {
-		throw new TypeError("attempted to get private field on non-instance");
-	}
-	return privateMap.get(receiver).value;
-}
-function _classPrivateFieldSet(receiver, privateMap, value) {
-	if (!privateMap.has(receiver)) {
-		throw new TypeError("attempted to set private field on non-instance");
-	}
-	var descriptor = privateMap.get(receiver);
-	if (!descriptor.writable) {
-		throw new TypeError("attempted to set read only private field");
-	}
-	descriptor.value = value;
-	return value;
-}
-function _classPrivateMethodGet(receiver, privateSet, fn) {
-	if (!privateSet.has(receiver)) {
-		throw new TypeError("attempted to get private field on non-instance");
-	}
-	return fn;
-}
 // @ts-nocheck
 if (typeof Array.prototype.at !== "function") {
 	Array.prototype.at = function(index) {
@@ -252,16 +229,25 @@ if (typeof setImmediate === "undefined") {
 	window.setImmediate = (callback) => setTimeout(callback, 0)
 	;
 }
-const Events = {
-	CREATE: "CREATE",
-	LENGTH_CHANGE: "LENGTH_CHANGE",
-	PUSH: "PUSH",
-	LOADED: "LOADED"
-};
-var _parseOptions = new WeakSet();
-class WebpackModule {
-	get Events() {
-		return Events;
+class Filters {
+	static byProps(...props1) {
+		return (module) => props1.every((prop) => prop in module
+		);
+	}
+	static byDisplayName(name, def = false) {
+		return (module) => (def ? module = module.default : module) && typeof module === "function" && module.displayName === name;
+	}
+	static byTypeString(...strings) {
+		return (module) => {
+			var ref;
+			return module.type && (module = (ref = module.type) === null || ref === void 0 ? void 0 : ref.toString()) && strings.every((str) => module.indexOf(str) > -1
+				);
+		};
+	}
+}
+var Webpack = new class Webpack {
+	get Filters() {
+		return Filters;
 	}
 	get chunkName() {
 		return "webpackChunkdiscord_app";
@@ -269,37 +255,10 @@ class WebpackModule {
 	get id() {
 		return "kernel-req" + Math.random().toString().slice(2, 5);
 	}
-	dispatch(event, ...args1) {
-		if (!(event in _classPrivateFieldGet(this, _events)))
-			throw new Error(`Unknown Event: ${event}`);
-		for (const callback of _classPrivateFieldGet(this, _events)[event]) {
-			try {
-				callback(...args1);
-			} catch (err) {
-				console.error(err);
-			}
-		}
-	}
-	on(event1, callback) {
-		if (!(event1 in _classPrivateFieldGet(this, _events)))
-			throw new Error(`Unknown Event: ${event1}`);
-		return _classPrivateFieldGet(this, _events)[event1].add(callback), () => this.off(event1, callback);
-	}
-	off(event2, callback1) {
-		if (!(event2 in _classPrivateFieldGet(this, _events)))
-			throw new Error(`Unknown Event: ${event2}`);
-		return _classPrivateFieldGet(this, _events)[event2].delete(callback1);
-	}
-	once(event3, callback2) {
-		const unlisten = this.on(event3, (...args) => {
-			unlisten();
-			callback2(...args);
-		});
-	}
-	async waitFor(filter3, {retries =100, all =false, delay =50} = {
+	async waitFor(filter4, {retries =100, all =false, forever =false, delay =50} = {
 		}) {
-		for (let i = 0; i < retries; i++) {
-			const module = this.findModule(filter3, {
+		for (let i = 0; i < retries || forever; i++) {
+			const module = this.findModule(filter4, {
 				all,
 				cache: false
 			});
@@ -308,10 +267,18 @@ class WebpackModule {
 			);
 		}
 	}
+	parseOptions(args, filter1 = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
+	) {
+		return [
+			args,
+			filter1(args.at(-1)) ? args.pop() : {
+			}
+		];
+	}
 	request(cache2 = true) {
-		if (cache2 && _classPrivateFieldGet(this, _cache$1)) return _classPrivateFieldGet(this, _cache$1);
-		let req = void 0;
-		if ("webpackChunkdiscord_app" in window && webpackChunkdiscord_app != null) {
+		if (cache2 && this.cache) return this.cache;
+		let req = undefined;
+		if (Array.isArray(window[this.chunkName])) {
 			const chunk = [
 				[
 					this.id
@@ -323,48 +290,51 @@ class WebpackModule {
 			webpackChunkdiscord_app.push(chunk);
 			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
 		}
-		if (cache2) _classPrivateFieldSet(this, _cache$1, req);
+		if (!req) console.warn("[Webpack] Got empty cache.");
+		if (cache2)
+			this.cache = req;
 		return req;
 	}
-	findModule(filter1, {all: all1 = false, cache: cache1 = true, force =false} = {
+	findModule(filter2, {all: all1 = false, cache: cache1 = true, force =false} = {
 		}) {
-		if (typeof filter1 !== "function") return void 0;
+		if (typeof filter2 !== "function") return void 0;
 		const __webpack_require__ = this.request(cache1);
 		const found = [];
-		const wrapFilter = function(module) {
+		if (!__webpack_require__) return;
+		const wrapFilter = function(module, index) {
 			try {
-				return filter1(module);
+				return filter2(module, index);
 			} catch (e) {
 				return false;
 			}
 		};
 		for (const id in __webpack_require__.c) {
-			var module1 = __webpack_require__.c[id].exports;
-			if (!module1 || module1 === window) continue;
-			switch (typeof module1) {
+			const module = __webpack_require__.c[id].exports;
+			if (!module || module === window) continue;
+			switch (typeof module) {
 				case "object": {
-					if (wrapFilter(module1)) {
-						if (!all1) return module1;
-						found.push(module1);
+					if (wrapFilter(module, id)) {
+						if (!all1) return module;
+						found.push(module);
 					}
-					if (module1.__esModule && module1.default != null && wrapFilter(module1.default)) {
-						if (!all1) return module1.default;
-						found.push(module1.default);
+					if (module.__esModule && module.default != null && wrapFilter(module.default, id)) {
+						if (!all1) return module.default;
+						found.push(module.default);
 					}
-					if (force && module1.__esModule)
-						for (const key in module1) {
-							if (!module1[key]) continue;
-							if (wrapFilter(module1[key])) {
-								if (!all1) return module1[key];
-								found.push(module1[key]);
+					if (force && module.__esModule)
+						for (const key in module) {
+							if (!module[key]) continue;
+							if (wrapFilter(module[key], id)) {
+								if (!all1) return module[key];
+								found.push(module[key]);
 							}
 					}
 					break;
 				}
 				case "function": {
-					if (wrapFilter(module1)) {
-						if (!all1) return module1;
-						found.push(module1);
+					if (wrapFilter(module, id)) {
+						if (!all1) return module;
+						found.push(module);
 					}
 					break;
 				}
@@ -372,112 +342,116 @@ class WebpackModule {
 		}
 		return all1 ? found : found[0];
 	}
-	findModules(filter2) {
-		return this.findModule(filter2, {
+	findModules(filter3) {
+		return this.findModule(filter3, {
 			all: true
 		});
 	}
 	bulk(...options) {
-		const [filters, {wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options);
+		const [filters, {wait =false, ...rest}] = this.parseOptions(options);
 		const found = new Array(filters.length);
 		const searchFunction = wait ? this.waitFor : this.findModule;
-		const returnValue = searchFunction.call(this, (module) => {
-			const matches = filters.filter((filter) => {
-				try {
-					return filter(module);
-				} catch (e) {
-					return false;
-				}
-			});
-			if (!matches.length) return false;
-			for (const filter4 of matches) {
-				found[filters.indexOf(filter4)] = module;
+		const wrappedFilters = filters.map((filter) => (m) => {
+			try {
+				return filter(m);
+			} catch (error) {
+				return false;
 			}
-			return found.filter(Boolean).length === filters.length;
+		}
+		);
+		const returnValue = searchFunction.call(this, (module) => {
+			for (let i = 0; i < wrappedFilters.length; i++) {
+				const filter = wrappedFilters[i];
+				if (typeof filter !== "function" || !filter(module) || found[i] != null) continue;
+				found[i] = module;
+			}
+			return found.filter(String).length === filters.length;
 		}, rest);
 		if (wait) return returnValue.then(() => found
 			);
 		return found;
 	}
 	findByProps(...options1) {
-		const [props1, {bulk =false, wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options1);
-		const filter = (props, module) => module && props.every((prop) => prop in module
-		);
-		return bulk ? this.bulk(...props1.map((props) => filter.bind(null, props)
-		).concat({
-			wait,
-			...rest
-		})) : wait ? this.waitFor(filter.bind(null, props1)) : this.findModule(filter.bind(null, props1), rest);
+		const [props, {bulk =false, wait =false, ...rest}] = this.parseOptions(options1);
+		if (!bulk && !wait) {
+			return this.findModule(Filters.byProps(...props), rest);
+		}
+		if (wait && !bulk) {
+			return this.waitFor(Filters.byProps(...props), rest);
+		}
+		if (bulk) {
+			const filters = props.map((propsArray) => Filters.byProps(...propsArray)
+			).concat({
+				wait,
+				...rest
+			});
+			return this.bulk(...filters);
+		}
+		return null;
 	}
 	findByDisplayName(...options2) {
-		const [displayNames, {bulk =false, default: defaultExport = false, wait =false, ...rest}] = _classPrivateMethodGet(this, _parseOptions, parseOptions).call(this, options2);
-		const filter = (name, module) => {
-			var ref;
-			return defaultExport ? (module === null || module === void 0 ? void 0 : (ref = module.default) === null || ref === void 0 ? void 0 : ref.displayName) === name : (module === null || module === void 0 ? void 0 : module.displayName) === name;
-		};
-		return bulk ? this.bulk(...displayNames.map((name) => filter.bind(null, name)
-		).concat({
-			wait,
-			cache
-		})) : wait ? this.waitFor(filter.bind(null, displayNames[0]), rest) : this.findModule(filter.bind(null, displayNames[0]), rest);
-	}
-	async wait(callback3 = null) {
-		return new Promise((resolve) => {
-			this.once(Events.LOADED, () => {
-				resolve();
-				typeof callback3 === "function" && callback3();
+		const [displayNames, {bulk =false, default: defaultExport = false, wait =false, ...rest}] = this.parseOptions(options2);
+		if (!bulk && !wait) {
+			return this.findModule(Filters.byDisplayName(displayNames[0]), rest);
+		}
+		if (wait && !bulk) {
+			return this.waitFor(Filters.byDisplayName(displayNames[0]), rest);
+		}
+		if (bulk) {
+			const filters = displayNames.map(filters.map(Filters.byDisplayName)).concat({
+				wait,
+				cache
 			});
+			return this.bulk(...filters);
+		}
+		return null;
+	}
+	findIndex(filter) {
+		let foundIndex = -1;
+		this.findModule((module, index) => {
+			if (filter(module))
+				foundIndex = index;
+		});
+		return foundIndex;
+	}
+	atIndex(index) {
+		var ref;
+		return (ref = this.request(true)) === null || ref === void 0 ? void 0 : ref.c[index];
+	}
+	get waitForGlobal() {
+		return new Promise(async (onExists) => {
+			while (!Array.isArray(window[this.chunkName])) {
+				await new Promise(setImmediate);
+			}
+			onExists();
 		});
 	}
-	get whenExists() {
-		return new Promise((resolve) => {
-			this.once(Events.CREATE, resolve);
+	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
+	async wait(callback = null) {
+		return this.whenReady.then(() => {
+			typeof callback === "function" && callback();
 		});
+	}
+	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
+	get whenExists() {
+		return this.waitForGlobal;
+	}
+	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
+	on(event, listener1) {
+		switch (event) {
+			case "LOADED":
+				return this.whenReady.then(listener1);
+		}
+	}
+	/**@deprecated @see Webpack.on */
+	get once() {
+		return this.on;
 	}
 	constructor() {
-		_events.set(this, {
-			writable: true,
-			value: Object.fromEntries(Object.keys(Events).map((key) => [
-				key,
-				new Set()
-			]
-			))
-		});
-		_cache$1.set(this, {
-			writable: true,
-			value: null
-		});
-		_parseOptions.add(this);
-		this.whenReady = null;
-		Object.defineProperty(window, this.chunkName, {
-			get() {
-				return void 0;
-			},
-			set: (value) => {
-				Object.defineProperty(window, this.chunkName, {
-					value,
-					configurable: true,
-					writable: true
-				});
-				const originalPush = value.push;
-				value.push = (...values) => {
-					this.dispatch(Events.LENGTH_CHANGE, value.length + values.length);
-					this.dispatch(Events.PUSH, values);
-					return Reflect.apply(originalPush, value, values);
-				};
-				this.dispatch(Events.CREATE);
-				return value;
-			},
-			configurable: true
-		});
-		let listener = (shouldUnsubscribe, Dispatcher, ActionTypes, event) => {
-			if (shouldUnsubscribe) {
-				Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
-			}
-			this.dispatch(Events.LOADED);
-		};
-		this.once(Events.PUSH, async () => {
-			const [Dispatcher, Constants] = await this.findByProps([
+		this.cache = null;
+		this.whenReady = this.waitForGlobal.then(() => new Promise(async (onReady) => {
+			const [Dispatcher, {ActionTypes} = {
+				}] = await this.findByProps([
 				"dirtyDispatch"
 			], [
 				"API_HOST",
@@ -485,26 +459,19 @@ class WebpackModule {
 			], {
 				cache: false,
 				bulk: true,
-				wait: true
+				wait: true,
+				forever: true
 			});
-			Dispatcher.subscribe(Constants.ActionTypes.START_SESSION, listener = listener.bind(null, true, Dispatcher, Constants.ActionTypes));
-		});
+			const listener = function() {
+				Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
+				onReady();
+			};
+			Dispatcher.subscribe(ActionTypes.START_SESSION, listener);
+		})
+		);
+		window.Webpack = this;
 	}
-}
-var _events = new WeakMap();
-var _cache$1 = new WeakMap();
-function parseOptions(args, filter = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
-) {
-	return [
-		args,
-		filter(args.at(-1)) ? args.pop() : {
-		}
-	];
-}
-var _Webpack;
-const Webpack = (_Webpack = window.Webpack) !== null && _Webpack !== void 0 ? _Webpack : window.Webpack = new WebpackModule;
-if (!Webpack.whenReady)
-	Webpack.whenReady = Webpack.wait();
+};
 
 class DiscordModules {
 	/**@returns {typeof import("react")} */
@@ -517,17 +484,76 @@ class DiscordModules {
 		return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal")
 		);
 	}
+	static get Tooltips() {
+		return memoize(this, "Tooltips", () => Webpack.findByProps("TooltipContainer")
+		);
+	}
+	static get DiscordProviders() {
+		return memoize(this, "DiscordProviders", () => {
+			const [{AccessibilityPreferencesContext: {Provider: AccessibilityProvider}} = {
+					AccessibilityPreferencesContext: {
+					}
+				}, Layers, {LayerClassName} = {
+				}] = Webpack.findByProps([
+				"AccessibilityPreferencesContext"
+			], [
+				"AppReferencePositionLayer"
+			], [
+				"LayerClassName"
+			], {
+				bulk: true
+			});
+			return {
+				AccessibilityProvider,
+				LayerProvider: Layers.AppLayerProvider().props.layerContext.Provider,
+				container: document.querySelector(`#app-mount > .${LayerClassName}`)
+			};
+		});
+	}
 	static get Toasts() {
 		return memoize(this, "Toasts", () => {
-			return Webpack.findByProps([
+			return Object.assign({
+			}, ...Webpack.findByProps([
 				"createToast"
 			], [
 				"showToast"
 			], {
 				bulk: true
-			}).reduce((api, sub) => Object.assign(api, sub)
-				, {
-				});
+			}));
+		});
+	}
+	static get PrivateChannelActions() {
+		return memoize(this, "PrivateChannelActions", () => Webpack.findByProps("openPrivateChannel")
+		);
+	}
+	static get Dispatcher() {
+		return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch")
+		);
+	}
+	static get InviteActions() {
+		return memoize(this, "InviteActions", () => Webpack.findByProps("resolveInvite")
+		);
+	}
+	static get ContextMenu() {
+		return memoize(this, "ContextMenu", () => {
+			const [ContextMenuActions, ContextMenuComponents] = Webpack.findByProps([
+				"openContextMenu"
+			], [
+				"MenuItem",
+				"default"
+			], {
+				bulk: true
+			});
+			const output = {
+				open: ContextMenuActions.openContextMenu,
+				close: ContextMenuActions.closeContextMenu,
+				Menu: ContextMenuComponents.default
+			};
+			for (let key in ContextMenuComponents) {
+				if (!key.startsWith("Menu")) continue;
+				output[key.slice("Menu".length)] = ContextMenuComponents[key];
+			}
+			return output;
 		});
 	}
 }
@@ -899,9 +925,9 @@ function ToastsContainer({useStore, setState}) {
 /**
  * Creates a updateable react store with a remote api.
  * @param {Any} state Intitial State of your store
+ * @returns {Any}
  */
 function createStore(state) {
-	const {useEffect, useReducer} = DiscordModules.React;
 	const listeners = new Set();
 	const Api = Object.freeze({
 		get listeners() {
@@ -931,9 +957,9 @@ function createStore(state) {
 	});
 	function useState(factory = (_) => _
 	) {
-		const [, forceUpdate] = useReducer((e) => e + 1
+		const [, forceUpdate] = DiscordModules.React.useReducer((e) => e + 1
 			, 0);
-		useEffect(() => {
+		DiscordModules.React.useEffect(() => {
 			const handler = () => forceUpdate();
 			listeners.add(handler);
 			return () => listeners.delete(handler);
@@ -1155,8 +1181,11 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 	static loadAddon(location1, showToast = true, showStart = true) {
 		const filecontent = fs$1.readFileSync(location1, "utf8");
 		const meta = Utilities.parseMETA(filecontent);
-		meta.filename = path.basename(location1);
-		meta.path = location1;
+		Object.assign(meta, {
+			filename: path.basename(location1),
+			path: location1,
+			filecontent
+		});
 		if (this.resolve(meta.name) || this.resolve(meta.filename))
 			throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 		let exports = {
@@ -1922,7 +1951,225 @@ var _cache = {
 	}
 };
 
-function Icon({name, ...props}) {
+function _extends$a() {
+	_extends$a = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$a.apply(this, arguments);
+}
+function ColorPalette(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$a({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "16",
+		viewBox: "0 0 24 24",
+		width: "16",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+	})));
+}
+
+function _extends$9() {
+	_extends$9 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$9.apply(this, arguments);
+}
+function Extension(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$9({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "16",
+		viewBox: "0 0 24 24",
+		width: "16",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"
+	})));
+}
+
+function _extends$8() {
+	_extends$8 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$8.apply(this, arguments);
+}
+function Globe(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$8({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "24",
+		viewBox: "0 0 24 24",
+		width: "24",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
+	})));
+}
+
+function _extends$7() {
+	_extends$7 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$7.apply(this, arguments);
+}
+function Github(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$7({
+		width: "24",
+		height: "24",
+		role: "img",
+		xmlns: "http://www.w3.org/2000/svg",
+		viewBox: "0 0 496 512"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		fill: "currentColor",
+		d: "M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
+	})));
+}
+
+function _extends$6() {
+	_extends$6 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$6.apply(this, arguments);
+}
+function Help(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$6({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "24",
+		viewBox: "0 0 24 24",
+		width: "24",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+	})));
+}
+
+function _extends$5() {
+	_extends$5 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$5.apply(this, arguments);
+}
+function Donate(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$5({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "24",
+		viewBox: "0 0 24 24",
+		width: "24",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("rect", {
+		fill: "none",
+		height: "24",
+		width: "24"
+	})), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
+		d: "M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12.88,17.76V19h-1.75v-1.29 c-0.74-0.18-2.39-0.77-3.02-2.96l1.65-0.67c0.06,0.22,0.58,2.09,2.4,2.09c0.93,0,1.98-0.48,1.98-1.61c0-0.96-0.7-1.46-2.28-2.03 c-1.1-0.39-3.35-1.03-3.35-3.31c0-0.1,0.01-2.4,2.62-2.96V5h1.75v1.24c1.84,0.32,2.51,1.79,2.66,2.23l-1.58,0.67 c-0.11-0.35-0.59-1.34-1.9-1.34c-0.7,0-1.81,0.37-1.81,1.39c0,0.95,0.86,1.31,2.64,1.9c2.4,0.83,3.01,2.05,3.01,3.45 C15.9,17.17,13.4,17.67,12.88,17.76z"
+	}))));
+}
+
+function _extends$4() {
+	_extends$4 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$4.apply(this, arguments);
+}
+function Patreon(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$4({
+		width: "24",
+		height: "24",
+		xmlns: "http://www.w3.org/2000/svg",
+		viewBox: "0 0 512 512"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		fill: "currentColor",
+		d: "M512 194.8c0 101.3-82.4 183.8-183.8 183.8-101.7 0-184.4-82.4-184.4-183.8 0-101.6 82.7-184.3 184.4-184.3C429.6 10.5 512 93.2 512 194.8zM0 501.5h90v-491H0v491z"
+	})));
+}
+
+const [useUpdaterStore, UpdaterApi] = createStore({
+	updates: {
+	}
+});
+
+function _extends$3() {
+	_extends$3 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$3.apply(this, arguments);
+}
+function Icon1({name, ...props}) {
 	const Component = Components.get(name);
 	if (!Components) return null;
 	return React.createElement(Component, props);
@@ -1934,20 +2181,22 @@ function ToolButton({label, icon, onClick, danger =false, disabled =false}) {
 		position: "top"
 	}, (props) => React.createElement(Button, {
 		...props,
-		className: "bdcompat-toolbutton",
+		className: Utilities.joinClassNames("bd-toolbutton", [
+			danger,
+			"bd-danger"
+		]),
 		look: Button.Looks.BLANK,
 		size: Button.Sizes.NONE,
 		onClick: onClick,
 		disabled
-	}, React.createElement(Icon, {
+	}, React.createElement(Icon1, {
 		name: icon,
-		color: danger ? "#ed4245" : void 0,
 		width: 20,
 		height: 20
 	}))
 	);
 }
-function ButtonWrapper({value, onChange, disabled}) {
+function ButtonWrapper({value, onChange, disabled =false}) {
 	const {React} = DiscordModules;
 	const [isChecked, setChecked] = React.useState(value);
 	return React.createElement(Components.get("Switch"), {
@@ -1959,11 +2208,111 @@ function ButtonWrapper({value, onChange, disabled}) {
 		}
 	});
 }
+function ClickableName({addon}) {
+	var ref;
+	const isLink = React.useMemo(() => {
+		return addon.authorId != null || addon.authorLink != null;
+	}, [
+		addon
+	]);
+	const Tag = isLink ? "a" : "span";
+	const handleClick = function() {
+		if (addon.authorId) {
+			return DiscordModules.PrivateChannelActions.ensurePrivateChannel(addon.authorId).then(() => {
+				DiscordModules.PrivateChannelActions.openPrivateChannel(addon.authorId);
+			}).catch(() => {});
+		} else {
+			window.open(addon.authorLink, "_blank");
+		}
+	};
+	var ref1;
+	return ( /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addon-author"
+	}, /*#__PURE__*/ React.createElement("span", {
+		className: "bd-author-text"
+	}, " by "), (ref1 = (ref = addon.author) === null || ref === void 0 ? void 0 : ref.split(/\s?,\s?/).map((author, index, authors) => /*#__PURE__*/ React.createElement(React.Fragment, {
+		key: author
+	}, /*#__PURE__*/ React.createElement(Tag, {
+		className: "bd-link",
+		onClick: handleClick
+	}, author), index < authors.length - 1 && /*#__PURE__*/ React.createElement("span", {
+			className: "bd-comma"
+		}, ", "))
+	)) !== null && ref1 !== void 0 ? ref1 : "Unknown"));
+}
+const IconsMap = {
+	website: {
+		icon: Globe,
+		label: "Website"
+	},
+	source: {
+		icon: Github,
+		label: "Source"
+	},
+	invite: {
+		icon: Help,
+		label: "Support Server"
+	},
+	donate: {
+		icon: Donate,
+		label: "Donate"
+	},
+	patreon: {
+		icon: Patreon,
+		label: "Patreon"
+	}
+};
+function SupportIcons({addon}) {
+	const Button = Components.byProps("DropdownSizes");
+	const openSupportServer = async function() {
+		console.log("open?");
+		try {
+			const data = await DiscordModules.InviteActions.resolveInvite(addon.invite);
+			console.log({
+				data
+			});
+			DiscordModules.Dispatcher.dispatch({
+				type: "INVITE_MODAL_OPEN",
+				code: addon.invite,
+				invite: data,
+				context: "APP"
+			});
+		} catch (error) {
+			Logger.error("InviteManager", `Failed to resolve invite for ${addon.name}:`, error);
+			Toasts$1.show("Could not resolve invite.", {
+				type: "error"
+			});
+		}
+	};
+	return ( /*#__PURE__*/ React.createElement(React.Fragment, null, Object.entries(IconsMap).map(([type, props1]) => {
+		if (!addon[type]) return null;
+		const {icon: Icon, label} = props1;
+		const handleClick = function() {
+			window.open(addon[type]);
+		};
+		return ( /*#__PURE__*/ React.createElement(DiscordModules.Tooltips.default, {
+			text: label,
+			position: "top",
+			key: type
+		}, (props) => /*#__PURE__*/ React.createElement(Button, _extends$3({
+		}, props, {
+			look: Button.Looks.BLANK,
+			size: Button.Sizes.NONE,
+			onClick: type === "invite" ? openSupportServer : handleClick,
+			className: "bd-addon-support-button"
+		}), /*#__PURE__*/ React.createElement(Icon, null))
+		));
+	})));
+}
 function AddonCard({addon, manager, openSettings, hasSettings, type}) {
-	const {React} = DiscordModules;
-	const [, forceUpdate] = React.useReducer((n) => n + 1
+	const {React: React1} = DiscordModules;
+	const [, forceUpdate] = React1.useReducer((n) => n + 1
 		, 0);
-	React.useEffect(() => {
+	const Markdown = Components.get("Markdown", (e) => "rules" in e
+	);
+	const pendingUpdate = useUpdaterStore((s) => s.updates[addon.name]
+	);
+	React1.useEffect(() => {
 		return manager.on("toggled", (name) => {
 			if (name !== addon.name) return;
 			forceUpdate();
@@ -1972,73 +2321,70 @@ function AddonCard({addon, manager, openSettings, hasSettings, type}) {
 		addon,
 		manager
 	]);
-	return React.createElement("div", {
-		className: "bdcompat-addon-card " + addon.name.replace(/ /g, "-"),
-		children: [
-			React.createElement("div", {
-				className: "bdcompat-card-tools",
-				children: [
-					React.createElement(ToolButton, {
-						label: "Settings",
-						icon: "Gear",
-						disabled: !hasSettings,
-						onClick: openSettings
-					}),
-					React.createElement(ToolButton, {
-						label: "Reload",
-						icon: "Replay",
-						onClick: () => manager.reloadAddon(addon)
-					}),
-					React.createElement(ToolButton, {
-						label: "Open Path",
-						icon: "Folder",
-						onClick: () => {
-							BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`, new Error().stack);
-						}
-					}),
-					React.createElement(ToolButton, {
-						label: "Delete",
-						icon: "Trash",
-						danger: true,
-						onClick: () => {
-							Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
-								onConfirm: () => {
-									BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`, new Error().stack);
-								}
-							});
-						}
-					})
-				]
-			}),
-			React.createElement("div", {
-				className: "bdcompat-card-header",
-				children: [
-					React.createElement("div", {
-						className: "bdcompat-card-name"
-					}, addon.name),
-					"version" in addon && React.createElement("div", {
-						className: "bdcompat-card-version"
-					}, "v" + addon.version),
-					"author" in addon && React.createElement("div", {
-						className: "bdcompat-card-author"
-					}, "by " + addon.author)
-				]
-			}),
-			addon.description && React.createElement("div", {
-				className: "bdcompat-card-desc"
-			}, React.createElement(Components.get("Markdown", (e) => "rules" in e
-			), null, addon.description)),
-			React.createElement("div", {
-				className: "bdcompat-footer",
-				children: React.createElement(ButtonWrapper, {
-					value: manager.isEnabled(addon),
-					onChange: () => {
-						manager.toggleAddon(addon);
+	var _name,
+		_version,
+		_description;
+	return ( /*#__PURE__*/ React.createElement("div", {
+		className: Utilities.joinClassNames("bd-addon-card"),
+		"data-addon": addon.name
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addoncard-header"
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addoncard-info"
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addoncard-icon"
+	}, type === "theme" ? /*#__PURE__*/ React.createElement(ColorPalette, null) : /*#__PURE__*/ React.createElement(Extension, null)), /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addon-name"
+	}, (_name = addon.name) !== null && _name !== void 0 ? _name : "???"), /*#__PURE__*/ React.createElement("span", {
+		className: "bd-addon-version"
+	}, "v" + ((_version = addon.version) !== null && _version !== void 0 ? _version : "Unknown")), /*#__PURE__*/ React.createElement(ClickableName, {
+		addon: addon
+	})), /*#__PURE__*/ React.createElement(ButtonWrapper, {
+		value: manager.isEnabled(addon),
+		onChange: () => {
+			manager.toggleAddon(addon);
+		}
+	})), /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addon-description"
+	}, /*#__PURE__*/ React.createElement(Markdown, null, (_description = addon.description) !== null && _description !== void 0 ? _description : `This ${type} has no description specified.`)), /*#__PURE__*/ React.createElement("div", {
+		className: "bd-addon-footer"
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bd-support-bar"
+	}, /*#__PURE__*/ React.createElement(SupportIcons, {
+		addon: addon
+	})), /*#__PURE__*/ React.createElement("div", {
+		className: "bd-toolbar"
+	}, pendingUpdate && /*#__PURE__*/ React.createElement(ToolButton, {
+			label: "Download Update",
+			icon: "Download",
+			onClick: () => pendingUpdate.update()
+		}), /*#__PURE__*/ React.createElement(ToolButton, {
+			label: "Settings",
+			icon: "Gear",
+			disabled: !hasSettings || !manager.isEnabled(addon),
+			onClick: openSettings
+		}), /*#__PURE__*/ React.createElement(ToolButton, {
+			label: "Reload",
+			icon: "Replay",
+			onClick: () => manager.reloadAddon(addon)
+		}), /*#__PURE__*/ React.createElement(ToolButton, {
+			label: "Open Path",
+			icon: "Folder",
+			onClick: () => {
+				BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`, new Error().stack);
+			}
+		}), /*#__PURE__*/ React.createElement(ToolButton, {
+			danger: true,
+			label: "Delete",
+			icon: "Trash",
+			onClick: () => {
+				Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
+					onConfirm: () => {
+						BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`, new Error().stack);
 					}
-				})
-			})
-		]
-	});
+				});
+			}
+		})))));
 }
 
 function DOMWrapper({children}) {
@@ -2168,7 +2514,7 @@ function AddonPanel({type, manager}) {
 						// Bruh
 						if (!element) {
 							Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
-							return void Toasts.show(`Unable to open settings panel fro ${addon.name}.`, {
+							return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
 								type: "error"
 							});
 						}
@@ -2184,8 +2530,8 @@ function AddonPanel({type, manager}) {
 	});
 }
 
-function _extends() {
-	_extends = Object.assign || function(target) {
+function _extends$2() {
+	_extends$2 = Object.assign || function(target) {
 		for (var i = 1; i < arguments.length; i++) {
 			var source = arguments[i];
 			for (var key in source) {
@@ -2196,13 +2542,13 @@ function _extends() {
 		}
 		return target;
 	};
-	return _extends.apply(this, arguments);
+	return _extends$2.apply(this, arguments);
 }
 function SwitchItem({id, name, ...props}) {
 	const SwitchForm = Components.get("SwitchItem");
 	const value = SettingsManager.useState(() => SettingsManager.isEnabled(id)
 	);
-	return ( /*#__PURE__*/ React.createElement(SwitchForm, _extends({
+	return ( /*#__PURE__*/ React.createElement(SwitchForm, _extends$2({
 	}, props, {
 		value: value,
 		onChange: () => {
@@ -3267,6 +3613,275 @@ const module = {
 const Buffer = module.exports.Buffer.default.Buffer;
 module.exports.Buffer.default;
 
+function DiscordProviders({children}) {
+	const {AccessibilityProvider, LayerProvider, container} = DiscordModules.DiscordProviders;
+	return React.createElement(AccessibilityProvider, {
+		value: {
+			reducedMotion: {
+				value: false,
+				rawValue: "no-preference"
+			}
+		}
+	}, React.createElement(LayerProvider, {
+		value: [
+			container
+		]
+	}, children));
+}
+
+function _extends$1() {
+	_extends$1 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$1.apply(this, arguments);
+}
+function BDLogo(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$1({
+		width: "24",
+		height: "24",
+		viewBox: "0 0 2000 2000"
+	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
+		fill: "#3E82E5",
+		d: "M1402.2,631.7c-9.7-353.4-286.2-496-642.6-496H68.4v714.1l442,398V490.7h257c274.5,0,274.5,344.9,0,344.9H597.6v329.5h169.8c274.5,0,274.5,344.8,0,344.8h-699v354.9h691.2c356.3,0,632.8-142.6,642.6-496c0-162.6-44.5-284.1-122.9-368.6C1357.7,915.8,1402.2,794.3,1402.2,631.7z"
+	}), /*#__PURE__*/ React.createElement("path", {
+		fill: "#FFFFFF",
+		d: "M1262.5,135.2L1262.5,135.2l-76.8,0c26.6,13.3,51.7,28.1,75,44.3c70.7,49.1,126.1,111.5,164.6,185.3c39.9,76.6,61.5,165.6,64.3,264.6l0,1.2v1.2c0,141.1,0,596.1,0,737.1v1.2l0,1.2c-2.7,99-24.3,188-64.3,264.6c-38.5,73.8-93.8,136.2-164.6,185.3c-22.6,15.7-46.9,30.1-72.6,43.1h72.5c346.2,1.9,671-171.2,671-567.9V716.7C1933.5,312.2,1608.7,135.2,1262.5,135.2z"
+	}))));
+}
+
+function _extends() {
+	_extends = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends.apply(this, arguments);
+}
+function UpdaterContextMenu() {
+	const {ContextMenu} = DiscordModules;
+	return ( /*#__PURE__*/ React.createElement(ContextMenu.Menu, {
+		navId: "UpdaterContextMenu",
+		onClose: ContextMenu.close
+	}, /*#__PURE__*/ React.createElement(ContextMenu.Item, {
+		label: "Update All",
+		id: "update-all",
+		action: async () => {
+			const updates = Object.values(UpdaterApi.getState().updates);
+			for (let i = 0; i < updates.length; i++) {
+				updates[i].update(false);
+			}
+		}
+	}), /*#__PURE__*/ React.createElement(ContextMenu.Item, {
+		label: "Skip Updates",
+		id: "skip-updates",
+		action: () => {
+			UpdaterApi.setState({
+				updates: {
+				}
+			});
+			Toasts$1.show("Updates Skipped!", {
+				type: "success"
+			});
+		}
+	})));
+}
+function UpdaterButton() {
+	const {ContextMenu} = DiscordModules;
+	const count = useUpdaterStore((state) => Object.keys(state.updates).length
+	);
+	if (count < 1) return null;
+	const handleContextMenu = function(event) {
+		ContextMenu.open(event, UpdaterContextMenu);
+	};
+	return ( /*#__PURE__*/ React.createElement(DiscordProviders, null, /*#__PURE__*/ React.createElement(DiscordModules.Tooltips.default, {
+		text: `${count} update${count > 1 ? "s" : ""} available!`,
+		position: "left"
+	}, (props) => /*#__PURE__*/ React.createElement("div", _extends({
+	}, props, {
+		className: "bd-updater-button",
+		onClick: () => {},
+		onContextMenu: handleContextMenu,
+		"data-updates": count
+	}), /*#__PURE__*/ React.createElement(BDLogo, {
+		width: "28",
+		height: "28"
+	}))
+	)));
+} // @ts-ignore
+window.BDUpdater = {
+	useUpdaterStore
+};
+
+class UpdaterNode {
+	async update(showToast) {
+		await new Promise((res, rej) => {
+			fs$1.writeFile(this.addon.path, this.code, (error) => {
+				if (error) rej(error);
+				else res();
+			});
+		});
+		UpdaterApi.setState((state) => {
+			const updates = {
+				...state.updates
+			};
+			delete updates[this.addon.name];
+			return {
+				updates
+			};
+		});
+		if (showToast) this.showNotice();
+	}
+	showNotice() {
+		Toasts$1.show(`${this.addon.name} was updated from ${this.currentVersion} to ${this.remoteVersion}.`);
+	}
+	constructor(addon1, code, currentVersion, remoteVersion1, pending) {
+		Object.assign(this, {
+			code,
+			currentVersion,
+			remoteVersion: remoteVersion1,
+			addon: addon1,
+			pending
+		});
+	}
+}
+class AddonUpdater {
+	static getAddons(type) {
+		let manager = null;
+		switch (type) {
+			case "plugin": {
+				manager = PluginsManager;
+				break;
+			}
+			case "theme": {
+				manager = ThemesManager;
+				break;
+			}
+			default: {
+				Logger.error("AddonUpdater", `Unsupported addon type: ${type}`);
+			}
+		}
+		if (!manager) return;
+		var _updateUrl;
+		return Object.fromEntries(manager.addons.map((addon) => {
+			var ref,
+				ref1,
+				ref2;
+			return [
+				addon.name,
+				{
+					version: this.parseVersion(addon),
+					addon,
+					updateUrl: (_updateUrl = addon.updateUrl) !== null && _updateUrl !== void 0 ? _updateUrl : (ref = addon.instance) === null || ref === void 0 ? void 0 : (ref1 = ref._config) === null || ref1 === void 0 ? void 0 : (ref2 = ref1.info) === null || ref2 === void 0 ? void 0 : ref2.github_raw
+				}
+			];
+		}));
+	}
+	static parseVersionString(code1) {
+		var ref;
+		const version = (ref = code1.match(this.versionRegex)) === null || ref === void 0 ? void 0 : ref.toString();
+		if (!version) return null;
+		return version.replace(/['"]/g, "");
+	}
+	static parseVersion(addonOrString) {
+		var ref;
+		if (typeof addonOrString === "string") return this.parseVersionString(addonOrString);
+		if (addonOrString.version) return addonOrString.version;
+		var ref3;
+		if (typeof ((ref = addonOrString.instance) === null || ref === void 0 ? void 0 : ref.getVersion) === "function") return (ref3 = addonOrString.instance.getVersion()) !== null && ref3 !== void 0 ? ref3 : "0.0.0";
+		return "0.0.0";
+	}
+	static initialize() {
+		const wrapper = DOM.createElement("div", {
+			className: "bd-updater-wrapper"
+		});
+		DiscordModules.ReactDOM.render(React.createElement(UpdaterButton, {
+		}), wrapper);
+		document.body.appendChild(wrapper);
+		this.patchZlibUpdater();
+		this.checkAllUpdates();
+		setInterval(() => this.checkAllUpdates()
+			, 1800000); // 30minutes
+	}
+	static patchZlibUpdater() {
+		try {
+			const updater = window.PluginUpdater;
+			if (updater && typeof updater.checkAll === "function") {
+				updater.checkAll = async () => {};
+			}
+		} catch (error) {
+			Logger.error("AddonUpdater", "Failed to patch zlibrary updater:", error);
+		}
+	}
+	static async checkAllUpdates() {
+		let found = {
+		};
+		for (const type of [
+				"theme",
+				"plugin"
+		]) {
+			const addons = this.getAddons(type);
+			for (const addonId in addons) {
+				const {addon, updateUrl} = addons[addonId];
+				if (!updateUrl) {
+					Logger.warn(`AddonUpdater:${type}s`, `Could not resolve updating url for ${addonId}.`);
+					continue;
+				}
+				try {
+					const data = await this.fetchUpdate(addon, updateUrl);
+					if (data.pending)
+						found[addonId] = data;
+				} catch (error) {
+					Logger.error("AddonUpdater", `Failed to fetch update for ${addonId}:`, error);
+				}
+			}
+		}
+		if (Object.keys(found) == 0) return;
+		UpdaterApi.setState((state) => ({
+			updates: Object.assign({
+			}, state.updates, found)
+		})
+		);
+	}
+	static fetchUpdate(addon, url) {
+		return new Promise((resolve, rej) => {
+			request(url, (res) => {
+				const data = [];
+				res.on("data", (chunk) => data.push(chunk)
+				);
+				res.on("end", () => {
+					const raw = data.join("");
+					const remoteVersion = this.parseVersionString(raw);
+					const localVersion = this.parseVersion(addon);
+					const hasChanges = remoteVersion && this.compareVersions(remoteVersion, localVersion);
+					resolve(new UpdaterNode(addon, raw, localVersion, remoteVersion, hasChanges));
+				});
+				res.on("error", rej);
+			});
+		});
+	}
+	static compareVersions(version1, version2) {
+		// Very very lazy compare, I don't wanna bother with people versioning their addons like 1.   beta.aplha.24
+		return version1 !== version2;
+	}
+}
+AddonUpdater.versionRegex = /['"][0-9]+\.[0-9]+\.[0-9]+['"]/i;
+
+const EXPOSE_PROCESS_GLOBAL = "bdcompat-expose-process-global";
+
 /// <reference path="../../types.d.ts" />
 const SettingsSections = [
 	{
@@ -3274,11 +3889,11 @@ const SettingsSections = [
 	},
 	{
 		section: "HEADER",
-		label: "BDCompat"
+		label: "BetterDiscord"
 	},
 	{
 		id: "bdcompat-settings-settings",
-		section: "BDCompatSettings",
+		section: "settings",
 		label: "Settings",
 		className: "bdcompat-settings-item-settings",
 		element: () => DiscordModules.React.createElement(SettingsPanel, {
@@ -3286,7 +3901,7 @@ const SettingsSections = [
 	},
 	{
 		id: "bdcompat-settings-plugins",
-		section: "BDCompatPlugins",
+		section: "plugins",
 		label: "Plugins",
 		className: "bdcompat-settings-item-plugins",
 		element: () => DiscordModules.React.createElement(AddonPanel, {
@@ -3296,7 +3911,7 @@ const SettingsSections = [
 	},
 	{
 		id: "bdcompat-settings-themes",
-		section: "BDCompatThemes",
+		section: "themes",
 		label: "Themes",
 		className: "bdcompat-settings-item-themes",
 		element: () => DiscordModules.React.createElement(AddonPanel, {
@@ -3305,6 +3920,9 @@ const SettingsSections = [
 		})
 	}
 ];
+if (!window.process) {
+	BDCompatNative.IPC.dispatch(EXPOSE_PROCESS_GLOBAL);
+}
 var index = new class BDCompat {
 	start() {
 		Webpack.whenReady.then(this.onStart.bind(this));
@@ -3324,6 +3942,7 @@ var index = new class BDCompat {
 		this.appendStyles();
 		ThemesManager.initialize();
 		PluginsManager.initialize();
+		AddonUpdater.initialize();
 	}
 	exposeBdApi() {
 		Object.freeze(BdApi);
@@ -3352,12 +3971,10 @@ var index = new class BDCompat {
 		};
 	}
 	appendStyles() {
-		const root = BDCompatNative.executeJS(`require("path").resolve(__dirname, "..")`, new Error().stack);
-		for (const [index, style] of this.styles.entries()) {
-			const location = path.resolve(root, "src", "renderer", style);
-			if (!fs$1.existsSync(location)) return Logger.error("Styles", `The stylesheet at ${location} doesn't exists.`);
-			DOM.injectCSS("BDCompat-internal" + index, fs$1.readFileSync(location, "utf8"));
-		}
+		const dist = BDCompatNative.executeJS("__dirname", new Error().stack);
+		const stylesPath = path.resolve(dist, "style.css");
+		if (!fs$1.existsSync(stylesPath)) return;
+		DOM.injectCSS("core", fs$1.readFileSync(stylesPath, "utf8"));
 	}
 	patchSettingsView() {
 		const SettingsView = Webpack.findByDisplayName("SettingsView");
