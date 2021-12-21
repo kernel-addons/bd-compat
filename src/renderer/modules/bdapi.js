@@ -116,7 +116,7 @@ export default class BdApi {
                     }
                 })
             );
-        };  
+        };
 
         if (typeof (before) === "function") makePatch("before", before);
         if (typeof (after) === "function") makePatch("after", after);
@@ -169,4 +169,10 @@ export default class BdApi {
             }
         }).observe(document, {childList: true, subtree: true});
     }
-}
+};
+
+Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {
+    descriptors[key] = Object.assign({}, Object.getOwnPropertyDescriptor(BdApi, key), {enumerable: true});
+
+    return descriptors;
+}, {}));
