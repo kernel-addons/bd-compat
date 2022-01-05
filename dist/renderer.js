@@ -1782,6 +1782,45 @@ class EventEmitter {
 	}
 }
 
+class RequestResponse extends Response {
+	get headers() {
+		return this._res.headers;
+	}
+	get url() {
+		return this._url;
+	}
+	get type() {
+		return this._type;
+	}
+	get statusCode() {
+		return this._res.statusCode;
+	}
+	constructor({res: res1, body: body1, url: url1, type}) {
+		super(body1, {
+			statusText: res1.statusMessage,
+			status: res1.status
+		});
+		this._res = res1;
+		this._url = url1;
+		this._type = type;
+	}
+}
+try {
+	BDCompatNative.executeJS(`
+        window.__REQUEST_RES_RET__ = [
+            "request", 
+            "headers", 
+            "body", 
+            "statusCode",
+            "rawHeaders",
+            "statusMessage",
+            "url",
+            "complete"
+        ];
+    `);
+} catch (error1) {
+	console.error("[BDCompat] Fatal Error: Could not define request properties:", error1);
+}
 const request$1 = function(url, options, callback, method = "") {
 	if (typeof options === "function") {
 		callback = options;
@@ -1789,19 +1828,12 @@ const request$1 = function(url, options, callback, method = "") {
 	const eventName = "request-" + Math.random().toString(36).slice(2, 10);
 	BDCompatNative.IPC.once(eventName, (error, res, body) => {
 		res = JSON.parse(res);
-		const resp = new Response(body, res);
-		Object.defineProperties(resp, {
-			url: {
-				value: url
-			},
-			type: {
-				value: method.toLowerCase() || "default"
-			},
-			headers: {
-				value: Object.fromEntries(Array.from(resp.headers))
-			}
+		const resp = new RequestResponse({
+			body,
+			res,
+			url,
+			type: method.toLowerCase() || "default"
 		});
-		Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
 		callback(error, resp, body);
 	});
 	return BDCompatNative.executeJS(`
@@ -1809,8 +1841,10 @@ const request$1 = function(url, options, callback, method = "") {
         const method = "${method}";
 
         (method ? request[method] : request)("${url}", ${JSON.stringify(options)}, (error, res, body) => {
-            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(res), body);   
-            delete BDCompatEvents["${eventName}"]; // No memory leak    
+            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res[e]]));
+            
+            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
+            delete BDCompatEvents["${eventName}"]; // No memory leak
         });
     `, new Error().stack);
 };
@@ -1819,7 +1853,8 @@ Object.assign(request$1, Object.fromEntries([
 	"put",
 	"post",
 	"delete",
-	"head"
+	"head",
+	"del"
 ].map((method) => [
 	method,
 	function(url, options, callback) {
@@ -1894,6 +1929,8 @@ var url = {
     `, new Error().stack)
 };
 
+const os = BDCompatNative.executeJS(`require("os")`);
+
 function Require(mod) {
 	switch (mod) {
 		case "fs":
@@ -1915,6 +1952,8 @@ function Require(mod) {
 			return mimeTypes;
 		case "url":
 			return url;
+		case "os":
+			return os;
 		default:
 			console.warn(`${mod} was not found!`);
 	}
