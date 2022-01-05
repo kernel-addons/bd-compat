@@ -1793,7 +1793,7 @@ class RequestResponse extends Response {
 		return this._type;
 	}
 	get statusCode() {
-		return this.res.status;
+		return this._res.statusCode;
 	}
 	constructor({res: res1, body: body1, url: url1, type}) {
 		super(body1, {
@@ -1834,7 +1834,6 @@ const request$1 = function(url, options, callback, method = "") {
 			url,
 			type: method.toLowerCase() || "default"
 		});
-		Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
 		callback(error, resp, body);
 	});
 	return BDCompatNative.executeJS(`
@@ -1843,7 +1842,7 @@ const request$1 = function(url, options, callback, method = "") {
 
         (method ? request[method] : request)("${url}", ${JSON.stringify(options)}, (error, res, body) => {
             const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res[e]]));
-
+            
             BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
             delete BDCompatEvents["${eventName}"]; // No memory leak
         });

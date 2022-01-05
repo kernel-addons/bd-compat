@@ -11,7 +11,7 @@ export class RequestResponse extends Response {
     get headers() {return this._res.headers;}
     get url() {return this._url;}
     get type() {return this._type;}
-    get statusCode() {return this.res.status;}
+    get statusCode() {return this._res.statusCode;}
 }
 
 try {
@@ -43,8 +43,6 @@ const request = function (url, options, callback, method = "") {
             body, res, url,
             type: method.toLowerCase() || "default"
         });   
-        
-        Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
 
         callback(error, resp, body);
     });
@@ -55,7 +53,7 @@ const request = function (url, options, callback, method = "") {
 
         (method ? request[method] : request)("${url}", ${JSON.stringify(options)}, (error, res, body) => {
             const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res[e]]));
-
+            
             BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
             delete BDCompatEvents["${eventName}"]; // No memory leak
         });
