@@ -1783,6 +1783,45 @@ class EventEmitter {
 	}
 }
 
+class RequestResponse extends Response {
+	get headers() {
+		return this._res.headers;
+	}
+	get url() {
+		return this._url;
+	}
+	get type() {
+		return this._type;
+	}
+	get statusCode() {
+		return this._res.statusCode;
+	}
+	constructor({res: res1, body: body1, url: url1, type}) {
+		super(body1, {
+			statusText: res1.statusMessage,
+			status: res1.status
+		});
+		this._res = res1;
+		this._url = url1;
+		this._type = type;
+	}
+}
+try {
+	BDCompatNative.executeJS(`
+        window.__REQUEST_RES_RET__ = [
+            "request", 
+            "headers", 
+            "body", 
+            "statusCode",
+            "rawHeaders",
+            "statusMessage",
+            "url",
+            "complete"
+        ];
+    `);
+} catch (error1) {
+	console.error("[BDCompat] Fatal Error: Could not define request properties:", error1);
+}
 const request$1 = function(url, options, callback, method = "") {
 	if (typeof options === "function") {
 		callback = options;
@@ -1790,19 +1829,12 @@ const request$1 = function(url, options, callback, method = "") {
 	const eventName = "request-" + Math.random().toString(36).slice(2, 10);
 	BDCompatNative.IPC.once(eventName, (error, res, body) => {
 		res = JSON.parse(res);
-		const resp = new Response(body, res);
-		Object.defineProperties(resp, {
-			url: {
-				value: url
-			},
-			type: {
-				value: method.toLowerCase() || "default"
-			},
-			headers: {
-				value: Object.fromEntries(Array.from(resp.headers))
-			}
+		const resp = new RequestResponse({
+			body,
+			res,
+			url,
+			type: method.toLowerCase() || "default"
 		});
-		Object.assign(resp, _.omit(res, "body", "headers", "ok", "status"));
 		callback(error, resp, body);
 	});
 	return BDCompatNative.executeJS(`
@@ -1810,8 +1842,10 @@ const request$1 = function(url, options, callback, method = "") {
         const method = "${method}";
 
         (method ? request[method] : request)("${url}", ${JSON.stringify(options)}, (error, res, body) => {
-            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(res), body);   
-            delete BDCompatEvents["${eventName}"]; // No memory leak    
+            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res[e]]));
+            
+            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
+            delete BDCompatEvents["${eventName}"]; // No memory leak
         });
     `, new Error().stack);
 };
@@ -1820,7 +1854,8 @@ Object.assign(request$1, Object.fromEntries([
 	"put",
 	"post",
 	"delete",
-	"head"
+	"head",
+	"del"
 ].map((method) => [
 	method,
 	function(url, options, callback) {
@@ -2519,7 +2554,7 @@ function AddonPanel({type, manager}) {
 					},
 					body: React.createElement(React.Fragment, {
 						children: [
-							`The following ${type}${pendingUpdates.length > 1 ? "s" : ""} need to be updated:`,
+							`The following ${type}${pendingUpdates.length > 1 ? "s" : ""} needs to be updated:`,
 							React.createElement("br"),
 							formatter.format(pendingUpdates)
 						]
@@ -3836,11 +3871,19 @@ class AddonUpdater {
 		return version.replace(/['"]/g, "");
 	}
 	static parseVersion(addonOrString) {
-		var ref;
+		var ref,
+			ref3,
+			ref4,
+			ref5,
+			ref6,
+			ref7,
+			ref8;
 		if (typeof addonOrString === "string") return this.parseVersionString(addonOrString);
+		// Fix some plugins. :zere_zoom:
+		if ((ref = addonOrString.instance) === null || ref === void 0 ? void 0 : (ref3 = ref._config) === null || ref3 === void 0 ? void 0 : (ref4 = ref3.info) === null || ref4 === void 0 ? void 0 : ref4.version) return (ref5 = addonOrString.instance) === null || ref5 === void 0 ? void 0 : (ref6 = ref5._config) === null || ref6 === void 0 ? void 0 : (ref7 = ref6.info) === null || ref7 === void 0 ? void 0 : ref7.version;
 		if (addonOrString.version) return addonOrString.version;
-		var ref3;
-		if (typeof ((ref = addonOrString.instance) === null || ref === void 0 ? void 0 : ref.getVersion) === "function") return (ref3 = addonOrString.instance.getVersion()) !== null && ref3 !== void 0 ? ref3 : "0.0.0";
+		var ref9;
+		if (typeof ((ref8 = addonOrString.instance) === null || ref8 === void 0 ? void 0 : ref8.getVersion) === "function") return (ref9 = addonOrString.instance.getVersion()) !== null && ref9 !== void 0 ? ref9 : "0.0.0";
 		return "0.0.0";
 	}
 	static initialize() {
