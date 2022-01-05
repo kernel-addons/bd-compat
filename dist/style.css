@@ -1,34 +1,3 @@
-.bd-category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.bd-category-header > h2 {
-  margin-bottom: 0;
-  cursor: pointer;
-}
-
-.bd-category-body {
-  padding-left: 10px;
-}
-
-.bd-collection-title svg {
-  margin-right: 5px;
-}
-
-.bd-collection-title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.bd-category-disabled {
-  opacity: 0.6;
-}
-
 .bdcompat-addon-panel, .bdcompat-settings-panel {
   color: #ddd;
 }
@@ -138,6 +107,37 @@
 
 .marginBottom20 {
   margin-bottom: 20px;
+}
+
+.bd-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.bd-category-header > h2 {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.bd-category-body {
+  padding-left: 10px;
+}
+
+.bd-collection-title svg {
+  margin-right: 5px;
+}
+
+.bd-collection-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bd-category-disabled {
+  opacity: 0.6;
 }
 
 .bd-toasts {

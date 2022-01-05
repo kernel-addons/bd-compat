@@ -1930,6 +1930,8 @@ var url = {
     `, new Error().stack)
 };
 
+const os = BDCompatNative.executeJS(`require("os")`);
+
 function Require(mod) {
 	switch (mod) {
 		case "fs":
@@ -1951,6 +1953,8 @@ function Require(mod) {
 			return mimeTypes;
 		case "url":
 			return url;
+		case "os":
+			return os;
 		default:
 			console.warn(`${mod} was not found!`);
 	}
