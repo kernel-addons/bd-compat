@@ -1479,6 +1479,7 @@ class ThemesManager {
 		if (!theme || !theme.element || !DOM.head.contains(theme.element)) return;
 		theme.element.remove();
 		delete theme.element;
+		delete theme.css;
 		if (showToast3) {
 			Logger.log("ThemesManager", `${theme.name} has been removed!`);
 			Toasts$1.show(`${theme.name} has been removed!`, {
@@ -1488,9 +1489,9 @@ class ThemesManager {
 	}
 	static reloadAddon(addon3) {
 		const theme = this.resolve(addon3);
-		if (!theme) return;
-		this.removeTheme(theme, false);
-		this.applyTheme(theme, false);
+		if (!theme || !this.isEnabled(theme)) return;
+		this.unloadAddon(theme, false);
+		this.loadTheme(theme.path, false);
 		Logger.log("ThemesManager", `${theme.name} was reloaded!`);
 		Toasts$1.show(`${theme.name} was reloaded!`, {
 			type: "success"
@@ -2308,7 +2309,10 @@ function SupportIcons({addon}) {
 			size: Button.Sizes.NONE,
 			onClick: type === "invite" ? openSupportServer : handleClick,
 			className: "bd-addon-support-button"
-		}), /*#__PURE__*/ React.createElement(Icon, null))
+		}), /*#__PURE__*/ React.createElement(Icon, {
+			width: "20",
+			height: "20"
+		}))
 		));
 	})));
 }
@@ -2447,6 +2451,13 @@ function AddonPanel({type, manager}) {
 	const [pluginSettings, setPluginSettings] = React.useState(null);
 	const Button = Components.byProps("DropdownSizes");
 	const Caret = Components.get("Caret");
+	const FormNotice = Components.get("FormNotice");
+	const pendingUpdates = useUpdaterStore((s) => Object.keys(s.updates)
+	);
+	const formatter = new Intl.ListFormat(document.documentElement.lang, {
+		style: "long",
+		type: "conjunction"
+	});
 	React.useEffect(() => manager.on("updated", () => forceUpdate()
 	)
 		, [
@@ -2495,45 +2506,65 @@ function AddonPanel({type, manager}) {
 				children: pluginSettings.element
 			}) : React.createElement("div", {
 				className: "bdcompat-addon-panel-list"
-			}, manager.addons.map((addon) => {
-				var ref;
-				return React.createElement(AddonCard, {
-					addon,
-					manager,
-					type,
-					key: addon.name,
-					hasSettings: typeof ((ref = addon.instance) === null || ref === void 0 ? void 0 : ref.getSettingsPanel) === "function",
-					openSettings: () => {
-						let element;
-						try {
-							element = addon.instance.getSettingsPanel.apply(addon.instance, []);
-						} catch (error) {
-							Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
-							return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-								type: "error"
+			}, [
+				pendingUpdates.length ? React.createElement(FormNotice, {
+					key: "update-notice",
+					type: FormNotice.Types.BRAND,
+					className: "marginBottom20",
+					title: `Outdated ${type[0].toUpperCase() + type.slice(1)}${pendingUpdates.length > 1 ? "s" : ""}`,
+					imageData: {
+						src: "/assets/6e97f6643e7df29b26571d96430e92f4.svg",
+						width: 60,
+						height: 60
+					},
+					body: React.createElement(React.Fragment, {
+						children: [
+							`The following ${type}${pendingUpdates.length > 1 ? "s" : ""} need to be updated:`,
+							React.createElement("br"),
+							formatter.format(pendingUpdates)
+						]
+					})
+				}) : null,
+				manager.addons.map((addon) => {
+					var ref;
+					return React.createElement(AddonCard, {
+						addon,
+						manager,
+						type,
+						key: addon.name,
+						hasSettings: typeof ((ref = addon.instance) === null || ref === void 0 ? void 0 : ref.getSettingsPanel) === "function",
+						openSettings: () => {
+							let element;
+							try {
+								element = addon.instance.getSettingsPanel.apply(addon.instance, []);
+							} catch (error) {
+								Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
+								return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
+									type: "error"
+								});
+							}
+							if (Element.prototype.isPrototypeOf(element))
+								element = React.createElement(DOMWrapper, {
+								}, element);
+							else if (typeof element === "function")
+								element = React.createElement(element, {
+								});
+							// Bruh
+							if (!element) {
+								Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
+								return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
+									type: "error"
+								});
+							}
+							if (!element) return;
+							setPluginSettings({
+								name: addon.name,
+								element
 							});
 						}
-						if (Element.prototype.isPrototypeOf(element))
-							element = React.createElement(DOMWrapper, {
-							}, element);
-						else if (typeof element === "function")
-							element = React.createElement(element, {
-							});
-						// Bruh
-						if (!element) {
-							Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
-							return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-								type: "error"
-							});
-						}
-						if (!element) return;
-						setPluginSettings({
-							name: addon.name,
-							element
-						});
-					}
-				});
-			}))
+					});
+				})
+			])
 		]
 	});
 }

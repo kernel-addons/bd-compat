@@ -75,6 +75,8 @@ export default class AddonUpdater {
 
     static parseVersion(addonOrString: any) {
         if (typeof (addonOrString) === "string") return this.parseVersionString(addonOrString);
+        // Fix some plugins. :zere_zoom:
+        if (addonOrString.instance?._config?.info?.version) return addonOrString.instance?._config?.info?.version;
         if (addonOrString.version) return addonOrString.version;
         if (typeof (addonOrString.instance?.getVersion) === "function") return addonOrString.instance.getVersion() ?? "0.0.0";
 

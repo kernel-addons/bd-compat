@@ -149,6 +149,7 @@ export default class ThemesManager {
 
         theme.element.remove();
         delete theme.element;
+        delete theme.css;
 
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} has been removed!`);
@@ -158,10 +159,10 @@ export default class ThemesManager {
 
     static reloadAddon(addon) {
         const theme = this.resolve(addon);
-        if (!theme) return;
+        if (!theme || !this.isEnabled(theme)) return;
 
-        this.removeTheme(theme, false);
-        this.applyTheme(theme, false);
+        this.unloadAddon(theme, false);
+        this.loadTheme(theme.path, false);
 
         Logger.log("ThemesManager", `${theme.name} was reloaded!`);
         Toasts.show(`${theme.name} was reloaded!`, {type: "success"});

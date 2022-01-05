@@ -149,7 +149,7 @@ export function SupportIcons({addon}) {
                                     onClick={type === "invite" ? openSupportServer : handleClick}
                                     className="bd-addon-support-button"
                                 >
-                                    <Icon />
+                                    <Icon width="20" height="20" />
                                 </Button>
                             )}
                         </DiscordModules.Tooltips.default>

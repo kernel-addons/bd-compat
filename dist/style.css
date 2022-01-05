@@ -136,6 +136,10 @@
   margin-left: auto;
 }
 
+.marginBottom20 {
+  margin-bottom: 20px;
+}
+
 .bd-toasts {
   position: fixed;
   bottom: 20px;
