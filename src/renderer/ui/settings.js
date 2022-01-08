@@ -1,7 +1,8 @@
-import DiscordModules from "../modules/discord.js";
+import DiscordModules from "../modules/discord";
 import SettingsManager from "../modules/settingsmanager";
-import Utilities from "../modules/utilities.js";
-import Components from "./components.js";
+import Utilities from "../modules/utilities";
+import Components from "./components";
+import ChannelCategory from "./icons/channelcategory";
 import "./settings.scss";
 
 export function SwitchItem({id, name, ...props}) {
@@ -50,7 +51,7 @@ export function Category({name, requires, items}) {
 }
 
 export default function SettingsPanel() {
-    const [ChannelCategory, FormTitle] = Components.bulk("SettingsPanel", "ChannelCategory", "FormTitle");
+    const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
 
     return DiscordModules.React.createElement("div", {
         className: "bdcompat-settings-panel",
