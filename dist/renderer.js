@@ -1999,6 +1999,35 @@ var _cache = {
 	}
 };
 
+function _extends$b() {
+	_extends$b = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$b.apply(this, arguments);
+}
+function ColorPalette(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$b({
+		xmlns: "http://www.w3.org/2000/svg",
+		height: "16",
+		viewBox: "0 0 24 24",
+		width: "16",
+		fill: "currentColor"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+	})));
+}
+
 function _extends$a() {
 	_extends$a = Object.assign || function(target) {
 		for (var i = 1; i < arguments.length; i++) {
@@ -2013,7 +2042,7 @@ function _extends$a() {
 	};
 	return _extends$a.apply(this, arguments);
 }
-function ColorPalette(props) {
+function Extension(props) {
 	return ( /*#__PURE__*/ React.createElement("svg", _extends$a({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "16",
@@ -2024,7 +2053,7 @@ function ColorPalette(props) {
 		d: "M0 0h24v24H0z",
 		fill: "none"
 	}), /*#__PURE__*/ React.createElement("path", {
-		d: "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+		d: "M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"
 	})));
 }
 
@@ -2042,18 +2071,18 @@ function _extends$9() {
 	};
 	return _extends$9.apply(this, arguments);
 }
-function Extension(props) {
+function Globe(props) {
 	return ( /*#__PURE__*/ React.createElement("svg", _extends$9({
 		xmlns: "http://www.w3.org/2000/svg",
-		height: "16",
+		height: "24",
 		viewBox: "0 0 24 24",
-		width: "16",
+		width: "24",
 		fill: "currentColor"
 	}, props), /*#__PURE__*/ React.createElement("path", {
 		d: "M0 0h24v24H0z",
 		fill: "none"
 	}), /*#__PURE__*/ React.createElement("path", {
-		d: "M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"
+		d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
 	})));
 }
 
@@ -2071,18 +2100,16 @@ function _extends$8() {
 	};
 	return _extends$8.apply(this, arguments);
 }
-function Globe(props) {
+function Github(props) {
 	return ( /*#__PURE__*/ React.createElement("svg", _extends$8({
-		xmlns: "http://www.w3.org/2000/svg",
-		height: "24",
-		viewBox: "0 0 24 24",
 		width: "24",
-		fill: "currentColor"
+		height: "24",
+		role: "img",
+		xmlns: "http://www.w3.org/2000/svg",
+		viewBox: "0 0 496 512"
 	}, props), /*#__PURE__*/ React.createElement("path", {
-		d: "M0 0h24v24H0z",
-		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
-		d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
+		fill: "currentColor",
+		d: "M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
 	})));
 }
 
@@ -2100,16 +2127,18 @@ function _extends$7() {
 	};
 	return _extends$7.apply(this, arguments);
 }
-function Github(props) {
+function Help(props) {
 	return ( /*#__PURE__*/ React.createElement("svg", _extends$7({
-		width: "24",
-		height: "24",
-		role: "img",
 		xmlns: "http://www.w3.org/2000/svg",
-		viewBox: "0 0 496 512"
+		height: "24",
+		viewBox: "0 0 24 24",
+		width: "24",
+		fill: "currentColor"
 	}, props), /*#__PURE__*/ React.createElement("path", {
-		fill: "currentColor",
-		d: "M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
+		d: "M0 0h24v24H0z",
+		fill: "none"
+	}), /*#__PURE__*/ React.createElement("path", {
+		d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
 	})));
 }
 
@@ -2127,19 +2156,20 @@ function _extends$6() {
 	};
 	return _extends$6.apply(this, arguments);
 }
-function Help(props) {
+function Donate(props) {
 	return ( /*#__PURE__*/ React.createElement("svg", _extends$6({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "24",
 		viewBox: "0 0 24 24",
 		width: "24",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("path", {
-		d: "M0 0h24v24H0z",
-		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
-		d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
-	})));
+	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("rect", {
+		fill: "none",
+		height: "24",
+		width: "24"
+	})), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
+		d: "M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12.88,17.76V19h-1.75v-1.29 c-0.74-0.18-2.39-0.77-3.02-2.96l1.65-0.67c0.06,0.22,0.58,2.09,2.4,2.09c0.93,0,1.98-0.48,1.98-1.61c0-0.96-0.7-1.46-2.28-2.03 c-1.1-0.39-3.35-1.03-3.35-3.31c0-0.1,0.01-2.4,2.62-2.96V5h1.75v1.24c1.84,0.32,2.51,1.79,2.66,2.23l-1.58,0.67 c-0.11-0.35-0.59-1.34-1.9-1.34c-0.7,0-1.81,0.37-1.81,1.39c0,0.95,0.86,1.31,2.64,1.9c2.4,0.83,3.01,2.05,3.01,3.45 C15.9,17.17,13.4,17.67,12.88,17.76z"
+	}))));
 }
 
 function _extends$5() {
@@ -2156,38 +2186,8 @@ function _extends$5() {
 	};
 	return _extends$5.apply(this, arguments);
 }
-function Donate(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$5({
-		xmlns: "http://www.w3.org/2000/svg",
-		height: "24",
-		viewBox: "0 0 24 24",
-		width: "24",
-		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("rect", {
-		fill: "none",
-		height: "24",
-		width: "24"
-	})), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
-		d: "M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12.88,17.76V19h-1.75v-1.29 c-0.74-0.18-2.39-0.77-3.02-2.96l1.65-0.67c0.06,0.22,0.58,2.09,2.4,2.09c0.93,0,1.98-0.48,1.98-1.61c0-0.96-0.7-1.46-2.28-2.03 c-1.1-0.39-3.35-1.03-3.35-3.31c0-0.1,0.01-2.4,2.62-2.96V5h1.75v1.24c1.84,0.32,2.51,1.79,2.66,2.23l-1.58,0.67 c-0.11-0.35-0.59-1.34-1.9-1.34c-0.7,0-1.81,0.37-1.81,1.39c0,0.95,0.86,1.31,2.64,1.9c2.4,0.83,3.01,2.05,3.01,3.45 C15.9,17.17,13.4,17.67,12.88,17.76z"
-	}))));
-}
-
-function _extends$4() {
-	_extends$4 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
-		}
-		return target;
-	};
-	return _extends$4.apply(this, arguments);
-}
 function Patreon(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$4({
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$5({
 		width: "24",
 		height: "24",
 		xmlns: "http://www.w3.org/2000/svg",
@@ -2203,8 +2203,8 @@ const [useUpdaterStore, UpdaterApi] = createStore({
 	}
 });
 
-function _extends$3() {
-	_extends$3 = Object.assign || function(target) {
+function _extends$4() {
+	_extends$4 = Object.assign || function(target) {
 		for (var i = 1; i < arguments.length; i++) {
 			var source = arguments[i];
 			for (var key in source) {
@@ -2215,7 +2215,7 @@ function _extends$3() {
 		}
 		return target;
 	};
-	return _extends$3.apply(this, arguments);
+	return _extends$4.apply(this, arguments);
 }
 function Icon1({name, ...props}) {
 	const Component = Components.get(name);
@@ -2342,7 +2342,7 @@ function SupportIcons({addon}) {
 			text: label,
 			position: "top",
 			key: type
-		}, (props) => /*#__PURE__*/ React.createElement(Button, _extends$3({
+		}, (props) => /*#__PURE__*/ React.createElement(Button, _extends$4({
 		}, props, {
 			look: Button.Looks.BLANK,
 			size: Button.Sizes.NONE,
@@ -2608,6 +2608,34 @@ function AddonPanel({type, manager}) {
 	});
 }
 
+function _extends$3() {
+	_extends$3 = Object.assign || function(target) {
+		for (var i = 1; i < arguments.length; i++) {
+			var source = arguments[i];
+			for (var key in source) {
+				if (Object.prototype.hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	};
+	return _extends$3.apply(this, arguments);
+}
+function ChannelCategory(props) {
+	return ( /*#__PURE__*/ React.createElement("svg", _extends$3({
+		width: "16",
+		height: "16",
+		viewBox: "0 0 16 16",
+		xmlns: "http://www.w3.org/2000/svg"
+	}, props), /*#__PURE__*/ React.createElement("path", {
+		transform: "translate(2.000000, 2.000000)",
+		fillRule: "nonzero",
+		fill: "currentColor",
+		d: "M4,0 L4,3 L0,3 L0,0 L4,0 Z M12,4 L12,7 L8,7 L8,4 L12,4 Z M8,9 L12,9 L12,12 L8,12 L8,9.33333333 L8,9 Z M7,7 L3,7 L3,10 L7,10 L7,12 L3,12 L1,12 L1,4 L3,4 L3,5 L7,5 L7,7 Z"
+	})));
+}
+
 function _extends$2() {
 	_extends$2 = Object.assign || function(target) {
 		for (var i = 1; i < arguments.length; i++) {
@@ -2684,7 +2712,7 @@ function Category({name, requires, items}) {
 	}, isOpened && renderItems(items))));
 }
 function SettingsPanel() {
-	const [ChannelCategory, FormTitle] = Components.bulk("SettingsPanel", "ChannelCategory", "FormTitle");
+	const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
 	return DiscordModules.React.createElement("div", {
 		className: "bdcompat-settings-panel",
 		children: [
