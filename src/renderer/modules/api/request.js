@@ -1,3 +1,5 @@
+import BufferModule from "./buffer";
+
 export class RequestResponse extends Response {
     constructor({res, body, url, type}) {
         super(body, {
@@ -12,6 +14,8 @@ export class RequestResponse extends Response {
     get url() {return this._url;}
     get type() {return this._type;}
     get statusCode() {return this._res.statusCode;}
+    get status() {return this.statusCode;}
+    get ok() {return this.status >= 200 && this.status <= 299;}
 }
 
 try {
@@ -38,6 +42,8 @@ const request = function (url, options, callback, method = "") {
 
     const eventName = "request-" + Math.random().toString(36).slice(2, 10);
     BDCompatNative.IPC.once(eventName, (error, res, body) => {
+        if (body instanceof Uint8Array) body = BufferModule.Buffer.from(body);
+
         res = JSON.parse(res);
         const resp = new RequestResponse({
             body, res, url,
@@ -51,11 +57,10 @@ const request = function (url, options, callback, method = "") {
         const request = require("request");
         const method = "${method}";
 
-        (method ? request[method] : request)("${url}", ${JSON.stringify(options)}, (error, res, body) => {
-            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res[e]]));
+        (method ? request[method] : request)(${JSON.stringify(url)}, ${JSON.stringify(options)}, (error, res, body) => {
+            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res?.[e]]));
             
             BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
-            delete BDCompatEvents["${eventName}"]; // No memory leak
         });
     `, new Error().stack);
 };

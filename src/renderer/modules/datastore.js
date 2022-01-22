@@ -53,7 +53,7 @@ export default class DataStore {
     }
 
     static tryLoadPluginData(pluginName) {
-        this.pluginData[pluginName] = {};
+        if (this.pluginData[pluginName]) return this.pluginData[pluginName];
         const config = path.join(this.pluginsFolder, `${pluginName}.config.json`);
 
         try {

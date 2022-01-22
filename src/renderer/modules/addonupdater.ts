@@ -9,6 +9,8 @@ import fs from "./api/fs";
 import {UpdaterApi} from "../stores/updater";
 import Toasts from "./toasts";
 
+const warnings = new Set();
+
 export class UpdaterNode {
     code: string;
     currentVersion: string;
@@ -116,7 +118,10 @@ export default class AddonUpdater {
                 const {addon, updateUrl} = addons[addonId];
 
                 if (!updateUrl) {
-                    Logger.warn(`AddonUpdater:${type}s`, `Could not resolve updating url for ${addonId}.`);
+                    if (!warnings.has(addonId)) {
+                        Logger.warn(`AddonUpdater:${type}s`, `Could not resolve updating url for ${addonId}.`);
+                        warnings.add(addonId);
+                    }
                     continue;
                 }
 

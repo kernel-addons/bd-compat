@@ -5,6 +5,9 @@
   "main": "main.js",
   "scripts": {
     "build-renderer": "rollup -c --mode=renderer",
+    "watch-renderer": "rollup -c -w --mode=renderer",
+    "watch-preload": "rollup -c -w --mode=preload",
+    "watch-main": "rollup -c -w --mode=main",
     "build-main": "rollup -c --mode=main",
     "build-preload": "rollup -c --mode=preload",
     "dist": "npm run build-renderer && npm run build-main && npm run build-preload"

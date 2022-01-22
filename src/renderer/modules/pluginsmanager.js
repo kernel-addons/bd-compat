@@ -90,7 +90,7 @@ export default class PluginsManager {
     }
 
     static compile(filecontent, name, location) {
-        return `(function (module, exports, __dirname, __filename, global) {\n${filecontent}\nif (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}\n})\n//# sourceURL=${_.escape(location)}`;
+        return `(function (module, exports, __dirname, __filename, global) {\n${filecontent}\nif (module.exports["${name}"]) {module.exports = module.exports["${name}"];}\nif (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}\n})\n//# sourceURL=${_.escape(location)}`;
     }
 
     static resolve(idOrFileOrAddon) {
@@ -108,18 +108,20 @@ export default class PluginsManager {
 
         if (this.resolve(meta.name) || this.resolve(meta.filename)) throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 
-        let exports = {};
-        try {window.eval(this.compile(filecontent, meta.name, location))(exports, exports, path.dirname(location), location, window);}
+        let module = {exports: {}};
+        try {window.eval(this.compile(filecontent, meta.name, location))(module, module.exports, path.dirname(location), location, window);}
         catch (error) {
             Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
         }
         
-        meta.exports = exports.toString().split(" ")[0] === "class"
-            ? exports
-            : exports.__esModule
-                ? (exports.default || exports.exports.default)
-                : exports.exports;
+        meta.exports = module.exports.toString().split(" ")[0] === "class"
+            ? module.exports
+            : module.exports?.__esModule
+                ? (module.exports.default || module.exports.exports.default)
+                : module.exports.exports;
 
+        if (typeof meta.exports !== "function") throw "Plugin had no exports.";
+        
         try {
             const instance = new meta.exports(meta);
             meta.instance = instance;

@@ -7,6 +7,7 @@ import * as https from "./api/https.js";
 import mimeTypes from "./api/mime-types.ts";
 import url from "./api/url.ts";
 import os from "./api/os";
+import Buffer from "./api/buffer";
 
 export default function (mod) {
     switch (mod) {
@@ -21,6 +22,7 @@ export default function (mod) {
         case "mime-types": return mimeTypes;
         case "url": return url;
         case "os": return os;
+        case "buffer": return Buffer;
 
         default: console.warn(`${mod} was not found!`);
     }

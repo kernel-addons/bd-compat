@@ -10,6 +10,8 @@ const IPC = {
         if (!events[event]) return;
 
         events[event].delete(callback);
+
+        if (!events[event].size) delete events[event];
     },
     once(event: string, callback: Function) {
         const unsubscribe = IPC.on(event, (...args) => {

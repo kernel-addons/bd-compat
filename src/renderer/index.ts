@@ -14,7 +14,7 @@ import Toasts from "./modules/toasts.js";
 import Webpack from "./modules/webpack";
 import AddonPanel from "./ui/addonpanel.js";
 import SettingsPanel from "./ui/settings.js";
-import {Buffer} from "./modules/buffer.js";
+import Buffer, {setBuffer} from "./modules/api/buffer";
 import Logger from "./modules/logger.js";
 import SettingsManager from "./modules/settingsmanager.js";
 import AddonUpdater from "./modules/addonupdater.js";
@@ -56,13 +56,17 @@ if (!window.process) {
 export default new class BDCompat {
     styles = ["./ui/toast.css", "./ui/addons.css", "./ui/settings.css"];
 
-    start() {Webpack.whenReady.then(this.onStart.bind(this));}
+    start() {
+        Logger.log("Core", "Loading...");
+        Webpack.whenReady.then(this.onStart.bind(this));
+    }
 
     onStart() {
         this.polyfillWebpack();
+        setBuffer(Webpack.findByProps("Buffer"));
         Object.assign(window, {
             require: Require,
-            Buffer: Buffer,
+            Buffer: Buffer.Buffer,
             React: DiscordModules.React
         });
 
