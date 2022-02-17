@@ -15,7 +15,6 @@ specifiers:
 
 dependencies:
   buffer: 6.0.3
-  rollup-plugin-scss: 3.0.0
 
 devDependencies:
   '@rollup/plugin-json': 4.1.0_rollup@2.60.0
@@ -24,6 +23,7 @@ devDependencies:
   esformatter-quotes: 1.1.0
   rollup: 2.60.0
   rollup-plugin-esformatter: 2.0.1_rollup@2.60.0
+  rollup-plugin-scss: 3.0.0
   rollup-plugin-swc: 0.2.0_@swc+core@1.2.109+rollup@2.60.0
   rollup-plugin-uglify: 6.0.4_rollup@2.60.0
   sass: 1.44.0
@@ -525,7 +525,7 @@ packages:
 
   /estree-walker/0.6.1:
     resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
-    dev: false
+    dev: true
 
   /estree-walker/1.0.1:
     resolution: {integrity: sha512-1fMXF3YP4pZZVozF8j/ZLfvnR8NSIljt56UhbZ5PeeDmmGHpgpdwQt7ITlGvYaQukCvuBRMLEiKiYC+oeIg4cg==}
@@ -892,7 +892,7 @@ packages:
     resolution: {integrity: sha512-UldNaNHEon2a5IusHvj/Nnwc7q13YDvbFxz5pfNbHBNStxGoUNyM+0XwAA/UafJ1u8XRPGdBMrhWFthrrGZdWQ==}
     dependencies:
       rollup-pluginutils: 2.8.2
-    dev: false
+    dev: true
 
   /rollup-plugin-swc/0.2.0_@swc+core@1.2.109+rollup@2.60.0:
     resolution: {integrity: sha512-caZSD80g4RwVxkiaeAp/TYvWGzWjzVKvJKBTSKitcKE95MQrnKm8qICLMwCOdvs4XMgc0RgcsCmVkckl8oMDCg==}
@@ -920,7 +920,7 @@ packages:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
     dependencies:
       estree-walker: 0.6.1
-    dev: false
+    dev: true
 
   /rollup/2.60.0:
     resolution: {integrity: sha512-cHdv9GWd58v58rdseC8e8XIaPUo8a9cgZpnCMMDGZFDZKEODOiPPEQFXLriWr/TjXzhPPmG5bkAztPsOARIcGQ==}
