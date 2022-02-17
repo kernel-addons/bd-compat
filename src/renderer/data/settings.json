@@ -47,5 +47,16 @@
                 ]
             }
         ]
+    },
+    "Developer": {
+        "settings": [
+            {
+                "name": "Show Debug Logs",
+                "note": "",
+                "value": false,
+                "id": "showDebug",
+                "type": "switch"
+            }
+        ]
     }
 }

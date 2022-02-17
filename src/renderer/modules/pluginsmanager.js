@@ -1,10 +1,13 @@
-import fs from "./api/fs.js";
-import path from "./api/path.js";
-import DataStore from "./datastore.js";
-import Logger from "./logger.js";
+import fs from "./api/fs";
+import path from "./api/path";
+import DataStore from "./datastore";
+import Logger from "./logger";
 import SettingsManager from "./settingsmanager";
-import Toasts from "./toasts.js";
-import Utilities from "./utilities.js";
+import Toasts from "./toasts";
+import Utilities from "./utilities";
+
+const showDebug = () => SettingsManager.isEnabled("showDebug");
+const startTimes = {};
 
 export default class PluginsManager {
     static listeners = {};
@@ -74,18 +77,26 @@ export default class PluginsManager {
     }
 
     static loadAllPlugins() {
-        for (const filename of fs.readdirSync(this.folder, "utf8")) {
+        const files = fs.readdirSync(this.folder, "utf8");
+        
+        for (let i = 0; i < files.length; i++) {
+            const filename = files[i];
             const location = path.resolve(this.folder, filename);
             const stats = fs.statSync(location);
             if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
             this.times[filename] = stats.mtime.getTime();
-
+    
             try {
                 this.loadAddon(location, false);
                 this.dispatch("updated");
             } catch (error) {
                 Logger.error("PluginsManager", `Failed to load plugin ${filename}:`, error);
             }
+        }
+
+        if (showDebug()) {
+            Logger.log("PluginsManager", `Plugins start times:`);
+            console.table(startTimes)
         }
     }
 
@@ -98,6 +109,7 @@ export default class PluginsManager {
     }
 
     static loadAddon(location, showToast = true, showStart = true) {
+        const start = Date.now();
         const filecontent = fs.readFileSync(location, "utf8");
         const meta = Utilities.parseMETA(filecontent);
         Object.assign(meta, {
@@ -114,7 +126,7 @@ export default class PluginsManager {
             Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
         }
         
-        meta.exports = module.exports.toString().split(" ")[0] === "class"
+        meta.exports = typeof module.exports === "function"
             ? module.exports
             : module.exports?.__esModule
                 ? (module.exports.default || module.exports.exports.default)
@@ -128,7 +140,7 @@ export default class PluginsManager {
             if (typeof (instance.load) === "function") {
                 try {
                     instance.load(meta);
-                    Logger.log("PluginsManager", `${meta.name} was loaded!`);
+                    // Logger.log("PluginsManager", `${meta.name} was loaded!`);
                     if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${meta.name} was loaded!`, {type: "success"});
                 } catch (error) {
                     Logger.error("PluginsManager", `Unable to fire load() for ${meta.name || meta.filename}:`, error);
@@ -138,7 +150,7 @@ export default class PluginsManager {
             if (!meta.description && typeof (instance.getDescription) === "function") meta.description = instance.getDescription(); 
             if (!meta.author && typeof (instance.getAuthor) === "function") meta.author = `${instance.getAuthor()}`; // Prevent clever escaping. 
 
-            if (!(meta.name in this.addonState)) {
+            if (this.addonState[meta.name] == null) {
                 this.addonState[meta.name] = false;
                 DataStore.saveAddonState("plugins", this.addonState);
             }
@@ -146,10 +158,11 @@ export default class PluginsManager {
 
             if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
         } catch (error) {
-            Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
+            return void Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
+        } finally {
+            if (showDebug()) startTimes[meta.name] = {"time in ms": Math.round(Date.now() - start)};
+            return meta.instance;
         }
-
-        if (meta.instance) return meta;
     }
 
     static unloadAddon(idOrFileOrAddon, showToast = true) {
@@ -172,7 +185,7 @@ export default class PluginsManager {
         try {
             if (typeof(addon.instance.start) === "function") addon.instance.start();
             if (showToast) {
-                Logger.log("PluginsManager", `${addon.name} has been started!`);
+                // Logger.log("PluginsManager", `${addon.name} has been started!`);
                 if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been started!`, {type: "info"});
             }
         } catch (error) {

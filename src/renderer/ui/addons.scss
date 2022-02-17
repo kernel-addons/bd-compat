@@ -1,8 +1,8 @@
-.bdcompat-addon-panel, .bdcompat-settings-panel {
+.bdc-addon-panel, .bdc-settings-panel {
     color: #ddd;
 }
 
-.bdcompat-title {
+.bdc-title {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
@@ -13,21 +13,21 @@
     color: var(--header-primary);
 }
 
-.bdcompat-settings-caret {
+.bdc-settings-caret {
     color: var(--text-muted)
 }
 
-.bdcompat-FlexCenter {
+.bdc-FlexCenter {
     display: flex;
     align-items: center;
 }
 
-.bdcompat-card-scroller {
+.bdc-card-scroller {
     display: flex;
     flex-direction: column;
 }
 
-.bdcompat-addon-card {
+.bdc-addon-card {
     position: relative;
     border-radius: 4px;
     background: var(--background-tertiary);
@@ -38,17 +38,17 @@
     transition: box-shadow .2s ease-out,transform .2s ease-out,background .2s ease-out,opacity .2s ease-in,-webkit-box-shadow .2s ease-out,-webkit-transform .2s ease-out;
 }
 
-.bdcompat-addon-card:hover {
+.bdc-addon-card:hover {
     transform: translateY(-1px);
     box-shadow: var(--elevation-high);
 }
 
-.bdcompat-card-name {
+.bdc-card-name {
     font-weight: 600;
     font-family: var(--font-display);
 }
 
-.bdcompat-card-header {
+.bdc-card-header {
     display: flex;
     align-items: center;
     padding-bottom: 10px;
@@ -56,12 +56,12 @@
     border-bottom: thin solid var(--background-modifier-accent);
 }
 
-.bdcompat-card-version, .bdcompat-card-author {
+.bdc-card-version, .bdc-card-author {
     padding-left: 5px;
     color: #ddd;
 }
 
-.bdcompat-card-tools {
+.bdc-card-tools {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,7 +74,7 @@
     box-shadow: var(--elevation-medium);
 }
 
-.bdcompat-toolbutton {
+.bdc-toolbutton {
     padding: 5px;
     display: flex;
     align-items: center;
@@ -82,26 +82,26 @@
     cursor: pointer;
 }
 
-.bdcompat-toolbutton:hover {
+.bdc-toolbutton:hover {
     background: var(--background-modifier-hover);
 }
 
-.bdcompat-toolbutton:active {
+.bdc-toolbutton:active {
     color: var(--interactive-active);
     background-color: var(--background-modifier-active);
 }
 
-.bdcompat-toolbutton:active svg {
+.bdc-toolbutton:active svg {
     transform: translateY(1px);
 }
 
-.bdcompat-card-desc {
+.bdc-card-desc {
     padding-bottom: 5px;
     margin-bottom: 10px;
     border-bottom: thin solid var(--background-modifier-accent);
 }
 
-.bdcompat-footer > div {
+.bdc-footer > div {
     margin-left: auto;
 }
 

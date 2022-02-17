@@ -54,13 +54,14 @@ export default class Toasts {
     }
 
     static show(content, options = {}) {
+        console.log({content, options});
         if (!SettingsManager.isEnabled("showToasts")) return;
 
         if (SettingsManager.isEnabled("useBuiltinToasts")) return this.showDiscordToast(content, options);
 
         // NotLikeThis
-        setImmediate(() => {
-            this.API.setState(state => ({...state, id: Math.random().toString(36).slice(2), toasts: state.toasts.concat({content, timeout: 3000, ...options})}));
-        });
+        // setImmediate(() => {
+        this.API.setState(state => ({...state, id: Math.random().toString(36).slice(2), toasts: state.toasts.concat({content, timeout: 3000, ...options})}));
+        // });
     }
 }

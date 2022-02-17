@@ -1,4 +1,4 @@
-import fs from "./api/fs.js";
+import fs from "./api/fs";
 import path from "./api/path.js";
 import DataStore from "./datastore.js";
 import DOM from "./dom.js";
@@ -124,7 +124,9 @@ export default class ThemesManager {
         if (!theme) return
 
         this.removeTheme(theme, false);
+        delete theme.css;
         this.addons.splice(this.addons.indexOf(theme), 1);
+        
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} was unloaded!`);
             Toasts.show(`${theme.name} was unloaded!`, {type: "info"});
@@ -149,7 +151,6 @@ export default class ThemesManager {
 
         theme.element.remove();
         delete theme.element;
-        delete theme.css;
 
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} has been removed!`);

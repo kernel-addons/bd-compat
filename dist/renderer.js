@@ -331,29 +331,53 @@ const methods = [
 	],
 	[
 		"constants"
+	],
+	[
+		"promises",
+		(ret) => {
+			return ret.isFile ? {
+				...ret,
+				isDirectory() {
+					return ret.isDirectory();
+				},
+				isFile() {
+					return ret.isFile();
+				}
+			} : ret;
+		}
 	]
 ];
 const fs1 = ((fs) => {
 	const passthrough = (_) => _;
 	for (let i = 0; i < methods.length; i++) {
 		const [method, factory = passthrough] = methods[i];
-		const [nativeMethod, nativeToString] = BDCompatNative.executeJS(`
+		const nativeMethod = BDCompatNative.executeJS(`
             const factory = ${factory.toString()};
             const method = require("fs")["${method}"];
-            const override = typeof method !== "function" ? method : ((...args) => factory(method(...args)));
-            [override, method.toString?.()];
+            const override = (() => {
+                if (typeof method === "function") return (...args) => factory(method(...args));
+                if (typeof method === "object") {
+                    const clone = {};
+                    const keys = Object.keys(method);
+
+                    for (let i = 0; i < keys.length; i++) {
+                        clone[keys[i]] = typeof method[keys[i]] === "function" ? (...args) => {
+                            const ret = method[keys[i]](...args);
+                            if (ret instanceof Promise) return ret.then(ret => factory(ret));
+
+                            return ret;
+                        } : method[keys[i]];
+                    }
+
+                    return clone;
+                }
+
+                return method;
+            })();
+            override;
         `, new Error().stack);
-		if (typeof nativeMethod !== "function")
-			fs[method] = nativeMethod;
-		else Object.defineProperties(fs[method] = nativeMethod, {
-				toString: {
-					enumerable: true,
-					value: () => nativeToString},
-				name: {
-					enumerable: true,
-					value: method
-				}
-			});
+		// @ts-ignore
+		fs[method] = nativeMethod;
 	}
 	return fs;
 })({
@@ -518,6 +542,12 @@ function memoize(target, key, getter) {
 	return value;
 }
 
+function _classPrivateFieldGet(receiver, privateMap) {
+	if (!privateMap.has(receiver)) {
+		throw new TypeError("attempted to get private field on non-instance");
+	}
+	return privateMap.get(receiver).value;
+}
 // @ts-nocheck
 if (typeof Array.prototype.at !== "function") {
 	Array.prototype.at = function(index) {
@@ -529,8 +559,8 @@ if (typeof setImmediate === "undefined") {
 	;
 }
 class Filters {
-	static byProps(...props1) {
-		return (module) => props1.every((prop) => prop in module
+	static byProps(...props) {
+		return (module) => props.every((prop) => prop in module
 		);
 	}
 	static byDisplayName(name, def = false) {
@@ -544,7 +574,7 @@ class Filters {
 		};
 	}
 }
-var Webpack = new class Webpack {
+class WebpackModule {
 	get Filters() {
 		return Filters;
 	}
@@ -552,12 +582,40 @@ var Webpack = new class Webpack {
 		return "webpackChunkdiscord_app";
 	}
 	get id() {
-		return "kernel-req" + Math.random().toString().slice(2, 5);
+		return Symbol("pc-compat");
 	}
-	async waitFor(filter4, {retries =100, all =false, forever =false, delay =50} = {
+	addListener(listener2) {
+		_classPrivateFieldGet(this, _listeners).add(listener2);
+		return () => {
+			_classPrivateFieldGet(this, _listeners).delete(listener2);
+		};
+	}
+	removeListener(listener1) {
+		return _classPrivateFieldGet(this, _listeners).delete(listener1);
+	}
+	findLazy(filter5) {
+		const fromCache = this.findModule(filter5);
+		if (fromCache) return Promise.resolve(fromCache);
+		return new Promise((resolve) => {
+			const listener = (m) => {
+				const directMatch = filter5(m);
+				if (directMatch) {
+					resolve(m);
+					return void remove();
+				}
+				if (!m.default) return;
+				const defaultMatch = filter5(m.default);
+				if (!defaultMatch) return;
+				resolve(m.default);
+				remove();
+			};
+			const remove = this.addListener(listener);
+		});
+	}
+	async waitFor(filter1, {retries =100, all =false, forever =false, delay =50} = {
 		}) {
 		for (let i = 0; i < retries || forever; i++) {
-			const module = this.findModule(filter4, {
+			const module = this.findModule(filter1, {
 				all,
 				cache: false
 			});
@@ -566,17 +624,16 @@ var Webpack = new class Webpack {
 			);
 		}
 	}
-	parseOptions(args, filter1 = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
+	parseOptions(args, filter2 = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
 	) {
 		return [
 			args,
-			filter1(args.at(-1)) ? args.pop() : {
+			filter2(args.at(-1)) ? args.pop() : {
 			}
 		];
 	}
 	request(cache2 = true) {
-		if (cache2 && this.cache) return this.cache;
-		let req = undefined;
+		if (this.cache) return this.cache;
 		if (Array.isArray(window[this.chunkName])) {
 			const chunk = [
 				[
@@ -584,26 +641,25 @@ var Webpack = new class Webpack {
 				],
 				{
 				},
-				(__webpack_require__) => req = __webpack_require__
+				(__webpack_require__) => __webpack_require__
 			];
-			webpackChunkdiscord_app.push(chunk);
+			this.cache = webpackChunkdiscord_app.push(chunk);
 			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
 		}
-		if (!req) console.warn("[Webpack] Got empty cache.");
-		if (cache2)
-			this.cache = req;
-		return req;
+		return this.cache;
 	}
-	findModule(filter2, {all: all1 = false, cache: cache1 = true, force =false} = {
+	findModule(filter3, {all: all1 = false, cache: cache1 = true, force =false, default: defaultExports = false} = {
 		}) {
-		if (typeof filter2 !== "function") return void 0;
+		if (typeof filter3 !== "function") return void 0;
 		const __webpack_require__ = this.request(cache1);
 		const found = [];
+		let hasError = null;
 		if (!__webpack_require__) return;
 		const wrapFilter = function(module, index) {
 			try {
-				return filter2(module, index);
-			} catch (e) {
+				return filter3(module, index);
+			} catch (error) {
+				hasError !== null && hasError !== void 0 ? hasError : hasError = error;
 				return false;
 			}
 		};
@@ -616,9 +672,10 @@ var Webpack = new class Webpack {
 						if (!all1) return module;
 						found.push(module);
 					}
-					if (module.__esModule && module.default != null && wrapFilter(module.default, id)) {
-						if (!all1) return module.default;
-						found.push(module.default);
+					if (module.__esModule && module.default != null && typeof module.default !== "number" && wrapFilter(module.default, id)) {
+						const exports = defaultExports ? module : module.default;
+						if (!all1) return exports;
+						found.push(exports);
 					}
 					if (force && module.__esModule)
 						for (const key in module) {
@@ -639,10 +696,15 @@ var Webpack = new class Webpack {
 				}
 			}
 		}
+		if (hasError) {
+			setImmediate(() => {
+				console.warn("[Webpack] filter threw an error. This can cause lag spikes at the user's end. Please fix asap.\n\n", hasError);
+			});
+		}
 		return all1 ? found : found[0];
 	}
-	findModules(filter3) {
-		return this.findModule(filter3, {
+	findModules(filter4) {
+		return this.findModule(filter4, {
 			all: true
 		});
 	}
@@ -650,14 +712,19 @@ var Webpack = new class Webpack {
 		const [filters, {wait =false, ...rest}] = this.parseOptions(options);
 		const found = new Array(filters.length);
 		const searchFunction = wait ? this.waitFor : this.findModule;
-		const wrappedFilters = filters.map((filter) => (m) => {
-			try {
-				return filter(m);
-			} catch (error) {
-				return false;
-			}
-		}
-		);
+		const wrappedFilters = filters.map((filter) => {
+			if (Array.isArray(filter))
+				filter = Filters.byProps(...filter);
+			if (typeof filter === "string")
+				filter = Filters.byDisplayName(filter);
+			return (m) => {
+				try {
+					return filter(m);
+				} catch (error) {
+					return false;
+				}
+			};
+		});
 		const returnValue = searchFunction.call(this, (module) => {
 			for (let i = 0; i < wrappedFilters.length; i++) {
 				const filter = wrappedFilters[i];
@@ -689,7 +756,7 @@ var Webpack = new class Webpack {
 		return null;
 	}
 	findByDisplayName(...options2) {
-		const [displayNames, {bulk =false, default: defaultExport = false, wait =false, ...rest}] = this.parseOptions(options2);
+		const [displayNames, {bulk =false, wait =false, ...rest}] = this.parseOptions(options2);
 		if (!bulk && !wait) {
 			return this.findModule(Filters.byDisplayName(displayNames[0]), rest);
 		}
@@ -736,10 +803,10 @@ var Webpack = new class Webpack {
 		return this.waitForGlobal;
 	}
 	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
-	on(event, listener1) {
+	on(event, listener3) {
 		switch (event) {
 			case "LOADED":
-				return this.whenReady.then(listener1);
+				return this.whenReady.then(listener3);
 		}
 	}
 	/**@deprecated @see Webpack.on */
@@ -747,30 +814,86 @@ var Webpack = new class Webpack {
 		return this.on;
 	}
 	constructor() {
+		_listeners.set(this, {
+			writable: true,
+			value: new Set()
+		});
 		this.cache = null;
+		this.waitForGlobal.then(() => {
+			let originalPush = window[this.chunkName].push;
+			const handlePush = (chunk) => {
+				const [, modules] = chunk;
+				for (const moduleId in modules) {
+					const originalModule = modules[moduleId];
+					modules[moduleId] = (module, exports, require) => {
+						try {
+							originalModule.call(originalModule, module, exports, require);
+							const listeners = [
+								..._classPrivateFieldGet(this, _listeners)
+							];
+							for (let i = 0; i < listeners.length; i++) {
+								try {
+									listeners[i](exports);
+								} catch (error) {
+									console.error("[Webpack]", "Could not fire callback listener:", error);
+								}
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					};
+					Object.assign(modules[moduleId], originalModule, {
+						toString: originalModule.toString.bind(originalModule),
+						__original: originalModule
+					});
+				}
+				return originalPush.apply(window[this.chunkName], [
+					chunk
+				]);
+			};
+			Object.defineProperty(window[this.chunkName], "push", {
+				configurable: true,
+				get: () => handlePush,
+				set: (newPush) => {
+					originalPush = newPush;
+					Object.defineProperty(window[this.chunkName], "push", {
+						value: handlePush,
+						configurable: true,
+						writable: true
+					});
+				}
+			});
+		});
 		this.whenReady = this.waitForGlobal.then(() => new Promise(async (onReady) => {
 			const [Dispatcher, {ActionTypes} = {
-				}] = await this.findByProps([
+				}, UserStore] = await this.findByProps([
 				"dirtyDispatch"
 			], [
 				"API_HOST",
 				"ActionTypes"
+			], [
+				"getCurrentUser",
+				"_dispatchToken"
 			], {
 				cache: false,
 				bulk: true,
 				wait: true,
 				forever: true
 			});
+			if (UserStore.getCurrentUser()) return onReady();
 			const listener = function() {
 				Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
+				Dispatcher.unsubscribe(ActionTypes.CONNECTION_OPEN, listener);
 				onReady();
 			};
 			Dispatcher.subscribe(ActionTypes.START_SESSION, listener);
+			Dispatcher.subscribe(ActionTypes.CONNECTION_OPEN, listener);
 		})
 		);
-		window.Webpack = this;
 	}
-};
+}
+var _listeners = new WeakMap();
+const Webpack = new WebpackModule;
 
 class DiscordModules {
 	/**@returns {typeof import("react")} */
@@ -1039,7 +1162,7 @@ class Patcher {
 }
 Patcher._patches = [];
 
-var Toasts$2 = {
+var Toasts$1 = {
 	settings: [
 		{
 			name: "Show Toasts",
@@ -1090,8 +1213,20 @@ var Toasts$2 = {
 		}
 	]
 };
+var Developer = {
+	settings: [
+		{
+			name: "Show Debug Logs",
+			note: "",
+			value: false,
+			id: "showDebug",
+			type: "switch"
+		}
+	]
+};
 var defaultSettings = {
-	Toasts: Toasts$2
+	Toasts: Toasts$1,
+	Developer: Developer
 };
 
 class SettingsManager {
@@ -1289,7 +1424,7 @@ class Converter {
 		}
 	}
 }
-class Toasts$1 {
+class Toasts {
 	static dispose() {
 		return DiscordModules.ReactDOM.unmountComponentAtNode(this.container);
 	}
@@ -1324,21 +1459,25 @@ class Toasts$1 {
 	}
 	static show(content1, options1 = {
 		}) {
+		console.log({
+			content: content1,
+			options: options1
+		});
 		if (!SettingsManager.isEnabled("showToasts")) return;
 		if (SettingsManager.isEnabled("useBuiltinToasts")) return this.showDiscordToast(content1, options1);
 		// NotLikeThis
-		setImmediate(() => {
-			this.API.setState((state) => ({
-				...state,
-				id: Math.random().toString(36).slice(2),
-				toasts: state.toasts.concat({
-					content: content1,
-					timeout: 3000,
-					...options1
-				})
+		// setImmediate(() => {
+		this.API.setState((state) => ({
+			...state,
+			id: Math.random().toString(36).slice(2),
+			toasts: state.toasts.concat({
+				content: content1,
+				timeout: 3000,
+				...options1
 			})
-			);
-		});
+		})
+		);
+	// });
 	}
 }
 
@@ -1396,6 +1535,9 @@ class Utilities {
 Utilities.metaSplitRegex = /[^\S\r\n]*?\r?(?:\r\n|\n)[^\S\r\n]*?\*[^\S\r\n]?/;
 Utilities.escapeAtRegex = /^\\@/;
 
+const showDebug = () => SettingsManager.isEnabled("showDebug");
+const startTimes = {
+};
 class PluginsManager {
 	static on(event, callback) {
 		if (!this.listeners[event])
@@ -1453,7 +1595,9 @@ class PluginsManager {
 		});
 	}
 	static loadAllPlugins() {
-		for (const filename of fs1.readdirSync(this.folder, "utf8")) {
+		const files = fs1.readdirSync(this.folder, "utf8");
+		for (let i = 0; i < files.length; i++) {
+			const filename = files[i];
 			const location = path.resolve(this.folder, filename);
 			const stats = fs1.statSync(location);
 			if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
@@ -1464,6 +1608,10 @@ class PluginsManager {
 			} catch (error) {
 				Logger.error("PluginsManager", `Failed to load plugin ${filename}:`, error);
 			}
+		}
+		if (showDebug()) {
+			Logger.log("PluginsManager", `Plugins start times:`);
+			console.table(startTimes);
 		}
 	}
 	static compile(filecontent, name, location) {
@@ -1480,6 +1628,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 	}
 	static loadAddon(location1, showToast = true, showStart = true) {
 		var ref;
+		const start = Date.now();
 		const filecontent = fs1.readFileSync(location1, "utf8");
 		const meta = Utilities.parseMETA(filecontent);
 		Object.assign(meta, {
@@ -1498,7 +1647,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		} catch (error) {
 			Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location1)}:`, error);
 		}
-		meta.exports = module.exports.toString().split(" ")[0] === "class" ? module.exports : ((ref = module.exports) === null || ref === void 0 ? void 0 : ref.__esModule) ? module.exports.default || module.exports.exports.default : module.exports.exports;
+		meta.exports = typeof module.exports === "function" ? module.exports : ((ref = module.exports) === null || ref === void 0 ? void 0 : ref.__esModule) ? module.exports.default || module.exports.exports.default : module.exports.exports;
 		if (typeof meta.exports !== "function")
 			throw "Plugin had no exports.";
 		try {
@@ -1507,8 +1656,8 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 			if (typeof instance.load === "function") {
 				try {
 					instance.load(meta);
-					Logger.log("PluginsManager", `${meta.name} was loaded!`);
-					if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts$1.show(`${meta.name} was loaded!`, {
+					// Logger.log("PluginsManager", `${meta.name} was loaded!`);
+					if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${meta.name} was loaded!`, {
 							type: "success"
 						});
 				} catch (error) {
@@ -1521,16 +1670,21 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 				meta.description = instance.getDescription();
 			if (!meta.author && typeof instance.getAuthor === "function")
 				meta.author = `${instance.getAuthor()}`; // Prevent clever escaping. 
-			if (!(meta.name in this.addonState)) {
+			if (this.addonState[meta.name] == null) {
 				this.addonState[meta.name] = false;
 				DataStore.saveAddonState("plugins", this.addonState);
 			}
 			this.addons.push(meta);
 			if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
 		} catch (error1) {
-			Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error1);
+			return void Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error1);
+		} finally {
+			if (showDebug())
+				startTimes[meta.name] = {
+					"time in ms": Math.round(Date.now() - start)
+				};
+			return meta.instance;
 		}
-		if (meta.instance) return meta;
 	}
 	static unloadAddon(idOrFileOrAddon1, showToast1 = true) {
 		const addon = this.resolve(idOrFileOrAddon1);
@@ -1539,7 +1693,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		this.addons.splice(this.addons.indexOf(addon), 1);
 		if (showToast1) {
 			Logger.log("PluginsManager", `${addon.name} was unloaded!`);
-			if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts$1.show(`${addon.name} was unloaded!`, {
+			if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${addon.name} was unloaded!`, {
 					type: "info"
 				});
 		}
@@ -1551,14 +1705,14 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		try {
 			if (typeof addon.instance.start === "function") addon.instance.start();
 			if (showToast2) {
-				Logger.log("PluginsManager", `${addon.name} has been started!`);
-				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts$1.show(`${addon.name} has been started!`, {
+				// Logger.log("PluginsManager", `${addon.name} has been started!`);
+				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been started!`, {
 						type: "info"
 					});
 			}
 		} catch (error) {
 			Logger.error("PluginsManager", `Unable to fire start() for ${addon.name}:`, error);
-			Toasts$1.show(`${addon.name} could not be started!`, {
+			Toasts.show(`${addon.name} could not be started!`, {
 				type: "error"
 			});
 			return false;
@@ -1572,13 +1726,13 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 			if (typeof addon.instance.stop === "function") addon.instance.stop();
 			if (showToast3) {
 				Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts$1.show(`${addon.name} has been stopped!`, {
+				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been stopped!`, {
 						type: "info"
 					});
 			}
 		} catch (error) {
 			Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
-			Toasts$1.show(`${addon.name} could not be stopped!`, {
+			Toasts.show(`${addon.name} could not be stopped!`, {
 				type: "error"
 			});
 			return false;
@@ -1598,7 +1752,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		const success = this.startPlugin(addon, false);
 		if (success) {
 			Logger.log("PluginsManager", `${addon.name} has been enabled!`);
-			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts$1.show(`${addon.name} has been enabled!`, {
+			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been enabled!`, {
 					type: "info"
 				});
 		}
@@ -1613,7 +1767,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		const success = this.stopPlugin(addon, false);
 		if (success) {
 			Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts$1.show(`${addon.name} has been stopped!`, {
+			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been stopped!`, {
 					type: "info"
 				});
 		}
@@ -1630,7 +1784,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		const addon = this.resolve(idOrFileOrAddon6);
 		this.unloadAddon(addon, false);
 		this.loadAddon(addon.path, false, false);
-		Toasts$1.show(`${addon.name} was reloaded!`, {
+		Toasts.show(`${addon.name} was reloaded!`, {
 			type: "success"
 		});
 		if (SettingsManager.isEnabled("showToastsPluginReload")) Logger.log("PluginsManager", `${addon.name} was reloaded!`);
@@ -1759,10 +1913,11 @@ class ThemesManager {
 		const theme = this.resolve(addon);
 		if (!theme) return;
 		this.removeTheme(theme, false);
+		delete theme.css;
 		this.addons.splice(this.addons.indexOf(theme), 1);
 		if (showToast1) {
 			Logger.log("ThemesManager", `${theme.name} was unloaded!`);
-			Toasts$1.show(`${theme.name} was unloaded!`, {
+			Toasts.show(`${theme.name} was unloaded!`, {
 				type: "info"
 			});
 		}
@@ -1773,7 +1928,7 @@ class ThemesManager {
 		if (!theme) return;
 		theme.element = DOM.injectCSS(theme.name + "theme", theme.css);
 		if (showToast2) {
-			Toasts$1.show(`${theme.name} has been applied!`, {
+			Toasts.show(`${theme.name} has been applied!`, {
 				type: "success"
 			});
 			Logger.log("ThemesManager", `${theme.name} has been applied!`);
@@ -1784,10 +1939,9 @@ class ThemesManager {
 		if (!theme || !theme.element || !DOM.head.contains(theme.element)) return;
 		theme.element.remove();
 		delete theme.element;
-		delete theme.css;
 		if (showToast3) {
 			Logger.log("ThemesManager", `${theme.name} has been removed!`);
-			Toasts$1.show(`${theme.name} has been removed!`, {
+			Toasts.show(`${theme.name} has been removed!`, {
 				type: "info"
 			});
 		}
@@ -1798,7 +1952,7 @@ class ThemesManager {
 		this.unloadAddon(theme, false);
 		this.loadTheme(theme.path, false);
 		Logger.log("ThemesManager", `${theme.name} was reloaded!`);
-		Toasts$1.show(`${theme.name} was reloaded!`, {
+		Toasts.show(`${theme.name} was reloaded!`, {
 			type: "success"
 		});
 	}
@@ -1807,7 +1961,7 @@ class ThemesManager {
 		if (!theme || this.isEnabled(theme)) return;
 		this.applyTheme(theme, false);
 		Logger.log("ThemesManager", `${theme.name} has been enabled!`);
-		Toasts$1.show(`${theme.name} has been applied.`);
+		Toasts.show(`${theme.name} has been applied.`);
 		this.addonState[theme.name] = true;
 		DataStore.saveAddonState("themes", this.addonState);
 		this.dispatch("toggled", theme.name, true);
@@ -1817,7 +1971,7 @@ class ThemesManager {
 		if (!theme || !this.isEnabled(theme)) return;
 		this.removeTheme(theme, false);
 		Logger.log("ThemesManager", `${theme.name} has been removed!`);
-		Toasts$1.show(`${theme.name} has been removed.`, {
+		Toasts.show(`${theme.name} has been removed.`, {
 			type: "info"
 		});
 		this.addonState[theme.name] = false;
@@ -1905,7 +2059,7 @@ class BdApi {
 		return Modals.showConfirmationModal(title1, content1, options3);
 	}
 	static showToast(content2, options1) {
-		return Toasts$1.show(content2, options1);
+		return Toasts.show(content2, options1);
 	}
 	static findModule(filter) {
 		return Webpack.findModule(filter);
@@ -2040,6 +2194,7 @@ BdApi.Patcher = {
 	))
 };
 Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {
+	if (key === "prototype") return descriptors;
 	descriptors[key] = Object.assign({
 	}, Object.getOwnPropertyDescriptor(BdApi, key), {
 		enumerable: true
@@ -2313,7 +2468,13 @@ var https = /*#__PURE__*/ Object.freeze({
 	createServer: createServer
 });
 
-var mimeTypes = BDCompatNative.executeJS(`require("mime-types")`, new Error().stack);
+var mimeTypes = BDCompatNative.executeJS(`(() => {
+try {
+    return require("mime-types");
+} catch {
+    return {};
+}
+})()`, new Error().stack);
 
 var url = {
 	parse: (...args) => BDCompatNative.executeJS(`
@@ -2324,7 +2485,9 @@ var url = {
 
 const os = BDCompatNative.executeJS(`require("os")`);
 
-function Require(mod) {
+var ref;
+var ref1;
+var Require = ((ref1 = (ref = window.process) === null || ref === void 0 ? void 0 : ref.contextIsolated) !== null && ref1 !== void 0 ? ref1 : true) ? function(mod) {
 	switch (mod) {
 		case "fs":
 			return fs1;
@@ -2352,7 +2515,7 @@ function Require(mod) {
 		default:
 			console.warn(`${mod} was not found!`);
 	}
-}
+} : window.require;
 
 function _classStaticPrivateFieldSpecGet(receiver, classConstructor, descriptor) {
 	if (receiver !== classConstructor) {
@@ -2721,7 +2884,7 @@ function SupportIcons({addon}) {
 			});
 		} catch (error) {
 			Logger.error("InviteManager", `Failed to resolve invite for ${addon.name}:`, error);
-			Toasts$1.show("Could not resolve invite.", {
+			Toasts.show("Could not resolve invite.", {
 				type: "error"
 			});
 		}
@@ -2877,21 +3040,30 @@ var ErrorBoundary = (() => {
 	return ErrorBoundary;
 });
 
+let Boundary = null;
 function AddonPanel({type, manager}) {
-	const {React} = DiscordModules;
-	const [, forceUpdate] = React.useReducer((n) => n + 1
+	const {React: React1} = DiscordModules;
+	Boundary !== null && Boundary !== void 0 ? Boundary : Boundary = ErrorBoundary();
+	const [, forceUpdate] = React1.useReducer((n) => n + 1
 		, 0);
-	const [pluginSettings, setPluginSettings] = React.useState(null);
+	const [pluginSettings, setPluginSettings] = React1.useState(null);
 	const Button = Components.byProps("DropdownSizes");
 	const Caret = Components.get("Caret");
 	const FormNotice = Components.get("FormNotice");
-	const pendingUpdates = useUpdaterStore((s) => Object.keys(s.updates)
-	);
+	const Arrow = Components.get("Arrow");
+	const pendingUpdates = useUpdaterStore((s) => {
+		const result = [];
+		for (const addonId in s.updates) {
+			if (s.updates[addonId].type !== type) continue;
+			result.push(addonId);
+		}
+		return result;
+	});
 	const formatter = new Intl.ListFormat(document.documentElement.lang, {
 		style: "long",
 		type: "conjunction"
 	});
-	React.useEffect(() => manager.on("updated", () => forceUpdate()
+	React1.useEffect(() => manager.on("updated", () => forceUpdate()
 	)
 		, [
 			type,
@@ -2899,107 +3071,80 @@ function AddonPanel({type, manager}) {
 			pluginSettings,
 			forceUpdate
 		]);
-	return React.createElement("div", {
-		className: "bdcompat-addon-panel type-" + type,
-		children: [
-			React.createElement("div", {
-				className: "bdcompat-title",
-				children: [
-					pluginSettings && React.createElement(Button, {
-						size: Button.Sizes.NONE,
-						look: Button.Looks.BLANK,
-						onClick: () => setPluginSettings(null)
-					}, React.createElement(Components.get("Arrow"), {
-						direction: "LEFT"
-					})),
-					React.createElement("span", {
-						className: "bdcompat-FlexCenter",
-						children: [
-							`${type[0].toUpperCase() + type.slice(1)}s - ${manager.addons.length}`,
-							pluginSettings && React.createElement("span", {
-								className: "bdcompat-FlexCenter",
-								children: [
-									React.createElement(Caret, {
-										direction: Caret.Directions.RIGHT,
-										className: "bdcompat-settings-caret"
-									}),
-									pluginSettings.name
-								]
-							})
-						]
-					}),
-					!pluginSettings && React.createElement(ToolButton, {
-						label: "Open Folder",
-						icon: "Folder",
-						onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(manager.folder)})`, new Error().stack)
-					})
-				]
-			}),
-			pluginSettings ? React.createElement(ErrorBoundary(), {
-				children: pluginSettings.element
-			}) : React.createElement("div", {
-				className: "bdcompat-addon-panel-list"
-			}, [
-				pendingUpdates.length ? React.createElement(FormNotice, {
-					key: "update-notice",
-					type: FormNotice.Types.BRAND,
-					className: "marginBottom20",
-					title: `Outdated ${type[0].toUpperCase() + type.slice(1)}${pendingUpdates.length > 1 ? "s" : ""}`,
-					imageData: {
-						src: "/assets/6e97f6643e7df29b26571d96430e92f4.svg",
-						width: 60,
-						height: 60
-					},
-					body: React.createElement(React.Fragment, {
-						children: [
-							`The following ${type}${pendingUpdates.length > 1 ? "s" : ""} needs to be updated:`,
-							React.createElement("br"),
-							formatter.format(pendingUpdates)
-						]
-					})
-				}) : null,
-				manager.addons.map((addon) => {
-					var ref;
-					return React.createElement(AddonCard, {
-						addon,
-						manager,
-						type,
-						key: addon.name,
-						hasSettings: typeof ((ref = addon.instance) === null || ref === void 0 ? void 0 : ref.getSettingsPanel) === "function",
-						openSettings: () => {
-							let element;
-							try {
-								element = addon.instance.getSettingsPanel.apply(addon.instance, []);
-							} catch (error) {
-								Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
-								return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-									type: "error"
-								});
-							}
-							if (Element.prototype.isPrototypeOf(element))
-								element = React.createElement(DOMWrapper, {
-								}, element);
-							else if (typeof element === "function")
-								element = React.createElement(element, {
-								});
-							// Bruh
-							if (!element) {
-								Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
-								return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-									type: "error"
-								});
-							}
-							if (!element) return;
-							setPluginSettings({
-								name: addon.name,
-								element
-							});
-						}
+	return ( /*#__PURE__*/ React.createElement("div", {
+		className: `bdc-addon-panel ${type}`
+	}, /*#__PURE__*/ React.createElement("div", {
+		className: "bdc-title"
+	}, pluginSettings && /*#__PURE__*/ React.createElement(Button, {
+			size: Button.Sizes.NONE,
+			look: Button.Looks.BLANK,
+			onClick: () => setPluginSettings(null)
+		}, /*#__PURE__*/ React.createElement(Arrow, {
+			direction: "LEFT"
+		})), /*#__PURE__*/ React.createElement("span", {
+			className: "bdc-FlexCenter"
+		}, type[0].toUpperCase() + type.slice(1), "s - ", manager.addons.length, pluginSettings && /*#__PURE__*/ React.createElement("span", {
+				className: "bdc-FlexCenter"
+			}, /*#__PURE__*/ React.createElement(Caret, {
+				direction: Caret.Directions.RIGHT,
+				className: "bdc-settings-caret"
+			}), pluginSettings.name)), !pluginSettings && /*#__PURE__*/ React.createElement(ToolButton, {
+			label: "Open Folder",
+			icon: "Folder",
+			onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(manager.folder)})`, new Error().stack)
+		})), pluginSettings ? /*#__PURE__*/ React.createElement(Boundary, null, pluginSettings.element) : /*#__PURE__*/ React.createElement("div", {
+		className: "bdc-addon-list"
+	}, pendingUpdates.length ? /*#__PURE__*/ React.createElement(FormNotice, {
+		key: "update-notice",
+		type: FormNotice.Types.BRAND,
+		className: "marginBottom20",
+		title: `Outdated ${type[0].toUpperCase() + type.slice(1)}${pendingUpdates.length > 1 ? "s" : ""}`,
+		imageData: {
+			src: "/assets/6e97f6643e7df29b26571d96430e92f4.svg",
+			width: 60,
+			height: 60
+		},
+		body: /*#__PURE__*/ React.createElement(React1.Fragment, null, `The following ${type}${pendingUpdates.length > 1 ? "s" : ""} needs to be updated:`, /*#__PURE__*/ React.createElement("br", null), formatter.format(pendingUpdates))
+	}) : null, manager.addons.map((addon) => {
+		var ref;
+		return ( /*#__PURE__*/ React.createElement(AddonCard, {
+			key: addon.name,
+			addon: addon,
+			manager: manager,
+			type: type,
+			hasSettings: typeof ((ref = addon.instance) === null || ref === void 0 ? void 0 : ref.getSettingsPanel) === "function",
+			openSettings: () => {
+				let element;
+				try {
+					element = addon.instance.getSettingsPanel.apply(addon.instance, []);
+				} catch (error) {
+					Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
+					return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
+						type: "error"
 					});
-				})
-			])
-		]
-	});
+				}
+				if (Element.prototype.isPrototypeOf(element))
+					element = React1.createElement(DOMWrapper, {
+						children: element
+					});
+				else if (typeof element === "function")
+					element = React1.createElement(element, {
+					});
+				// Bruh
+				if (!element) {
+					Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
+					return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
+						type: "error"
+					});
+				}
+				if (!element) return;
+				setPluginSettings({
+					name: addon.name,
+					element
+				});
+			}
+		}));
+	}))));
 }
 
 function _extends$3() {
@@ -3108,10 +3253,10 @@ function Category({name, requires, items}) {
 function SettingsPanel() {
 	const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
 	return DiscordModules.React.createElement("div", {
-		className: "bdcompat-settings-panel",
+		className: "bdc-settings-panel",
 		children: [
 			DiscordModules.React.createElement("div", {
-				className: "bdcompat-title"
+				className: "bdc-title"
 			}, "Settings"),
 			Object.entries(SettingsManager.items).map(([collection, {settings}]) => {
 				return [
@@ -3198,7 +3343,9 @@ function UpdaterContextMenu() {
 		action: async () => {
 			const updates = Object.values(UpdaterApi.getState().updates);
 			for (let i = 0; i < updates.length; i++) {
-				updates[i].update(false);
+				var ref,
+					ref1;
+				(ref = updates[i]) === null || ref === void 0 ? void 0 : (ref1 = ref.data) === null || ref1 === void 0 ? void 0 : ref1.update(false);
 			}
 		}
 	}), /*#__PURE__*/ React.createElement(ContextMenu.Item, {
@@ -3209,7 +3356,7 @@ function UpdaterContextMenu() {
 				updates: {
 				}
 			});
-			Toasts$1.show("Updates Skipped!", {
+			Toasts.show("Updates Skipped!", {
 				type: "success"
 			});
 		}
@@ -3263,7 +3410,7 @@ class UpdaterNode {
 		if (showToast) this.showNotice();
 	}
 	showNotice() {
-		Toasts$1.show(`${this.addon.name} was updated from ${this.currentVersion} to ${this.remoteVersion}.`);
+		Toasts.show(`${this.addon.name} was updated from ${this.currentVersion} to ${this.remoteVersion}.`);
 	}
 	constructor(addon1, code, currentVersion, remoteVersion1, pending) {
 		Object.assign(this, {
@@ -3371,7 +3518,10 @@ class AddonUpdater {
 				try {
 					const data = await this.fetchUpdate(addon, updateUrl);
 					if (data.pending)
-						found[addonId] = data;
+						found[addonId] = {
+							type: type,
+							data
+						};
 				} catch (error) {
 					Logger.error("AddonUpdater", `Failed to fetch update for ${addonId}:`, error);
 				}
@@ -3465,13 +3615,13 @@ var index = new class BDCompat {
 			React: DiscordModules.React
 		});
 		this.exposeBdApi();
-		this.patchSettingsView();
 		DataStore.initialize();
 		SettingsManager.initialize();
-		Toasts$1.initialize();
+		Toasts.initialize();
 		this.appendStyles();
 		ThemesManager.initialize();
 		PluginsManager.initialize();
+		this.injectSettings();
 		AddonUpdater.initialize();
 	}
 	exposeBdApi() {
@@ -3497,7 +3647,7 @@ var index = new class BDCompat {
 		window.webpackJsonp.push = ([[], module, [[id]]]) => {
 			return module[id]({
 			}, {
-			}, Webpack.request(false));
+			}, Webpack.request());
 		};
 	}
 	appendStyles() {
@@ -3506,22 +3656,42 @@ var index = new class BDCompat {
 		if (!fs1.existsSync(stylesPath)) return;
 		DOM.injectCSS("core", fs1.readFileSync(stylesPath, "utf8"));
 	}
-	patchSettingsView() {
-		const SettingsView = Webpack.findByDisplayName("SettingsView");
-		Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
-			if (!Array.isArray(res) || !res.some((e) => {
-					var ref;
-					return (e === null || e === void 0 ? void 0 : (ref = e.section) === null || ref === void 0 ? void 0 : ref.toLowerCase()) === "changelog";
-				}) || res.some((s) => {
-					return (s === null || s === void 0 ? void 0 : s.id) === "bdcompat-settings-settings";
-				})) return;
-			const index = res.findIndex((s) => {
-					var ref;
-					return (s === null || s === void 0 ? void 0 : (ref = s.section) === null || ref === void 0 ? void 0 : ref.toLowerCase()) === "changelog";
-				}) - 1;
-			if (index < 0) return;
-			res.splice(index, 0, ...SettingsSections);
-		});
+	async injectSettings() {
+		if ("SettingsNative" in window) {
+			if (typeof KernelSettings === "undefined") await new Promise((resolve) => {
+					const listener = () => {
+						resolve();
+						DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", listener);
+					};
+					DiscordModules.Dispatcher.subscribe("KERNEL_SETTINGS_INIT", listener);
+				});
+			for (const panel of SettingsSections) {
+				if (panel.section === "HEADER" || panel.section === "DIVIDER") continue;
+				this._flush.push(KernelSettings.register("BetterDiscord" + panel.label, {
+					...panel,
+					render: panel.element,
+					icon: React.createElement(BDLogo, {
+						className: "bd-logo",
+						width: 16,
+						height: 16
+					})
+				}));
+			}
+		} else {
+			BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
+		// const SettingsView = Webpack.findByDisplayName("SettingsView");
+		// Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
+		//     if (!Array.isArray(res) || !res.some(e => e?.section?.toLowerCase() === "changelog") || res.some(s => s?.id === "bdcompat-settings-settings")) return;
+		//     const index = res.findIndex(s => s?.section?.toLowerCase() === "changelog") - 1;
+		//     if (index < 0) return;
+		//     res.splice(index, 0, ...SettingsSections);
+		// });
+		}
+	}
+	stop() {
+		for (let i = 0; i < this._flush.length; i++) {
+			this._flush[i]();
+		}
 	}
 	constructor() {
 		this.styles = [
@@ -3529,6 +3699,7 @@ var index = new class BDCompat {
 			"./ui/addons.css",
 			"./ui/settings.css"
 		];
+		this._flush = [];
 	}
 };
 

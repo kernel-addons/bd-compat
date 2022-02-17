@@ -1,6 +1,6 @@
 import electron from "./api/electron.js";
 import EventEmitter from "./api/events.js";
-import fs from "./api/fs.js";
+import fs from "./api/fs";
 import path from "./api/path.js";
 import request from "./api/request.js";
 import * as https from "./api/https.js";
@@ -9,7 +9,7 @@ import url from "./api/url.ts";
 import os from "./api/os";
 import Buffer from "./api/buffer";
 
-export default function (mod) {
+export default (window.process?.contextIsolated ?? true) ? function (mod) {
     switch (mod) {
         case "fs": return fs;
         case "path": return path;
@@ -26,4 +26,4 @@ export default function (mod) {
 
         default: console.warn(`${mod} was not found!`);
     }
-};
+} : window.require;

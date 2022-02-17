@@ -4,12 +4,13 @@ import esFormatter from "rollup-plugin-esformatter";
 import {nodeResolve} from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
 import scss from "rollup-plugin-scss";
+import {uglify} from "rollup-plugin-uglify";
 
-const IGNORED_WARNINGS = ["EVAL", "THIS_IS_UNDEFINED"];
 
 export default args => {
-    const {mode = "renderer"} = args;
+    const {mode = "renderer", minify = true} = args;
     delete args.mode;
+    delete args.minify;
 
     return defineConfig({
         input: `./src/${mode}/index.ts`,
@@ -20,8 +21,10 @@ export default args => {
         },
 
         plugins: [
+            minify && uglify(),
             scss({
                 output: "./dist/style.css",
+                // @ts-ignore
                 runtime: require("sass")
             }),
             json(),
@@ -49,10 +52,6 @@ export default args => {
                     target: "es2019"
                 }
             })
-        ],
-        // onwarn: (message) => {
-        //     if (IGNORED_WARNINGS.includes(message.code)) return; // Hide this annoying thing
-        //     return console.error(message);
-        // }
+        ].filter(Boolean)
     });
 };

@@ -127,7 +127,10 @@ export default class AddonUpdater {
 
                 try {
                     const data = await this.fetchUpdate(addon, updateUrl);
-                    if (data.pending) found[addonId] = data;
+                    if (data.pending) found[addonId] = {
+                        type: type,
+                        data
+                    };
                 } catch (error) {
                     Logger.error("AddonUpdater", `Failed to fetch update for ${addonId}:`, error);
                 }

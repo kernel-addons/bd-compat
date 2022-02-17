@@ -1,1 +1,7 @@
-export default BDCompatNative.executeJS(`require("mime-types")`, new Error().stack);
+export default BDCompatNative.executeJS(`(() => {
+try {
+    return require("mime-types");
+} catch {
+    return {};
+}
+})()`, new Error().stack);

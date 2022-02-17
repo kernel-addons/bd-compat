@@ -31,10 +31,11 @@
     "rollup": "^2.59.0",
     "rollup-plugin-esformatter": "^2.0.1",
     "rollup-plugin-swc": "^0.2.0",
-    "sass": "^1.44.0"
+    "rollup-plugin-uglify": "^6.0.4",
+    "sass": "^1.44.0",
+    "rollup-plugin-scss": "^3.0.0"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "rollup-plugin-scss": "^3.0.0"
+    "buffer": "^6.0.3"
   }
 }

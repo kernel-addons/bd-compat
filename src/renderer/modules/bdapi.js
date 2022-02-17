@@ -172,6 +172,8 @@ export default class BdApi {
 };
 
 Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {
+    if (key === "prototype") return descriptors;
+
     descriptors[key] = Object.assign({}, Object.getOwnPropertyDescriptor(BdApi, key), {enumerable: true});
 
     return descriptors;

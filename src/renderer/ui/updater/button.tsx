@@ -17,7 +17,7 @@ export function UpdaterContextMenu() {
                     const updates = Object.values<any>(UpdaterApi.getState().updates);
 
                     for (let i = 0; i < updates.length; i++) {
-                        updates[i].update(false);
+                        updates[i]?.data?.update(false);
                     }
                 }}
             />

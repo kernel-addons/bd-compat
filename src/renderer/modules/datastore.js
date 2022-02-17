@@ -1,4 +1,4 @@
-import fs from "./api/fs.js";
+import fs from "./api/fs";
 import path from "./api/path.js";
 import Logger from "./logger.js";
 

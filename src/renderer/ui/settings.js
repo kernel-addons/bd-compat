@@ -54,10 +54,10 @@ export default function SettingsPanel() {
     const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
 
     return DiscordModules.React.createElement("div", {
-        className: "bdcompat-settings-panel",
+        className: "bdc-settings-panel",
         children: [
             DiscordModules.React.createElement("div", {
-                className: "bdcompat-title"
+                className: "bdc-title"
             }, "Settings"),
             Object.entries(SettingsManager.items).map(([collection, {settings}]) => {
                 return [
