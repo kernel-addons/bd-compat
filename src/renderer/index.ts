@@ -148,11 +148,9 @@ export default new class BDCompat {
                 }));
             }
         } else {
-            setTimeout(() => {
-               if (window.unbound) return;
-
-               BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
-            }, 1000)
+            if (!global.isUnbound) {
+                BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
+            }
             // const SettingsView = Webpack.findByDisplayName("SettingsView");
 
             // Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
