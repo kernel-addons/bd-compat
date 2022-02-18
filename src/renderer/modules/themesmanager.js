@@ -63,7 +63,7 @@ export default class ThemesManager {
             lastCall = new Date();
             const absolutePath = path.resolve(this.folder, filename);
             if (!filename.endsWith(this.extension)) return;
-            
+
             // await new Promise(r => setTimeout(r, 100));
             try {
                 const stats = fs.statSync(absolutePath);
@@ -92,7 +92,7 @@ export default class ThemesManager {
                 this.loadTheme(location, false);
                 this.dispatch("updated");
             } catch (error) {
-                Logger.error("ThemesManager", `Failed to load ${filename}:`, error);                
+                Logger.error("ThemesManager", `Failed to load ${filename}:`, error);
             }
         }
     }
@@ -116,6 +116,8 @@ export default class ThemesManager {
             this.applyTheme(meta, showToast);
         }
 
+        this.dispatch("updated");
+
         return meta;
     }
 
@@ -126,17 +128,24 @@ export default class ThemesManager {
         this.removeTheme(theme, false);
         delete theme.css;
         this.addons.splice(this.addons.indexOf(theme), 1);
-        
+
         if (showToast) {
             Logger.log("ThemesManager", `${theme.name} was unloaded!`);
             Toasts.show(`${theme.name} was unloaded!`, {type: "info"});
-        } 
+        }
         this.dispatch("updated");
+    }
+
+    static delete(addon) {
+        const file = this.resolve(addon);
+        if (!file) return;
+
+        return fs.unlinkSync(file.path);
     }
 
     static applyTheme(addon, showToast = true) {
         const theme = this.resolve(addon);
-        if (!theme) return; 
+        if (!theme) return;
 
         theme.element = DOM.injectCSS(theme.name + "theme", theme.css);
         if (showToast) {
@@ -178,7 +187,7 @@ export default class ThemesManager {
         Toasts.show(`${theme.name} has been applied.`);
 
         this.addonState[theme.name] = true;
-        
+
         DataStore.saveAddonState("themes", this.addonState);
         this.dispatch("toggled", theme.name, true);
     }
@@ -192,7 +201,7 @@ export default class ThemesManager {
         Toasts.show(`${theme.name} has been removed.`, {type: "info"});
 
         this.addonState[theme.name] = false;
-        
+
         DataStore.saveAddonState("themes", this.addonState);
         this.disableAddon("toggled", theme.name, false);
     }

@@ -54,7 +54,6 @@ export default class Toasts {
     }
 
     static show(content, options = {}) {
-        console.log({content, options});
         if (!SettingsManager.isEnabled("showToasts")) return;
 
         if (SettingsManager.isEnabled("useBuiltinToasts")) return this.showDiscordToast(content, options);

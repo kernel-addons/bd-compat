@@ -26,13 +26,19 @@ const createAddonAPI = manager => new class AddonAPI {
     get(idOrFile) {return manager.resolve(idOrFile);}
 
     getAll() {return manager.addons.map(addon => this.get(addon));}
+
+    on(event, listener) {return manager.on(event, listener);}
+
+    off(event, listener) {return manager.off(event, listener);}
+
+    delete(idOrAddon) {return manager.delete(idOrAddon);}
 };
 
 export default class BdApi {
     static get version() {return "0.0.0";}
 
     static get React() {return DiscordModules.React;}
-    
+
     static get ReactDOM() {return DiscordModules.ReactDOM;}
 
     static get WindowConfigFile() {return "";}
@@ -45,7 +51,7 @@ export default class BdApi {
 
     static enableSetting() {}
 
-    static __getPluginConfigPath(plugin) {return console.log({plugin}), path.resolve(this.Plugins.folder, "..", "config", `${plugin}.json`);}
+    static __getPluginConfigPath(plugin) {return path.resolve(this.Plugins.folder, "..", "config", `${plugin}.json`);}
 
     static injectCSS(id, css) {return DOM.injectCSS(id, css);}
 
@@ -82,9 +88,9 @@ export default class BdApi {
     }
 
     static loadData(pluginName, key) {return DataStore.getPluginData(pluginName, key);}
-    
+
     static saveData(pluginName, key, value) {return DataStore.setPluginData(pluginName, key, value);}
-    
+
     static deleteData(pluginName, key) {return DataStore.deletePluginData(pluginName, key);}
 
     static get getData() {return this.loadData;}
