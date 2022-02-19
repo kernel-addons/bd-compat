@@ -1,359 +1,57 @@
-/// <reference path="../../../../types.d.ts" />
-const methods = [
-	[
-		"appendFile"
-	],
-	[
-		"appendFileSync"
-	],
-	[
-		"access"
-	],
-	[
-		"accessSync"
-	],
-	[
-		"chown"
-	],
-	[
-		"chownSync"
-	],
-	[
-		"chmod"
-	],
-	[
-		"chmodSync"
-	],
-	[
-		"close"
-	],
-	[
-		"closeSync"
-	],
-	[
-		"copyFile"
-	],
-	[
-		"copyFileSync"
-	],
-	// ["createReadStream"],
-	// ["createWriteStream"],
-	[
-		"exists"
-	],
-	[
-		"existsSync"
-	],
-	[
-		"fchown"
-	],
-	[
-		"fchownSync"
-	],
-	[
-		"fchmod"
-	],
-	[
-		"fchmodSync"
-	],
-	[
-		"fdatasync"
-	],
-	[
-		"fdatasyncSync"
-	],
-	[
-		"fstat"
-	],
-	[
-		"fstatSync"
-	],
-	[
-		"fsync"
-	],
-	[
-		"fsyncSync"
-	],
-	[
-		"ftruncate"
-	],
-	[
-		"ftruncateSync"
-	],
-	[
-		"futimes"
-	],
-	[
-		"futimesSync"
-	],
-	[
-		"lchown"
-	],
-	[
-		"lchownSync"
-	],
-	// ["lchmod"],
-	// ["lchmodSync"],
-	[
-		"link"
-	],
-	[
-		"linkSync"
-	],
-	[
-		"lstat",
-		(ret) => {
-			return {
-				...ret,
-				isDirectory() {
-					return ret.isDirectory();
-				},
-				isFile() {
-					return ret.isFile();
-				}
-			};
+const methods = [["appendFile"], ["appendFileSync"], ["access"], ["accessSync"], ["chown"], ["chownSync"], ["chmod"], ["chmodSync"], ["close"], ["closeSync"], ["copyFile"], ["copyFileSync"], ["exists"], ["existsSync"], ["fchown"], ["fchownSync"], ["fchmod"], ["fchmodSync"], ["fdatasync"], ["fdatasyncSync"], ["fstat"], ["fstatSync"], ["fsync"], ["fsyncSync"], ["ftruncate"], ["ftruncateSync"], ["futimes"], ["futimesSync"], ["lchown"], ["lchownSync"], ["link"], ["linkSync"], ["lstat", e => ({
+		...e,
+		isDirectory() {
+			return e.isDirectory()
+		},
+		isFile() {
+			return e.isFile()
 		}
-	],
-	[
-		"lstatSync",
-		(ret) => {
-			return {
-				...ret,
-				isDirectory() {
-					return ret.isDirectory();
-				},
-				isFile() {
-					return ret.isFile();
-				}
-			};
+	})], ["lstatSync", e => ({
+		...e,
+		isDirectory() {
+			return e.isDirectory()
+		},
+		isFile() {
+			return e.isFile()
 		}
-	],
-	[
-		"lutimes"
-	],
-	[
-		"lutimesSync"
-	],
-	[
-		"mkdir"
-	],
-	[
-		"mkdirSync"
-	],
-	[
-		"mkdtemp"
-	],
-	[
-		"mkdtempSync"
-	],
-	[
-		"open"
-	],
-	[
-		"openSync"
-	],
-	[
-		"opendir"
-	],
-	[
-		"opendirSync"
-	],
-	[
-		"readdir"
-	],
-	[
-		"readdirSync"
-	],
-	[
-		"read"
-	],
-	[
-		"readSync"
-	],
-	[
-		"readv"
-	],
-	[
-		"readvSync"
-	],
-	[
-		"readFile"
-	],
-	[
-		"readFileSync"
-	],
-	[
-		"readlink"
-	],
-	[
-		"readlinkSync"
-	],
-	[
-		"realpath"
-	],
-	[
-		"realpathSync"
-	],
-	[
-		"rename"
-	],
-	[
-		"renameSync"
-	],
-	[
-		"rm"
-	],
-	[
-		"rmSync"
-	],
-	[
-		"rmdir"
-	],
-	[
-		"rmdirSync"
-	],
-	[
-		"stat",
-		(ret) => {
-			return {
-				...ret,
-				isDirectory() {
-					return ret.isDirectory();
-				},
-				isFile() {
-					return ret.isFile();
-				}
-			};
+	})], ["lutimes"], ["lutimesSync"], ["mkdir"], ["mkdirSync"], ["mkdtemp"], ["mkdtempSync"], ["open"], ["openSync"], ["opendir"], ["opendirSync"], ["readdir"], ["readdirSync"], ["read"], ["readSync"], ["readv"], ["readvSync"], ["readFile"], ["readFileSync"], ["readlink"], ["readlinkSync"], ["realpath"], ["realpathSync"], ["rename"], ["renameSync"], ["rm"], ["rmSync"], ["rmdir"], ["rmdirSync"], ["stat", e => ({
+		...e,
+		isDirectory() {
+			return e.isDirectory()
+		},
+		isFile() {
+			return e.isFile()
 		}
-	],
-	[
-		"statSync",
-		(ret) => {
-			return {
-				...ret,
-				isDirectory() {
-					return ret.isDirectory();
-				},
-				isFile() {
-					return ret.isFile();
-				}
-			};
+	})], ["statSync", e => ({
+		...e,
+		isDirectory() {
+			return e.isDirectory()
+		},
+		isFile() {
+			return e.isFile()
 		}
-	],
-	[
-		"symlink"
-	],
-	[
-		"symlinkSync"
-	],
-	[
-		"truncate"
-	],
-	[
-		"truncateSync"
-	],
-	[
-		"unwatchFile"
-	],
-	[
-		"unlink"
-	],
-	[
-		"unlinkSync"
-	],
-	[
-		"utimes"
-	],
-	[
-		"utimesSync"
-	],
-	[
-		"watch",
-		(ret) => {
-			return {
-				...ret,
-				close: () => ret.close()
-			};
+	})], ["symlink"], ["symlinkSync"], ["truncate"], ["truncateSync"], ["unwatchFile"], ["unlink"], ["unlinkSync"], ["utimes"], ["utimesSync"], ["watch", e => ({
+		...e,
+		close: () => e.close()
+	})], ["watchFile", e => ({
+		...e,
+		close: () => e.close()
+	})], ["writeFile"], ["writeFileSync"], ["write"], ["writeSync"], ["writev"], ["writevSync"], ["writev"], ["writevSync"], ["F_OK"], ["R_OK"], ["W_OK"], ["X_OK"], ["constants"], ["promises", e => e.isFile ? {
+		...e,
+		isDirectory() {
+			return e.isDirectory()
+		},
+		isFile() {
+			return e.isFile()
 		}
-	],
-	[
-		"watchFile",
-		(ret) => {
-			return {
-				...ret,
-				close: () => ret.close()
-			};
-		}
-	],
-	[
-		"writeFile"
-	],
-	[
-		"writeFileSync"
-	],
-	[
-		"write"
-	],
-	[
-		"writeSync"
-	],
-	[
-		"writev"
-	],
-	[
-		"writevSync"
-	],
-	[
-		"writev"
-	],
-	[
-		"writevSync"
-	],
-	// ["Dir"],
-	// ["Dirent"],
-	// ["Stats"],
-	// ["ReadStream"],
-	// ["WriteStream"],
-	// ["FileReadStream"],
-	// ["FileWriteStream"],
-	// ["_toUnixTimestamp"],
-	[
-		"F_OK"
-	],
-	[
-		"R_OK"
-	],
-	[
-		"W_OK"
-	],
-	[
-		"X_OK"
-	],
-	[
-		"constants"
-	],
-	[
-		"promises",
-		(ret) => {
-			return ret.isFile ? {
-				...ret,
-				isDirectory() {
-					return ret.isDirectory();
-				},
-				isFile() {
-					return ret.isFile();
-				}
-			} : ret;
-		}
-	]
-];
-const fs1 = ((fs) => {
-	const passthrough = (_) => _;
-	for (let i = 0; i < methods.length; i++) {
-		const [method, factory = passthrough] = methods[i];
-		const nativeMethod = BDCompatNative.executeJS(`
-            const factory = ${factory.toString()};
-            const method = require("fs")["${method}"];
+	} : e]],
+	fs1 = (t => {
+		var n = e => e;
+		for (let e = 0; e < methods.length; e++) {
+			const [s, r=n] = methods[e];
+			var a = BDCompatNative.executeJS(`
+            const factory = ${r.toString()};
+            const method = require("fs")["${s}"];
             const override = (() => {
                 if (typeof method === "function") return (...args) => factory(method(...args));
                 if (typeof method === "object") {
@@ -375,1907 +73,1326 @@ const fs1 = ((fs) => {
                 return method;
             })();
             override;
-        `, new Error().stack);
-		// @ts-ignore
-		fs[method] = nativeMethod;
-	}
-	return fs;
-})({
-});
-
-var path = typeof __BDCOMPAT_LEAKED__ === "undefined" ? BDCompatNative.executeJS(`require("path")`, new Error().stack) : window.require("path");
-
+        `, (new Error).stack);
+			t[s] = a
+		}
+		return t
+	})({});
+var path = "undefined" == typeof __BDCOMPAT_LEAKED__ ? BDCompatNative.executeJS("require(\"path\")", (new Error).stack) : window.require("path");
 class Logger {
-	static _parseType(type) {
-		switch (type) {
+	static _parseType(e) {
+		switch (e) {
 			case "info":
 			case "warn":
 			case "error":
-				return type;
-			default:
-				return "log";
+				return e;default:
+				return "log"
 		}
 	}
-	static _log(type1, module, ...nessage) {
-		type1 = this._parseType(type1);
-		console[type1](`%c[BetterDiscord]%c %c[${module}]%c`, "color: #3e82e5; font-weight: 700;", "", "color: #3e82e5", "", ...nessage);
+	static _log(e, t, ...n) {
+		e = this._parseType(e), console[e](`%c[BetterDiscord]%c %c[${t}]%c`, "color: #3e82e5; font-weight: 700;", "", "color: #3e82e5", "", ...n)
 	}
-	static log(module1, ...message) {
-		this._log("log", module1, ...message);
+	static log(e, ...t) {
+		this._log("log", e, ...t)
 	}
-	static info(module2, ...message1) {
-		this._log("info", module2, ...message1);
+	static info(e, ...t) {
+		this._log("info", e, ...t)
 	}
-	static warn(module3, ...message2) {
-		this._log("warn", module3, ...message2);
+	static warn(e, ...t) {
+		this._log("warn", e, ...t)
 	}
-	static error(module4, ...message3) {
-		this._log("error", module4, ...message3);
+	static error(e, ...t) {
+		this._log("error", e, ...t)
 	}
 }
-
 class DataStore {
-	static getAddonState(type) {
+	static getAddonState(e) {
 		try {
-			return JSON.parse(fs1.readFileSync(path.resolve(this.dataFolder, `${type}States.json`), "utf8"));
-		} catch (error) {
-			return {
-			};
+			return JSON.parse(fs1.readFileSync(path.resolve(this.dataFolder, e + "States.json"), "utf8"))
+		} catch (e) {
+			return {}
 		}
 	}
-	static saveAddonState(type1, state = {
-		}) {
+	static saveAddonState(e, t = {}) {
 		try {
-			fs1.writeFileSync(path.resolve(this.dataFolder, `${type1}States.json`), JSON.stringify(state, null, "\t"));
-		} catch (error) {
-			Logger.error("DataStore", `Unable to save addon states:`, error);
+			fs1.writeFileSync(path.resolve(this.dataFolder, e + "States.json"), JSON.stringify(t, null, "\t"))
+		} catch (e) {
+			Logger.error("DataStore", "Unable to save addon states:", e)
 		}
 	}
 	static initialize() {
-		const folders = [
-			"config",
-			"plugins",
-			"themes"
-		];
+		var e;
 		Logger.log("DataStore", "Ensuring directories...");
-		for (const folder of folders) {
-			const location = path.resolve(BDCompatNative.getBasePath(), folder);
-			if (fs1.existsSync(location)) continue;
-			try {
-				fs1.mkdirSync(location);
-			} catch (error) {
-				Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
+		for (const n of ["config", "plugins", "themes"]) {
+			var t = path.resolve(BDCompatNative.getBasePath(), n);
+			if (!fs1.existsSync(t)) try {
+					fs1.mkdirSync(t)
+				} catch (e) {
+					Logger.error("DataStore", `Failed to create missing ${n} folder:`, e)
 			}
 		}
-		Logger.log("DataStore", "Loading settings...");
-		try {
-			if (!fs1.existsSync(this.settingsFile)) fs1.writeFileSync(this.settingsFile, "{}", "utf8");
-			var ref;
-			this.settingsData = (ref = this.loadData("settings")) !== null && ref !== void 0 ? ref : {
-			};
-		} catch (error) {
-			Logger.error("DataStore", "Failed to load settings:", error);
-			this.settingsData = {
-			};
+		Logger.log("DataStore", "Loading settings...");try {
+			fs1.existsSync(this.settingsFile) || fs1.writeFileSync(this.settingsFile, "{}", "utf8"), this.settingsData = null !== (e = this.loadData("settings")) && void 0 !== e ? e : {}
+		} catch (e) {
+			Logger.error("DataStore", "Failed to load settings:", e), this.settingsData = {}
 		}
 	}
-	static tryLoadPluginData(pluginName) {
-		if (this.pluginData[pluginName]) return this.pluginData[pluginName];
-		const config = path.join(this.pluginsFolder, `${pluginName}.config.json`);
+	static tryLoadPluginData(t) {
+		if (this.pluginData[t]) return this.pluginData[t];
+		var e = path.join(this.pluginsFolder, t + ".config.json");
 		try {
-			if (!fs1.existsSync(config)) return null;
-			this.pluginData[pluginName] = this.loadData(pluginName, this.pluginsFolder, ".config.json");
-		} catch (error) {
-			Logger.error("DataStore", `PluginData for ${pluginName} seems corrupted.`, error);
+			if (!fs1.existsSync(e)) return null;
+			this.pluginData[t] = this.loadData(t, this.pluginsFolder, ".config.json")
+		} catch (e) {
+			Logger.error("DataStore", `PluginData for ${t} seems corrupted.`, e)
 		}
 	}
-	static saveData(type2, data, _path = DataStore.dataFolder, extension = ".json") {
+	static saveData(e, t, n = DataStore.dataFolder, a = ".json") {
 		try {
-			fs1.writeFileSync(path.resolve(_path, `${type2}${extension}`), JSON.stringify(data, null, "\t"), "utf8");
-		} catch (error) {
-			Logger.error("DataStore", "Failed to save data:", error);
+			fs1.writeFileSync(path.resolve(n, "" + e + a), JSON.stringify(t, null, "\t"), "utf8")
+		} catch (e) {
+			Logger.error("DataStore", "Failed to save data:", e)
 		}
 	}
-	static loadData(type3, _path1 = DataStore.dataFolder, extension1 = ".json") {
+	static loadData(e, t = DataStore.dataFolder, n = ".json") {
 		try {
-			return JSON.parse(fs1.readFileSync(path.resolve(_path1, `${type3}${extension1}`), "utf8"));
-		} catch (error) {
-			Logger.error("DataStore", "Failed to load data:", error);
+			return JSON.parse(fs1.readFileSync(path.resolve(t, "" + e + n), "utf8"))
+		} catch (e) {
+			Logger.error("DataStore", "Failed to load data:", e)
 		}
 	}
-	static setPluginData(pluginName1, key, value) {
-		const data = Object.assign({
-		}, this.pluginData[pluginName1], {
-			[key]: value
-		});
-		this.pluginData[pluginName1] = data;
-		this.saveData(pluginName1, data, this.pluginsFolder, ".config.json");
+	static setPluginData(e, t, n) {
+		t = Object.assign({}, this.pluginData[e], {
+			[t]: n
+		});this.pluginData[e] = t, this.saveData(e, t, this.pluginsFolder, ".config.json")
 	}
-	static getPluginData(pluginName2, key1) {
-		var ref;
-		if (!this.pluginData[pluginName2]) {
-			this.tryLoadPluginData(pluginName2);
-		}
-		return (ref = this.pluginData[pluginName2]) === null || ref === void 0 ? void 0 : ref[key1];
+	static getPluginData(e, t) {
+		return this.pluginData[e] || this.tryLoadPluginData(e), null === (e = this.pluginData[e]) || void 0 === e ? void 0 : e[t]
 	}
-	static setSettings(id, value1) {
-		const newSettings = Object.assign({
-		}, this.settingsData, {
-			[id]: value1
-		});
-		try {
-			this.saveData("settings", newSettings);
-		} catch (error) {
-			Logger.error("DataStore", "Failed to save settings:", error);
+	static setSettings(e, t) {
+		e = Object.assign({}, this.settingsData, {
+			[e]: t
+		});try {
+			this.saveData("settings", e)
+		} catch (e) {
+			Logger.error("DataStore", "Failed to save settings:", e)
 		}
 	}
 	static getSettings() {
-		return this.settingsData;
+		return this.settingsData
 	}
-	static deletePluginData(pluginName3, key2) {
-		var ref,
-			ref1;
-		if (!this.pluginData[pluginName3]) {
-			this.tryLoadPluginData(pluginName3);
-		}
-		if (!this.pluginData[pluginName3]) return;
-		if (typeof ((ref = this.pluginData[pluginName3]) === null || ref === void 0 ? void 0 : ref[key2]) !== "undefined")
-			(ref1 = this.pluginData[pluginName3]) === null || ref1 === void 0 ? void 0 :
-				delete ref1[key2];
-		this.saveData(pluginName3, this.pluginData[pluginName3]);
+	static deletePluginData(e, t) {
+		var n,
+			a;
+		this.pluginData[e] || this.tryLoadPluginData(e), this.pluginData[e] && (void 0 !== (null === (n = this.pluginData[e]) || void 0 === n ? void 0 : n[t]) && null !== (a = this.pluginData[e]) && void 0 !== a &&
+		delete a[t]
+		, this.saveData(e, this.pluginData[e]))
 	}
 }
-DataStore.pluginData = {
-};
-DataStore.settingsData = null;
-DataStore.pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins");
-DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
-DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
-DataStore.settingsFile = path.resolve(DataStore.dataFolder, "settings.json");
-
-function memoize(target, key, getter) {
-	const value = getter();
-	Object.defineProperty(target, key, {
-		value: value,
-		configurable: true
-	});
-	return value;
+function memoize(e, t, n) {
+	n = n();return Object.defineProperty(e, t, {
+			value: n,
+			configurable: !0
+		}), n
 }
-
-function _classPrivateFieldGet(receiver, privateMap) {
-	if (!privateMap.has(receiver)) {
+function _classPrivateFieldGet(e, t) {
+	if (!t.has(e))
 		throw new TypeError("attempted to get private field on non-instance");
-	}
-	return privateMap.get(receiver).value;
+	return t.get(e).value
 }
-// @ts-nocheck
-if (typeof Array.prototype.at !== "function") {
-	Array.prototype.at = function(index) {
-		return index < 0 ? this[this.length - Math.abs(index)] : this[index];
-	};
-}
-if (typeof setImmediate === "undefined") {
-	window.setImmediate = (callback) => setTimeout(callback, 0)
-	;
-}
+DataStore.pluginData = {}, DataStore.settingsData = null, DataStore.pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins"), DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes"), DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config"), DataStore.settingsFile = path.resolve(DataStore.dataFolder, "settings.json"), "function" != typeof Array.prototype.at && (Array.prototype.at = function(e) {
+	return e < 0 ? this[this.length - Math.abs(e)] : this[e]
+}), "undefined" == typeof setImmediate && (window.setImmediate = e => setTimeout(e, 0));
 class Filters {
-	static byProps(...props) {
-		return (module) => props.every((prop) => prop in module
-		);
+	static byProps(...e) {
+		return t => e.every(e => e in t)
 	}
-	static byDisplayName(name, def = false) {
-		return (module) => (def ? module = module.default : module) && typeof module === "function" && module.displayName === name;
+	static byDisplayName(t, n = !1) {
+		return e => (n ? e = e.default : e) && "function" == typeof e && e.displayName === t
 	}
-	static byTypeString(...strings) {
-		return (module) => {
-			var ref;
-			return module.type && (module = (ref = module.type) === null || ref === void 0 ? void 0 : ref.toString()) && strings.every((str) => module.indexOf(str) > -1
-				);
-		};
+	static byTypeString(...n) {
+		return t => {
+			var e;
+			return t.type && (t = null === (e = t.type) || void 0 === e ? void 0 : e.toString()) && n.every(e => -1 < t.indexOf(e))
+		}
 	}
 }
 class WebpackModule {
 	get Filters() {
-		return Filters;
+		return Filters
 	}
 	get chunkName() {
-		return "webpackChunkdiscord_app";
+		return "webpackChunkdiscord_app"
 	}
 	get id() {
-		return Symbol("pc-compat");
+		return Symbol("pc-compat")
 	}
-	addListener(listener2) {
-		_classPrivateFieldGet(this, _listeners).add(listener2);
-		return () => {
-			_classPrivateFieldGet(this, _listeners).delete(listener2);
-		};
+	addListener(e) {
+		return _classPrivateFieldGet(this, _listeners).add(e), () => {
+				_classPrivateFieldGet(this, _listeners).delete(e)
+		}
 	}
-	removeListener(listener1) {
-		return _classPrivateFieldGet(this, _listeners).delete(listener1);
+	removeListener(e) {
+		return _classPrivateFieldGet(this, _listeners).delete(e)
 	}
-	findLazy(filter5) {
-		const fromCache = this.findModule(filter5);
-		if (fromCache) return Promise.resolve(fromCache);
-		return new Promise((resolve) => {
-			const listener = (m) => {
-				const directMatch = filter5(m);
-				if (directMatch) {
-					resolve(m);
-					return void remove();
-				}
-				if (!m.default) return;
-				const defaultMatch = filter5(m.default);
-				if (!defaultMatch) return;
-				resolve(m.default);
-				remove();
-			};
-			const remove = this.addListener(listener);
-		});
+	findLazy(a) {
+		var e = this.findModule(a);
+		return e ? Promise.resolve(e) : new Promise(t => {
+			const n = this.addListener(e => {
+				if (a(e)) return t(e), void n();
+				e.default && a(e.default) && (t(e.default), n())
+			})
+		})
 	}
-	async waitFor(filter1, {retries =100, all =false, forever =false, delay =50} = {
-		}) {
-		for (let i = 0; i < retries || forever; i++) {
-			const module = this.findModule(filter1, {
-				all,
-				cache: false
+	async waitFor(t, {retries: n=100, all: a=!1, forever: s=!1, delay: r=50} = {}) {
+		for (let e = 0; e < n || s; e++) {
+			var i = this.findModule(t, {
+				all: a,
+				cache: !1
 			});
-			if (module) return module;
-			await new Promise((res) => setTimeout(res, delay)
-			);
+			if (i) return i;
+			await new Promise(e => setTimeout(e, r))
 		}
 	}
-	parseOptions(args, filter2 = (thing) => typeof thing === "object" && thing != null && !Array.isArray(thing)
-	) {
-		return [
-			args,
-			filter2(args.at(-1)) ? args.pop() : {
-			}
-		];
+	parseOptions(e, t = e => "object" == typeof e && null != e && !Array.isArray(e)) {
+		return [e, t(e.at(-1)) ? e.pop() : {}]
 	}
-	request(cache2 = true) {
-		if (this.cache) return this.cache;
-		if (Array.isArray(window[this.chunkName])) {
-			const chunk = [
-				[
-					this.id
-				],
-				{
-				},
-				(__webpack_require__) => __webpack_require__
-			];
-			this.cache = webpackChunkdiscord_app.push(chunk);
-			webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(chunk), 1);
-		}
-		return this.cache;
+	request(e = 0) {
+		return this.cache || (Array.isArray(window[this.chunkName]) && (t = [[this.id], {}, e => e], this.cache = webpackChunkdiscord_app.push(t), webpackChunkdiscord_app.splice(webpackChunkdiscord_app.indexOf(t), 1)), this.cache);
+		var t
 	}
-	findModule(filter3, {all: all1 = false, cache: cache1 = true, force =false, default: defaultExports = false} = {
-		}) {
-		if (typeof filter3 !== "function") return void 0;
-		const __webpack_require__ = this.request(cache1);
-		const found = [];
-		let hasError = null;
-		if (!__webpack_require__) return;
-		const wrapFilter = function(module, index) {
-			try {
-				return filter3(module, index);
-			} catch (error) {
-				hasError !== null && hasError !== void 0 ? hasError : hasError = error;
-				return false;
-			}
-		};
-		for (const id in __webpack_require__.c) {
-			const module = __webpack_require__.c[id].exports;
-			if (!module || module === window) continue;
-			switch (typeof module) {
-				case "object": {
-					if (wrapFilter(module, id)) {
-						if (!all1) return module;
-						found.push(module);
+	findModule(a, {all: e=!1, cache: t=!0, force: u=!1, default: h=!1} = {}) {
+		if ("function" == typeof a) {
+			var s = this.request(t);
+			const c = [];
+			let n = null;
+			if (s) {
+				function r(e, t) {
+					try {
+						return a(e, t)
+					} catch (e) {
+						return null !== n && void 0 !== n ? n : n = e, !1
 					}
-					if (module.__esModule && module.default != null && typeof module.default !== "number" && wrapFilter(module.default, id)) {
-						const exports = defaultExports ? module : module.default;
-						if (!all1) return exports;
-						found.push(exports);
-					}
-					if (force && module.__esModule)
-						for (const key in module) {
-							if (!module[key]) continue;
-							if (wrapFilter(module[key], id)) {
-								if (!all1) return module[key];
-								found.push(module[key]);
-							}
-					}
-					break;
 				}
-				case "function": {
-					if (wrapFilter(module, id)) {
-						if (!all1) return module;
-						found.push(module);
+				for (const l in s.c) {
+					var i = s.c[l].exports;
+					if (i && i !== window) switch (typeof i) {
+							case "object":
+								if (r(i, l)) {
+									if (!e) return i;
+									c.push(i)
+								}
+								if (i.__esModule && null != i.default && "number" != typeof i.default && r(i.default, l)) {
+									var o = h ? i : i.default;
+									if (!e) return o;
+									c.push(o)
+								}
+								if (u && i.__esModule)
+									for (const d in i)
+										if (i[d] && r(i[d], l)) {
+											if (!e) return i[d];
+											c.push(i[d])
+								}
+								break;case "function":
+								if (r(i, l)) {
+									if (!e) return i;
+									c.push(i)
+								}
 					}
-					break;
 				}
+				return n && setImmediate(() => {
+						console.warn("[Webpack] filter threw an error. This can cause lag spikes at the user's end. Please fix asap.\n\n", n)
+					}), e ? c : c[0]
 			}
 		}
-		if (hasError) {
-			setImmediate(() => {
-				console.warn("[Webpack] filter threw an error. This can cause lag spikes at the user's end. Please fix asap.\n\n", hasError);
-			});
-		}
-		return all1 ? found : found[0];
 	}
-	findModules(filter4) {
-		return this.findModule(filter4, {
-			all: true
-		});
+	findModules(e) {
+		return this.findModule(e, {
+			all: !0
+		})
 	}
-	bulk(...options) {
-		const [filters, {wait =false, ...rest}] = this.parseOptions(options);
-		const found = new Array(filters.length);
-		const searchFunction = wait ? this.waitFor : this.findModule;
-		const wrappedFilters = filters.map((filter) => {
-			if (Array.isArray(filter))
-				filter = Filters.byProps(...filter);
-			if (typeof filter === "string")
-				filter = Filters.byDisplayName(filter);
-			return (m) => {
-				try {
-					return filter(m);
-				} catch (error) {
-					return false;
+	bulk(...e) {
+		const [a, {wait: t=!1, ...n}] = this.parseOptions(e),
+			s = new Array(a.length),
+			r = t ? this.waitFor : this.findModule,
+			i = a.map(t => ("string" == typeof (t = Array.isArray(t) ? Filters.byProps(...t) : t) && (t = Filters.byDisplayName(t)), e => {
+					try {
+						return t(e)
+					} catch (e) {
+						return !1
+					}
+				})),
+			o = r.call(this, t => {
+				for (let e = 0; e < i.length; e++) {
+					const n = i[e];
+					"function" == typeof n && n(t) && null == s[e] && (s[e] = t)
 				}
-			};
-		});
-		const returnValue = searchFunction.call(this, (module) => {
-			for (let i = 0; i < wrappedFilters.length; i++) {
-				const filter = wrappedFilters[i];
-				if (typeof filter !== "function" || !filter(module) || found[i] != null) continue;
-				found[i] = module;
-			}
-			return found.filter(String).length === filters.length;
-		}, rest);
-		if (wait) return returnValue.then(() => found
-			);
-		return found;
+				return s.filter(String).length === a.length
+			}, n);
+		return t ? o.then(() => s) : s
 	}
-	findByProps(...options1) {
-		const [props, {bulk =false, wait =false, ...rest}] = this.parseOptions(options1);
-		if (!bulk && !wait) {
-			return this.findModule(Filters.byProps(...props), rest);
-		}
-		if (wait && !bulk) {
-			return this.waitFor(Filters.byProps(...props), rest);
-		}
-		if (bulk) {
-			const filters = props.map((propsArray) => Filters.byProps(...propsArray)
-			).concat({
-				wait,
-				...rest
+	findByProps(...e) {
+		const [t, {bulk: n=!1, wait: a=!1, ...s}] = this.parseOptions(e);
+		return n || a ? a && !n ? this.waitFor(Filters.byProps(...t), s) : n ? (e = t.map(e => Filters.byProps(...e)).concat({
+			wait: a,...s
+		}), this.bulk(...e)) : null : this.findModule(Filters.byProps(...t), s)
+	}
+	findByDisplayName(...e) {
+		const [t, {bulk: n=!1, wait: a=!1, ...s}] = this.parseOptions(e);
+		if (!n && !a) return this.findModule(Filters.byDisplayName(t[0]), s);
+		if (a && !n) return this.waitFor(Filters.byDisplayName(t[0]), s);
+		if (n) {
+			const r = t.map(r.map(Filters.byDisplayName)).concat({
+				wait: a,
+				cache: cache
 			});
-			return this.bulk(...filters);
+			return this.bulk(...r)
 		}
-		return null;
+		return null
 	}
-	findByDisplayName(...options2) {
-		const [displayNames, {bulk =false, wait =false, ...rest}] = this.parseOptions(options2);
-		if (!bulk && !wait) {
-			return this.findModule(Filters.byDisplayName(displayNames[0]), rest);
-		}
-		if (wait && !bulk) {
-			return this.waitFor(Filters.byDisplayName(displayNames[0]), rest);
-		}
-		if (bulk) {
-			const filters = displayNames.map(filters.map(Filters.byDisplayName)).concat({
-				wait,
-				cache
-			});
-			return this.bulk(...filters);
-		}
-		return null;
+	findIndex(n) {
+		let a = -1;
+		return this.findModule((e, t) => {
+				n(e) && (a = t)
+			}), a
 	}
-	findIndex(filter) {
-		let foundIndex = -1;
-		this.findModule((module, index) => {
-			if (filter(module))
-				foundIndex = index;
-		});
-		return foundIndex;
-	}
-	atIndex(index) {
-		var ref;
-		return (ref = this.request(true)) === null || ref === void 0 ? void 0 : ref.c[index];
+	atIndex(e) {
+		var t;
+		return null === (t = this.request(!0)) || void 0 === t ? void 0 : t.c[e]
 	}
 	get waitForGlobal() {
-		return new Promise(async (onExists) => {
-			while (!Array.isArray(window[this.chunkName])) {
-				await new Promise(setImmediate);
-			}
-			onExists();
-		});
+		return new Promise(async e => {
+			for (; !Array.isArray(window[this.chunkName]);) await new Promise(setImmediate);
+			e()
+		})
 	}
-	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
-	async wait(callback = null) {
+	async wait(e = null) {
 		return this.whenReady.then(() => {
-			typeof callback === "function" && callback();
-		});
+			"function" == typeof e && e()
+		})
 	}
-	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
 	get whenExists() {
-		return this.waitForGlobal;
+		return this.waitForGlobal
 	}
-	/**@deprecated Use Webpack.whenReady.then(() => {}) instead. */
-	on(event, listener3) {
-		switch (event) {
-			case "LOADED":
-				return this.whenReady.then(listener3);
-		}
+	on(e, t) {
+		if ("LOADED" === e) return this.whenReady.then(t)
 	}
-	/**@deprecated @see Webpack.on */
 	get once() {
-		return this.on;
+		return this.on
 	}
 	constructor() {
 		_listeners.set(this, {
-			writable: true,
-			value: new Set()
-		});
-		this.cache = null;
-		this.waitForGlobal.then(() => {
-			let originalPush = window[this.chunkName].push;
-			const handlePush = (chunk) => {
-				const [, modules] = chunk;
-				for (const moduleId in modules) {
-					const originalModule = modules[moduleId];
-					modules[moduleId] = (module, exports, require) => {
+			writable: !0,
+			value: new Set
+		}), this.cache = null, this.waitForGlobal.then(() => {
+			let a = window[this.chunkName].push;
+			const t = e => {
+				const [, t] = e;
+				for (const n in t) {
+					const s = t[n];
+					t[n] = (e, t, n) => {
 						try {
-							originalModule.call(originalModule, module, exports, require);
-							const listeners = [
-								..._classPrivateFieldGet(this, _listeners)
-							];
-							for (let i = 0; i < listeners.length; i++) {
-								try {
-									listeners[i](exports);
-								} catch (error) {
-									console.error("[Webpack]", "Could not fire callback listener:", error);
-								}
+							s.call(s, e, t, n);const a = [..._classPrivateFieldGet(this, _listeners)];
+							for (let e = 0; e < a.length; e++) try {
+									a[e](t)
+								} catch (e) {
+									console.error("[Webpack]", "Could not fire callback listener:", e)
 							}
-						} catch (error) {
-							console.error(error);
+						} catch (e) {
+							console.error(e)
 						}
-					};
-					Object.assign(modules[moduleId], originalModule, {
-						toString: originalModule.toString.bind(originalModule),
-						__original: originalModule
-					});
+					}, Object.assign(t[n], s, {
+						toString: s.toString.bind(s),
+						__original: s
+					})
 				}
-				return originalPush.apply(window[this.chunkName], [
-					chunk
-				]);
+				return a.apply(window[this.chunkName], [e])
 			};
 			Object.defineProperty(window[this.chunkName], "push", {
-				configurable: true,
-				get: () => handlePush,
-				set: (newPush) => {
-					originalPush = newPush;
-					Object.defineProperty(window[this.chunkName], "push", {
-						value: handlePush,
-						configurable: true,
-						writable: true
-					});
+				configurable: !0,
+				get: () => t,
+				set: e => {
+					a = e, Object.defineProperty(window[this.chunkName], "push", {
+						value: t,
+						configurable: !0,
+						writable: !0
+					})
 				}
+			})
+		}), this.whenReady = this.waitForGlobal.then(() => new Promise(async e => {
+			const [t, {ActionTypes:n} ={}, a] = await this.findByProps(["dirtyDispatch"], ["API_HOST", "ActionTypes"], ["getCurrentUser", "_dispatchToken"], {
+				cache: !1,
+				bulk: !0,
+				wait: !0,
+				forever: !0
 			});
-		});
-		this.whenReady = this.waitForGlobal.then(() => new Promise(async (onReady) => {
-			const [Dispatcher, {ActionTypes} = {
-				}, UserStore] = await this.findByProps([
-				"dirtyDispatch"
-			], [
-				"API_HOST",
-				"ActionTypes"
-			], [
-				"getCurrentUser",
-				"_dispatchToken"
-			], {
-				cache: false,
-				bulk: true,
-				wait: true,
-				forever: true
-			});
-			if (UserStore.getCurrentUser()) return onReady();
-			const listener = function() {
-				Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
-				Dispatcher.unsubscribe(ActionTypes.CONNECTION_OPEN, listener);
-				onReady();
-			};
-			Dispatcher.subscribe(ActionTypes.START_SESSION, listener);
-			Dispatcher.subscribe(ActionTypes.CONNECTION_OPEN, listener);
-		})
-		);
+			if (a.getCurrentUser()) return e();
+			function s() {
+				t.unsubscribe(n.START_SESSION, s), t.unsubscribe(n.CONNECTION_OPEN, s), e()
+			}
+			t.subscribe(n.START_SESSION, s), t.subscribe(n.CONNECTION_OPEN, s)
+		}))
 	}
 }
-var _listeners = new WeakMap();
+var _listeners = new WeakMap;
 const Webpack = new WebpackModule;
-
 class DiscordModules {
-	/**@returns {typeof import("react")} */
 	static get React() {
-		return memoize(this, "React", () => Webpack.findByProps("createElement", "createContext")
-		);
+		return memoize(this, "React", () => Webpack.findByProps("createElement", "createContext"))
 	}
-	/**@returns {typeof import("react-dom")} */
 	static get ReactDOM() {
-		return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal")
-		);
+		return memoize(this, "ReactDOM", () => Webpack.findByProps("findDOMNode", "render", "createPortal"))
 	}
 	static get Tooltips() {
-		return memoize(this, "Tooltips", () => Webpack.findByProps("TooltipContainer")
-		);
+		return memoize(this, "Tooltips", () => Webpack.findByProps("TooltipContainer"))
 	}
 	static get DiscordProviders() {
 		return memoize(this, "DiscordProviders", () => {
-			const [{AccessibilityPreferencesContext: {Provider: AccessibilityProvider}} = {
-					AccessibilityPreferencesContext: {
-					}
-				}, Layers, {LayerClassName} = {
-				}] = Webpack.findByProps([
-				"AccessibilityPreferencesContext"
-			], [
-				"AppReferencePositionLayer"
-			], [
-				"LayerClassName"
-			], {
-				bulk: true
+			const [{AccessibilityPreferencesContext: {Provider:e}} ={
+					AccessibilityPreferencesContext: {}
+				}, t, {LayerClassName:n} ={}] = Webpack.findByProps(["AccessibilityPreferencesContext"], ["AppReferencePositionLayer"], ["LayerClassName"], {
+				bulk: !0
 			});
 			return {
-				AccessibilityProvider,
-				LayerProvider: Layers.AppLayerProvider().props.layerContext.Provider,
-				container: document.querySelector(`#app-mount > .${LayerClassName}`)
-			};
-		});
+				AccessibilityProvider: e,
+				LayerProvider: t.AppLayerProvider().props.layerContext.Provider,
+				container: document.querySelector("#app-mount > ." + n)
+			}
+		})
 	}
 	static get Toasts() {
-		return memoize(this, "Toasts", () => {
-			return Object.assign({
-			}, ...Webpack.findByProps([
-				"createToast"
-			], [
-				"showToast"
-			], {
-				bulk: true
-			}));
-		});
+		return memoize(this, "Toasts", () => Object.assign({}, ...Webpack.findByProps(["createToast"], ["showToast"], {
+			bulk: !0
+		})))
 	}
 	static get PrivateChannelActions() {
-		return memoize(this, "PrivateChannelActions", () => Webpack.findByProps("openPrivateChannel")
-		);
+		return memoize(this, "PrivateChannelActions", () => Webpack.findByProps("openPrivateChannel"))
 	}
 	static get Dispatcher() {
-		return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch")
-		);
+		return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch"))
 	}
 	static get InviteActions() {
-		return memoize(this, "InviteActions", () => Webpack.findByProps("resolveInvite")
-		);
+		return memoize(this, "InviteActions", () => Webpack.findByProps("resolveInvite"))
 	}
 	static get ContextMenu() {
 		return memoize(this, "ContextMenu", () => {
-			const [ContextMenuActions, ContextMenuComponents] = Webpack.findByProps([
-				"openContextMenu"
-			], [
-				"MenuItem",
-				"default"
-			], {
-				bulk: true
-			});
-			const output = {
-				open: ContextMenuActions.openContextMenu,
-				close: ContextMenuActions.closeContextMenu,
-				Menu: ContextMenuComponents.default
+			var e,
+				[t, n] = Webpack.findByProps(["openContextMenu"], ["MenuItem", "default"], {
+					bulk: !0
+				});
+			const a = {
+				open: t.openContextMenu,
+				close: t.closeContextMenu,
+				Menu: n.default
 			};
-			for (let key in ContextMenuComponents) {
-				if (!key.startsWith("Menu")) continue;
-				output[key.slice("Menu".length)] = ContextMenuComponents[key];
-			}
-			return output;
-		});
+			for (e in n) e.startsWith("Menu") && (a[e.slice("Menu".length)] = n[e]);
+			return a
+		})
 	}
 }
-
 class DOM {
 	static get head() {
-		return memoize(this, "head", () => document.head.appendChild(this.createElement("bd-head"))
-		);
+		return memoize(this, "head", () => document.head.appendChild(this.createElement("bd-head")))
 	}
-	static createElement(type, options, ...children) {
-		const node = Object.assign(document.createElement(type), options);
-		node.append(...children);
-		return node;
+	static createElement(e, t, ...n) {
+		const a = Object.assign(document.createElement(e), t);
+		return a.append(...n), a
 	}
-	static injectCSS(id, css) {
-		const element = this.createElement("style", {
-			id,
-			textContent: css
-		});
-		this.head.appendChild(element);
-		return element;
+	static injectCSS(e, t) {
+		e = this.createElement("style", {
+			id: e,
+			textContent: t
+		});return this.head.appendChild(e), e
 	}
-	static clearCSS(id1) {
-		const element = this.head.querySelector(`style[id="${id1}"]`);
-		if (element) element.remove();
+	static clearCSS(e) {
+		const t = this.head.querySelector(`style[id="${e}"]`);
+		t && t.remove()
 	}
 }
-
 class Modals {
 	static get ModalsAPI() {
-		return memoize(this, "ModalsAPI", () => Webpack.findByProps("openModal", "useModalsStore")
-		);
+		return memoize(this, "ModalsAPI", () => Webpack.findByProps("openModal", "useModalsStore"))
 	}
 	static get ModalComponents() {
-		return memoize(this, "ModalComponents", () => Webpack.findByProps("ModalRoot", "ModalHeader")
-		);
+		return memoize(this, "ModalComponents", () => Webpack.findByProps("ModalRoot", "ModalHeader"))
 	}
 	static get Forms() {
-		return memoize(this, "Forms", () => Webpack.findByProps("FormTitle", "FormItem")
-		);
+		return memoize(this, "Forms", () => Webpack.findByProps("FormTitle", "FormItem"))
 	}
 	static get Button() {
-		return memoize(this, "Button", () => Webpack.findByProps("DropdownSizes")
-		);
+		return memoize(this, "Button", () => Webpack.findByProps("DropdownSizes"))
 	}
 	static get ConfirmationModal() {
-		return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal")
-		);
+		return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal"))
 	}
-	/**@returns {typeof import("react")} */
 	static get Text() {
-		return memoize(this, "Text", () => Webpack.findByDisplayName("Text")
-		);
+		return memoize(this, "Text", () => Webpack.findByDisplayName("Text"))
 	}
-	static showConfirmationModal(title, content, options = {
-		}) {
-		const {confirmText ="Okay", cancelText ="Cancel", onConfirm =() => {}, onCancel =() => {}} = options;
-		return this.ModalsAPI.openModal((props) => DiscordModules.React.createElement(this.ConfirmationModal, Object.assign({
-			header: title,
-			confirmText: confirmText,
-			cancelText: cancelText,
-			onConfirm,
-			onCancel
-		}, props), DiscordModules.React.createElement(this.Text, null, content))
-		);
+	static showConfirmationModal(t, n, e = {}) {
+		const {confirmText: a="Okay", cancelText: s="Cancel", onConfirm: r=() => {}, onCancel: i=() => {}} = e;
+		return this.ModalsAPI.openModal(e => DiscordModules.React.createElement(this.ConfirmationModal, Object.assign({
+			header: t,
+			confirmText: a,
+			cancelText: s,
+			onConfirm: r,
+			onCancel: i
+		}, e), DiscordModules.React.createElement(this.Text, null, n)))
 	}
-	static alert(title1, content1) {
-		return this.showConfirmationModal(title1, content1, {
+	static alert(e, t) {
+		return this.showConfirmationModal(e, t, {
 			cancelText: null
-		});
+		})
 	}
 }
-
 class Patcher {
-	static getPatchesByCaller(id) {
-		if (!id) return [];
-		const patches = [];
-		for (const patch of this._patches)
-			for (const childPatch of patch.children)
-				if (childPatch.caller === id) patches.push(childPatch);
-		return patches;
+	static getPatchesByCaller(e) {
+		if (!e) return [];
+		const t = [];
+		for (const n of this._patches)
+			for (const a of n.children) a.caller === e && t.push(a);
+		return t
 	}
-	static unpatchAll(caller) {
-		const patches = this.getPatchesByCaller(caller);
-		if (!patches.length) return;
-		for (const patch of patches) patch.unpatch();
+	static unpatchAll(e) {
+		e = this.getPatchesByCaller(e);
+		if (e.length)
+			for (const t of e) t.unpatch()
 	}
-	static makeOverride(patch) {
+	static makeOverride(o) {
 		return function() {
-			var ref;
-			let returnValue;
-			if (!(patch === null || patch === void 0 ? void 0 : (ref = patch.children) === null || ref === void 0 ? void 0 : ref.length)) return patch.originalFunction.apply(this, arguments);
-			for (const beforePatch of patch.children.filter((e) => e.type === "before"
-			)) {
-				try {
-					beforePatch.callback(this, arguments);
-				} catch (error) {
-					Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${beforePatch.caller}:`, error);
-				}
+			let t;
+			if (null == o || (null === (e = o.children) || void 0 === e || !e.length)) return o.originalFunction.apply(this, arguments);
+			for (const s of o.children.filter(e => "before" === e.type)) try {
+					s.callback(this, arguments)
+				} catch (e) {
+					Logger.error("Patcher", `Cannot fire before patch of ${o.functionName} for ${s.caller}:`, e)
 			}
-			const insteadPatches = patch.children.filter((e) => e.type === "instead"
-			);
-			if (!insteadPatches.length)
-				returnValue = patch.originalFunction.apply(this, arguments);
-			else
-				for (const insteadPatch of insteadPatches) {
-					try {
-						const tempReturn = insteadPatch.callback(this, arguments, patch.originalFunction.bind(this));
-						if (typeof tempReturn !== "undefined")
-							returnValue = tempReturn;
-					} catch (error) {
-						Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${insteadPatch.caller}:`, error);
-					}
-			}
-			for (const afterPatch of patch.children.filter((e) => e.type === "after"
-			)) {
-				try {
-					const tempReturn = afterPatch.callback(this, arguments, returnValue, (ret) => returnValue = ret
-					);
-					if (typeof tempReturn !== "undefined")
-						returnValue = tempReturn;
-				} catch (error) {
-					Logger.error("Patcher", `Cannot fire before patch of ${patch.functionName} for ${afterPatch.caller}:`, error);
-				}
-			}
-			return returnValue;
-		};
+			var e = o.children.filter(e => "instead" === e.type);
+			if (e.length)
+				for (const r of e) try {
+						var n = r.callback(this, arguments, o.originalFunction.bind(this));
+						void 0 !== n && (t = n)
+					} catch (e) {
+						Logger.error("Patcher", `Cannot fire before patch of ${o.functionName} for ${r.caller}:`, e)
+			} else
+				t = o.originalFunction.apply(this, arguments);
+			for (const i of o.children.filter(e => "after" === e.type)) try {
+					var a = i.callback(this, arguments, t, e => t = e);
+					void 0 !== a && (t = a)
+				} catch (e) {
+					Logger.error("Patcher", `Cannot fire before patch of ${o.functionName} for ${i.caller}:`, e)
+			} return t
+		}
 	}
-	static pushPatch(caller1, module, functionName) {
-		const patch = {
-			caller: caller1,
-			module,
-			functionName,
-			originalFunction: module[functionName],
+	static pushPatch(e, t, n) {
+		const a = {
+			caller: e,
+			module: t,
+			functionName: n,
+			originalFunction: t[n],
 			undo: () => {
-				patch.module[patch.functionName] = patch.originalFunction;
-				patch.children = [];
+				a.module[a.functionName] = a.originalFunction, a.children = []
 			},
 			count: 0,
 			children: []
 		};
-		module[functionName] = this.makeOverride(patch);
-		Object.assign(module[functionName], patch.originalFunction, {
-			__originalFunction: patch.originalFunction
-		});
-		return this._patches.push(patch), patch;
+		return t[n] = this.makeOverride(a), Object.assign(t[n], a.originalFunction, {
+				__originalFunction: a.originalFunction
+			}), this._patches.push(a), a
 	}
-	static doPatch(caller2, module1, functionName1, callback, type = "after", options = {
-		}) {
-		let {displayName} = options;
-		var ref;
-		const patch = (ref = this._patches.find((e) => e.module === module1 && e.functionName === functionName1
-		)) !== null && ref !== void 0 ? ref : this.pushPatch(caller2, module1, functionName1);
-		if (typeof displayName !== "string") displayName || module1.displayName || module1.name || module1.constructor.displayName || module1.constructor.name;
-		const child = {
-			caller: caller2,
-			type,
-			id: patch.count,
-			callback,
-			unpatch: () => {
-				patch.children.splice(patch.children.findIndex((cpatch) => cpatch.id === child.id && cpatch.type === type
-				), 1);
-				if (patch.children.length <= 0) {
-					const patchNum = this._patches.findIndex((p) => p.module == module1 && p.functionName == functionName1
-					);
-					this._patches[patchNum].undo();
-					this._patches.splice(patchNum, 1);
+	static doPatch(e, t, n, a, s = "after", r = {}) {
+		var i,
+			r = r["displayName"];
+		const o = null !== (i = this._patches.find(e => e.module === t && e.functionName === n)) && void 0 !== i ? i : this.pushPatch(e, t, n),
+			c = ("string" != typeof r && (r || t.displayName || t.name || t.constructor.displayName || t.constructor.name), {
+				caller: e,
+				type: s,
+				id: o.count,
+				callback: a,
+				unpatch: () => {
+					var e;
+					o.children.splice(o.children.findIndex(e => e.id === c.id && e.type === s), 1), o.children.length <= 0 && (e = this._patches.findIndex(e => e.module == t && e.functionName == n), this._patches[e].undo(), this._patches.splice(e, 1))
 				}
-			}
-		};
-		patch.children.push(child);
-		patch.count++;
-		return child.unpatch;
+			});
+		return o.children.push(c), o.count++, c.unpatch
 	}
-	static before(caller3, module2, functionName2, callback1) {
-		return this.doPatch(caller3, module2, functionName2, callback1, "before");
+	static before(e, t, n, a) {
+		return this.doPatch(e, t, n, a, "before")
 	}
-	static after(caller4, module3, functionName3, callback2) {
-		return this.doPatch(caller4, module3, functionName3, callback2, "after");
+	static after(e, t, n, a) {
+		return this.doPatch(e, t, n, a, "after")
 	}
-	static instead(caller5, module4, functionName4, callback3) {
-		return this.doPatch(caller5, module4, functionName4, callback3, "instead");
+	static instead(e, t, n, a) {
+		return this.doPatch(e, t, n, a, "instead")
 	}
 }
 Patcher._patches = [];
-
 var Toasts$1 = {
-	settings: [
-		{
+		settings: [{
 			name: "Show Toasts",
 			note: "Show any types of toasts.",
-			value: true,
+			value: !0,
 			id: "showToasts",
 			type: "switch"
-		},
-		{
+		}, {
 			name: "Use builtin toasts",
 			note: "Makes BDCompat use discord's builtin toasts instead.",
-			value: true,
+			value: !0,
 			id: "useBuiltinToasts",
 			type: "switch"
-		},
-		{
+		}, {
 			name: "Show Toasts on",
 			type: "category",
-			requires: [
-				"showToasts"
-			],
-			items: [
-				{
-					name: "Show Toasts on plugin start/stop",
-					id: "showToastsPluginStartStop",
-					type: "switch",
-					value: true
-				},
-				{
-					name: "Show Toasts on plugin load/unload",
-					id: "showToastsPluginLoad",
-					type: "switch",
-					value: true
-				},
-				{
-					name: "Show Toasts on plugin reload",
-					id: "showToastsPluginReload",
-					type: "switch",
-					value: true
-				},
-				{
-					name: "Show Toasts on plugin enable/disable",
-					id: "showToastsPluginState",
-					type: "switch",
-					value: true
-				}
-			]
-		}
-	]
-};
-var Developer = {
-	settings: [
-		{
+			requires: ["showToasts"],
+			items: [{
+				name: "Show Toasts on plugin start/stop",
+				id: "showToastsPluginStartStop",
+				type: "switch",
+				value: !0
+			}, {
+				name: "Show Toasts on plugin load/unload",
+				id: "showToastsPluginLoad",
+				type: "switch",
+				value: !0
+			}, {
+				name: "Show Toasts on plugin reload",
+				id: "showToastsPluginReload",
+				type: "switch",
+				value: !0
+			}, {
+				name: "Show Toasts on plugin enable/disable",
+				id: "showToastsPluginState",
+				type: "switch",
+				value: !0
+			}]
+		}]
+	},
+	Developer = {
+		settings: [{
 			name: "Show Debug Logs",
 			note: "",
-			value: false,
+			value: !1,
 			id: "showDebug",
 			type: "switch"
-		}
-	]
-};
-var defaultSettings = {
-	Toasts: Toasts$1,
-	Developer: Developer
-};
-
+		}]
+	},
+	defaultSettings = {
+		Toasts: Toasts$1,
+		Developer: Developer
+	};
 class SettingsManager {
 	static get items() {
-		return defaultSettings;
+		return defaultSettings
 	}
 	static initialize() {
 		this.states = DataStore.getSettings();
-		const loadSetting = (settings, requires = []) => {
-			for (const setting of settings) {
-				if (setting.type === "category") {
-					loadSetting(setting.items, setting.requires);
-					continue;
-				}
-				this.settings[setting.id] = {
-					type: setting.type,
+		const a = (e, t = []) => {
+			for (const n of e) "category" !== n.type ? this.settings[n.id] = {
+					type: n.type,
 					get value() {
-						var _id;
-						return (_id = SettingsManager.states[setting.id]) !== null && _id !== void 0 ? _id : setting.value;
+						var e;
+						return null !== (e = SettingsManager.states[n.id]) && void 0 !== e ? e : n.value
 					},
-					requires: requires
-				};
-			}
+					requires: t
+				} : a(n.items, n.requires)
 		};
-		for (let collectionId in this.defaultSettings) {
-			const collection = this.defaultSettings[collectionId];
-			if (!collection.settings) continue;
-			loadSetting(collection.settings);
+		for (var e in this.defaultSettings) {
+			e = this.defaultSettings[e];e.settings && a(e.settings)
 		}
 	}
-	static setSetting(id2, value) {
-		this.states[id2] = value;
-		DataStore.setSettings(id2, value);
-		this.alertListeners(id2, value);
+	static setSetting(e, t) {
+		this.states[e] = t, DataStore.setSettings(e, t), this.alertListeners(e, t)
 	}
-	static isEnabled(id1) {
-		const setting = this.settings[id1];
-		if (!setting) return false;
-		return setting.value && setting.requires.every((id) => this.isEnabled(id)
-			);
+	static isEnabled(e) {
+		const t = this.settings[e];
+		return !!t && (t.value && t.requires.every(e => this.isEnabled(e)))
 	}
-	// Listener stuff
-	static addListener(callback) {
-		this.listeners.add(callback);
-		return () => this.removeListener(callback);
+	static addListener(e) {
+		return this.listeners.add(e), () => this.removeListener(e)
 	}
-	static removeListener(callback1) {
-		return this.listeners.delete(callback1);
+	static removeListener(e) {
+		return this.listeners.delete(e)
 	}
-	static alertListeners(...args) {
-		for (const callback of this.listeners) {
-			try {
-				callback(...args);
-			} catch (error) {
-				Logger.error("SettingsManager", "Could not fire listener:", error);
+	static alertListeners(...e) {
+		for (const t of this.listeners) try {
+				t(...e)
+			} catch (e) {
+				Logger.error("SettingsManager", "Could not fire listener:", e)
+		}
+	}
+	static useState(e) {
+		const [t, n] = React.useState(e());
+		return React.useEffect(() => this.addListener(() => n(e()))), t
+	}
+}
+function Toast({type:e, children:t, timeout:n, onRemove:a}) {
+	const s = DiscordModules["React"],
+		[r, i] = s.useState(!1),
+		o = s.useCallback(() => {
+			i(!0), setTimeout(() => a(), 300)
+		}, [a, r]);
+	return s.useEffect(() => {
+			setTimeout(() => o(), n)
+		}, [n]), s.createElement("div", {
+			className: ["bd-toast", e && ["icon", "toast-" + e], r && "closing"].filter(Boolean).flat(10).join(" "),
+			onClick: e => {
+				e.shiftKey && o()
 			}
-		}
-	}
-	static useState(factory) {
-		const [state, setState] = React.useState(factory());
-		React.useEffect(() => {
-			return this.addListener(() => setState(factory())
-			);
-		});
-		return state;
-	}
+		}, t)
 }
-SettingsManager.listeners = new Set();
-SettingsManager.defaultSettings = defaultSettings;
-SettingsManager.states = {
-};
-SettingsManager.settings = {
-};
-
-function Toast({type, children, timeout, onRemove}) {
-	const {React} = DiscordModules;
-	const [closing, setClosing] = React.useState(false);
-	const remove = React.useCallback(() => {
-		setClosing(true);
-		setTimeout(() => onRemove()
-			, 300);
-	}, [
-		onRemove,
-		closing
-	]);
-	React.useEffect(() => {
-		setTimeout(() => remove()
-			, timeout);
-	}, [
-		timeout
-	]);
-	return React.createElement("div", {
-		className: [
-			"bd-toast",
-			type && [
-				"icon",
-				"toast-" + type
-			],
-			closing && "closing"
-		].filter(Boolean).flat(10).join(" "),
-		onClick: (event) => {
-			if (!event.shiftKey) return;
-			remove();
-		}
-	}, children);
-}
-function ToastsContainer({useStore, setState}) {
-	const {React} = DiscordModules;
-	const elements = useStore((state) => state.toasts
-	);
-	return React.createElement(React.Fragment, null, elements.map((element) => React.createElement(Toast, {
-		key: element.id,
+function ToastsContainer({useStore:e, setState:t}) {
+	const a = DiscordModules["React"],
+		n = e(e => e.toasts);
+	return a.createElement(a.Fragment, null, n.map(n => a.createElement(Toast, {
+		key: n.id,
 		onRemove: () => {
-			setState((state) => {
-				const index = state.toasts.indexOf(element);
-				if (index < 0) return;
-				return {
-					...state,
-					toasts: state.toasts.slice(0, index).concat(state.toasts.slice(index + 1))
-				};
-			});
+			t(e => {
+				var t = e.toasts.indexOf(n);
+				if (!(t < 0)) return {
+						...e,
+						toasts: e.toasts.slice(0, t).concat(e.toasts.slice(t + 1))
+				}
+			})
 		},
-		children: element.content,
-		timeout: element.timeout,
-		type: element.type
-	})
-	));
+		children: n.content,
+		timeout: n.timeout,
+		type: n.type
+	})))
 }
-
-/**
- * Creates a updateable react store with a remote api.
- * @param {Any} state Intitial State of your store
- * @returns {Any}
- */
-function createStore(state) {
-	const listeners = new Set();
-	const Api = Object.freeze({
-		get listeners() {
-			return listeners;
-		},
-		getState(factory = (_) => _
-		) {
-			return factory(state);
-		},
-		setState(partial) {
-			const partialState = typeof partial === "function" ? partial(state) : partial;
-			if (_.isEqual(state, partialState)) return;
-			state = Object.assign({
-			}, state, partialState);
-			listeners.forEach((listener) => {
-				listener(state);
-			});
-		},
-		addListener(listener) {
-			if (listeners.has(listener)) return;
-			listeners.add(listener);
-			return () => listeners.delete(listener);
-		},
-		removeListener(listener) {
-			return listeners.delete(listener);
-		}
-	});
-	function useState(factory = (_) => _
-	) {
-		const [, forceUpdate] = DiscordModules.React.useReducer((e) => e + 1
-			, 0);
-		DiscordModules.React.useEffect(() => {
-			const handler = () => forceUpdate();
-			listeners.add(handler);
-			return () => listeners.delete(handler);
-		}, []);
-		return Api.getState(factory);
+function createStore(t) {
+	const n = new Set,
+		a = Object.freeze({
+			get listeners() {
+				return n
+			},
+			getState(e = e => e) {
+				return e(t)
+			},
+			setState(e) {
+				e = "function" == typeof e ? e(t) : e;_.isEqual(t, e) || (t = Object.assign({}, t, e), n.forEach(e => {
+					e(t)
+				}))
+			},
+			addListener(e) {
+				if (!n.has(e)) return n.add(e), () => n.delete(e)
+			},
+			removeListener(e) {
+				return n.delete(e)
+			}
+		});
+	function e(e = e => e) {
+		const [, t] = DiscordModules.React.useReducer(e => e + 1, 0);
+		return DiscordModules.React.useEffect(() => {
+				const e = () => t();
+				return n.add(e), () => n.delete(e)
+			}, []), a.getState(e)
 	}
-	Object.assign(useState, Api, {
-		*[Symbol.iterator]() {
-			yield useState;
-			yield Api;
-		}
-	});
-	return useState;
+	return Object.assign(e, a, {
+			*[Symbol.iterator]() {
+				yield e, yield a
+			}
+		}), e
 }
-
+SettingsManager.listeners = new Set, SettingsManager.defaultSettings = defaultSettings, SettingsManager.states = {}, SettingsManager.settings = {};
 class Converter {
-	static convertType(type1) {
+	static convertType(e) {
 		switch (
-		type1 === null || type1 === void 0 ? void 0 : type1.toLowerCase()) {
+		null == e ? void 0 : e.toLowerCase()) {
 			case "info":
-				return DiscordModules.Toasts.ToastType.MESSAGE;
-			case "error":
-				return DiscordModules.Toasts.ToastType.FAILURE;
-			case "success":
-				return DiscordModules.Toasts.ToastType.SUCCESS;
-			default:
-				return DiscordModules.Toasts.ToastType.MESSAGE;
+				return DiscordModules.Toasts.ToastType.MESSAGE;case "error":
+				return DiscordModules.Toasts.ToastType.FAILURE;case "success":
+				return DiscordModules.Toasts.ToastType.SUCCESS;default:
+				return DiscordModules.Toasts.ToastType.MESSAGE
 		}
 	}
 }
 class Toasts {
 	static dispose() {
-		return DiscordModules.ReactDOM.unmountComponentAtNode(this.container);
+		return DiscordModules.ReactDOM.unmountComponentAtNode(this.container)
 	}
 	static get container() {
 		return memoize(this, "container", () => DOM.createElement("div", {
 			className: "bd-toasts"
-		})
-		);
+		}))
 	}
 	static initialize() {
-		const [useStore, Api] = createStore({
+		var [e, t] = createStore({
 			toasts: []
 		});
-		document.body.appendChild(this.container);
-		this.API = Api;
-		DiscordModules.ReactDOM.render(DiscordModules.React.createElement(ToastsContainer, {
-			useStore,
-			setState: Api.setState
-		}), this.container);
+		document.body.appendChild(this.container), this.API = t, DiscordModules.ReactDOM.render(DiscordModules.React.createElement(ToastsContainer, {
+			useStore: e,
+			setState: t.setState
+		}), this.container)
 	}
-	static showDiscordToast(content, options) {
+	static showDiscordToast(t, n) {
 		try {
-			setImmediate(() => {
-				const type = Converter.convertType(options.type);
-				const toast = DiscordModules.Toasts.createToast(content, type);
-				DiscordModules.Toasts.showToast(toast);
-			});
-			return;
-		} catch (error) {
-			Logger.error("Toasts", "Failed to show discord's toast:", error);
-		}
-	}
-	static show(content1, options1 = {
-		}) {
-		console.log({
-			content: content1,
-			options: options1
-		});
-		if (!SettingsManager.isEnabled("showToasts")) return;
-		if (SettingsManager.isEnabled("useBuiltinToasts")) return this.showDiscordToast(content1, options1);
-		// NotLikeThis
-		// setImmediate(() => {
-		this.API.setState((state) => ({
-			...state,
-			id: Math.random().toString(36).slice(2),
-			toasts: state.toasts.concat({
-				content: content1,
-				timeout: 3000,
-				...options1
+			return void setImmediate(() => {
+				var e = Converter.convertType(n.type),
+					e = DiscordModules.Toasts.createToast(t, e);
+				DiscordModules.Toasts.showToast(e)
 			})
-		})
-		);
-	// });
+		} catch (e) {
+			Logger.error("Toasts", "Failed to show discord's toast:", e)
+		}
+	}
+	static show(t, n = {}) {
+		if (console.log({
+				content: t,
+				options: n
+			}), SettingsManager.isEnabled("showToasts")) return SettingsManager.isEnabled("useBuiltinToasts") ? this.showDiscordToast(t, n) : void this.API.setState(e => ({
+				...e,
+				id: Math.random().toString(36).slice(2),
+				toasts: e.toasts.concat({
+					content: t,
+					timeout: 3e3,...n
+				})
+			}))
 	}
 }
-
 class Utilities {
-	static parseMETA(code) {
-		const [firstLine] = code.split("\n");
-		if (firstLine.startsWith("//META")) return this.parseOldMETA(code);
-		if (firstLine.startsWith("/**")) return this.parseNewMETA(code);
-		throw new Error("META was not found!");
+	static parseMETA(e) {
+		const [t] = e.split("\n");
+		if (t.startsWith("//META")) return this.parseOldMETA(e);
+		if (t.startsWith("/**")) return this.parseNewMETA(e);
+		throw new Error("META was not found!")
 	}
-	static parseOldMETA(code1) {
-		const [firstLine] = code1.split("\n");
-		const parsed = JSON.parse(firstLine.slice(firstLine.indexOf("//META") + 6, firstLine.indexOf("*//")));
-		parsed.format = "json";
-		return parsed;
+	static parseOldMETA(e) {
+		const [t] = e.split("\n"),
+			n = JSON.parse(t.slice(t.indexOf("//META") + 6, t.indexOf("*//")));
+		return n.format = "json", n
 	}
-	static parseNewMETA(code2) {
-		const block = code2.split("/**", 2)[1].split("*/", 1)[0];
-		const parsed = {
-			format: "jsdoc"
-		};
-		let key = "";
-		let value = "";
-		for (const line of block.split(this.metaSplitRegex)) {
-			if (!line.length) continue;
-			if (line[0] === "@" && line[1] !== " ") {
-				parsed[key] = value;
-				const index = line.indexOf(" ");
-				key = line.slice(1, index);
-				value = line.slice(index + 1);
-			} else {
-				value += ` ${line.replace("\\n", "\n").replace(this.escapeAtRegex, "@")}`;
-			}
+	static parseNewMETA(e) {
+		const t = e.split("/**", 2)[1].split("*/", 1)[0],
+			n = {
+				format: "jsdoc"
+			};
+		let a = "",
+			s = "";
+		for (const i of t.split(this.metaSplitRegex)) {
+			var r;
+			i.length && ("@" === i[0] && " " !== i[1] ? (n[a] = s, r = i.indexOf(" "), a = i.slice(1, r), s = i.slice(r + 1)) : s += " " + i.replace("\\n", "\n").replace(this.escapeAtRegex, "@"))
 		}
-		parsed[key] = value.trim();
-		delete parsed[""];
-		return parsed;
+		return n[a] = s.trim(),
+			delete n[""]
+			, n
 	}
-	static joinClassNames(...classNames /* : (string | [boolean, string])[] */ ) {
-		let className = [];
-		for (const item of classNames) {
-			if (typeof item === "string") {
-				className.push(item);
-				continue;
-			}
-			if (Array.isArray(item)) {
-				const [should, name] = item;
-				if (!should) continue;
-				className.push(name);
-			}
+	static joinClassNames(...e) {
+		let t = [];
+		for (const s of e) {
+			var n,
+				a;
+			"string" != typeof s ? Array.isArray(s) && ([n, a] = s, n && t.push(a)) : t.push(s)
 		}
-		return className.join(" ");
+		return t.join(" ")
 	}
 }
-Utilities.metaSplitRegex = /[^\S\r\n]*?\r?(?:\r\n|\n)[^\S\r\n]*?\*[^\S\r\n]?/;
-Utilities.escapeAtRegex = /^\\@/;
-
-const showDebug = () => SettingsManager.isEnabled("showDebug");
-const startTimes = {
-};
+Utilities.metaSplitRegex = /[^\S\r\n]*?\r?(?:\r\n|\n)[^\S\r\n]*?\*[^\S\r\n]?/, Utilities.escapeAtRegex = /^\\@/;
+const showDebug = () => SettingsManager.isEnabled("showDebug"),
+	startTimes = {};
 class PluginsManager {
-	static on(event, callback) {
-		if (!this.listeners[event])
-			this.listeners[event] = new Set();
-		return this.listeners[event].add(callback), this.off.bind(this, event, callback);
+	static on(e, t) {
+		return this.listeners[e] || (this.listeners[e] = new Set), this.listeners[e].add(t), this.off.bind(this, e, t)
 	}
-	static off(event1, callback1) {
-		if (!this.listeners[event1]) return;
-		return this.listeners[event1].delete(callback1);
+	static off(e, t) {
+		if (this.listeners[e]) return this.listeners[e].delete(t)
 	}
-	static dispatch(event2, ...args) {
-		if (!this.listeners[event2]) return;
-		for (const listener of this.listeners[event2]) {
-			try {
-				listener(...args);
-			} catch (error) {
-				Logger.error("Emitter", error);
-			}
+	static dispatch(e, ...t) {
+		if (this.listeners[e])
+			for (const n of this.listeners[e]) try {
+					n(...t)
+				} catch (e) {
+					Logger.error("Emitter", e)
 		}
 	}
 	static initialize() {
-		this.addonState = DataStore.getAddonState("plugins");
-		this.observer = new MutationObserver((changes) => {
-			for (const change of changes) this.onMutate(change);
-		});
-		this.observer.observe(document, {
-			childList: true,
-			subtree: true
-		});
-		BDCompatNative.IPC.on("navigate", () => this.onSwitch()
-		);
-		Logger.log("PluginsManager", "Loading plugins...");
-		this.loadAllPlugins();
-		this.watchAddons();
+		this.addonState = DataStore.getAddonState("plugins"), this.observer = new MutationObserver(e => {
+			for (const t of e) this.onMutate(t)
+		}), this.observer.observe(document, {
+			childList: !0,
+			subtree: !0
+		}), BDCompatNative.IPC.on("navigate", () => this.onSwitch()), Logger.log("PluginsManager", "Loading plugins..."), this.loadAllPlugins(), this.watchAddons()
 	}
 	static watchAddons() {
 		this.watcher = fs1.watch(this.folder, {
-			persistent: false
-		}, (eventType, filename) => {
-			if (!eventType || !filename) return;
-			const absolutePath = path.resolve(this.folder, filename);
-			if (!filename.endsWith(this.extension)) return;
-			// await new Promise(r => setTimeout(r, 100));
-			try {
-				const stats = fs1.statSync(absolutePath);
-				if (!stats.isFile() || !stats.mtime) return;
-				if (this.times[filename] === stats.mtime.getTime()) return;
-				this.times[filename] = stats.mtime.getTime();
-				if (eventType === "rename") this.loadAddon(absolutePath, true);
-				if (eventType === "change") this.reloadAddon(absolutePath, true);
-			} catch (err) {
-				if (fs1.existsSync(absolutePath)) return;
-				this.unloadAddon(absolutePath, true);
-			}
-		});
-	}
-	static loadAllPlugins() {
-		const files = fs1.readdirSync(this.folder, "utf8");
-		for (let i = 0; i < files.length; i++) {
-			const filename = files[i];
-			const location = path.resolve(this.folder, filename);
-			const stats = fs1.statSync(location);
-			if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
-			this.times[filename] = stats.mtime.getTime();
-			try {
-				this.loadAddon(location, false);
-				this.dispatch("updated");
-			} catch (error) {
-				Logger.error("PluginsManager", `Failed to load plugin ${filename}:`, error);
-			}
-		}
-		if (showDebug()) {
-			Logger.log("PluginsManager", `Plugins start times:`);
-			console.table(startTimes);
-		}
-	}
-	static compile(filecontent, name, location) {
-		return `(function (module, exports, __dirname, __filename, global) {
-${filecontent}
-if (module.exports["${name}"]) {module.exports = module.exports["${name}"];}
-if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}
-})
-//# sourceURL=${_.escape(location)}`;
-	}
-	static resolve(idOrFileOrAddon) {
-		return this.addons.find((addon) => addon.name === idOrFileOrAddon || addon.path === idOrFileOrAddon || addon === idOrFileOrAddon
-		);
-	}
-	static loadAddon(location1, showToast = true, showStart = true) {
-		var ref;
-		const start = Date.now();
-		const filecontent = fs1.readFileSync(location1, "utf8");
-		const meta = Utilities.parseMETA(filecontent);
-		Object.assign(meta, {
-			filename: path.basename(location1),
-			path: location1,
-			filecontent
-		});
-		if (this.resolve(meta.name) || this.resolve(meta.filename))
-			throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
-		let module = {
-			exports: {
-			}
-		};
-		try {
-			window.eval(this.compile(filecontent, meta.name, location1))(module, module.exports, path.dirname(location1), location1, window);
-		} catch (error) {
-			Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location1)}:`, error);
-		}
-		meta.exports = typeof module.exports === "function" ? module.exports : ((ref = module.exports) === null || ref === void 0 ? void 0 : ref.__esModule) ? module.exports.default || module.exports.exports.default : module.exports.exports;
-		if (typeof meta.exports !== "function")
-			throw "Plugin had no exports.";
-		try {
-			const instance = new meta.exports(meta);
-			meta.instance = instance;
-			if (typeof instance.load === "function") {
-				try {
-					instance.load(meta);
-					// Logger.log("PluginsManager", `${meta.name} was loaded!`);
-					if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${meta.name} was loaded!`, {
-							type: "success"
-						});
-				} catch (error) {
-					Logger.error("PluginsManager", `Unable to fire load() for ${meta.name || meta.filename}:`, error);
+			persistent: !1
+		}, (e, t) => {
+			if (e && t) {
+				var n = path.resolve(this.folder, t);
+				if (t.endsWith(this.extension)) try {
+						const a = fs1.statSync(n);
+						if (!a.isFile() || !a.mtime) return;
+						if (this.times[t] === a.mtime.getTime()) return;
+						this.times[t] = a.mtime.getTime(), "rename" === e && this.loadAddon(n, !0), "change" === e && this.reloadAddon(n, !0)
+					} catch (e) {
+						if (fs1.existsSync(n)) return;
+						this.unloadAddon(n, !0)
 				}
 			}
-			if (!meta.version && typeof instance.getVersion === "function")
-				meta.version = instance.getVersion();
-			if (!meta.description && typeof instance.getDescription === "function")
-				meta.description = instance.getDescription();
-			if (!meta.author && typeof instance.getAuthor === "function")
-				meta.author = `${instance.getAuthor()}`; // Prevent clever escaping. 
-			if (this.addonState[meta.name] == null) {
-				this.addonState[meta.name] = false;
-				DataStore.saveAddonState("plugins", this.addonState);
+		})
+	}
+	static loadAllPlugins() {
+		var t = fs1.readdirSync(this.folder, "utf8");
+		for (let e = 0; e < t.length; e++) {
+			const a = t[e];
+			var n = path.resolve(this.folder, a);
+			const s = fs1.statSync(n);
+			if (a.endsWith(this.extension) && s.isFile()) {
+				this.times[a] = s.mtime.getTime();try {
+					this.loadAddon(n, !1), this.dispatch("updated")
+				} catch (e) {
+					Logger.error("PluginsManager", `Failed to load plugin ${a}:`, e)
+				}
 			}
-			this.addons.push(meta);
-			if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
-		} catch (error1) {
-			return void Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error1);
+		}
+		showDebug() && (Logger.log("PluginsManager", "Plugins start times:"), console.table(startTimes))
+	}
+	static compile(e, t, n) {
+		return `(function (module, exports, __dirname, __filename, global) {
+${e}
+if (module.exports["${t}"]) {module.exports = module.exports["${t}"];}
+if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(t)});}
+})
+//# sourceURL=` + _.escape(n)
+	}
+	static resolve(t) {
+		return this.addons.find(e => e.name === t || e.path === t || e === t)
+	}
+	static loadAddon(t, e = !0, n = !0) {
+		var a = Date.now(),
+			s = fs1.readFileSync(t, "utf8");
+		const r = Utilities.parseMETA(s);
+		if (Object.assign(r, {
+				filename: path.basename(t),
+				path: t,
+				filecontent: s
+			}), this.resolve(r.name) || this.resolve(r.filename))
+			throw new Error(`There's already a plugin with name ${r.name || r.filename}!`);
+		var i = {
+			exports: {}
+		};
+		try {
+			window.eval(this.compile(s, r.name, t))(i, i.exports, path.dirname(t), t, window)
+		} catch (e) {
+			Logger.error("PluginsManager", `Failed to compile ${r.name || path.basename(t)}:`, e)
+		}
+		if (r.exports = "function" == typeof i.exports ? i.exports : null !== (s = i.exports) && void 0 !== s && s.__esModule ? i.exports.default || i.exports.exports.default : i.exports.exports, "function" != typeof r.exports)
+			throw "Plugin had no exports.";
+		try {
+			const o = new r.exports(r);
+			if ("function" == typeof (r.instance = o).load) try {
+					o.load(r), e && SettingsManager.isEnabled("showToastsPluginLoad") && Toasts.show(r.name + " was loaded!", {
+						type: "success"
+					})
+				} catch (e) {
+					Logger.error("PluginsManager", `Unable to fire load() for ${r.name || r.filename}:`, e)
+			} r.version || "function" != typeof o.getVersion || (r.version = o.getVersion()), r.description || "function" != typeof o.getDescription || (r.description = o.getDescription()), r.author || "function" != typeof o.getAuthor || (r.author = "" + o.getAuthor()), null == this.addonState[r.name] && (this.addonState[r.name] = !1, DataStore.saveAddonState("plugins", this.addonState)), this.addons.push(r), this.addonState[r.name] && this.startPlugin(r, n)
+		} catch (e) {
+			return void Logger.error("PluginsManager", `Unable to load ${r.name || r.filename}:`, e)
 		} finally {
-			if (showDebug())
-				startTimes[meta.name] = {
-					"time in ms": Math.round(Date.now() - start)
-				};
-			return meta.instance;
+			return showDebug() && (startTimes[r.name] = {
+					"time in ms": Math.round(Date.now() - a)
+				}), r.instance
 		}
 	}
-	static unloadAddon(idOrFileOrAddon1, showToast1 = true) {
-		const addon = this.resolve(idOrFileOrAddon1);
-		if (!addon) return;
-		this.stopPlugin(addon, false);
-		this.addons.splice(this.addons.indexOf(addon), 1);
-		if (showToast1) {
-			Logger.log("PluginsManager", `${addon.name} was unloaded!`);
-			if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${addon.name} was unloaded!`, {
+	static unloadAddon(e, t = !0) {
+		e = this.resolve(e);e && (this.stopPlugin(e, !1), this.addons.splice(this.addons.indexOf(e), 1), t && (Logger.log("PluginsManager", e.name + " was unloaded!"), SettingsManager.isEnabled("showToastsPluginLoad") && Toasts.show(e.name + " was unloaded!", {
+			type: "info"
+		})), this.dispatch("updated"))
+	}
+	static startPlugin(e, t = !0) {
+		const n = this.resolve(e);
+		if (n) {
+			try {
+				"function" == typeof n.instance.start && n.instance.start(), t && SettingsManager.isEnabled("showToastsPluginStartStop") && Toasts.show(n.name + " has been started!", {
 					type: "info"
-				});
+				})
+			} catch (e) {
+				return Logger.error("PluginsManager", `Unable to fire start() for ${n.name}:`, e), Toasts.show(n.name + " could not be started!", {
+						type: "error"
+					}), !1
+			} return !0
 		}
-		this.dispatch("updated");
 	}
-	static startPlugin(plugin, showToast2 = true) {
-		const addon = this.resolve(plugin);
-		if (!addon) return;
-		try {
-			if (typeof addon.instance.start === "function") addon.instance.start();
-			if (showToast2) {
-				// Logger.log("PluginsManager", `${addon.name} has been started!`);
-				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been started!`, {
-						type: "info"
-					});
-			}
-		} catch (error) {
-			Logger.error("PluginsManager", `Unable to fire start() for ${addon.name}:`, error);
-			Toasts.show(`${addon.name} could not be started!`, {
-				type: "error"
-			});
-			return false;
-		}
-		return true;
-	}
-	static stopPlugin(plugin1, showToast3 = true) {
-		const addon = this.resolve(plugin1);
-		if (!addon) return;
-		try {
-			if (typeof addon.instance.stop === "function") addon.instance.stop();
-			if (showToast3) {
-				Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-				if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been stopped!`, {
-						type: "info"
-					});
-			}
-		} catch (error) {
-			Logger.error("PluginsManager", `Unable to fire stop() for ${addon.name}:`, error);
-			Toasts.show(`${addon.name} could not be stopped!`, {
-				type: "error"
-			});
-			return false;
-		}
-		return true;
-	}
-	static isEnabled(idOrFileOrAddon2) {
-		const addon = this.resolve(idOrFileOrAddon2);
-		if (!addon) return;
-		var _name;
-		return (_name = this.addonState[addon.name]) !== null && _name !== void 0 ? _name : false;
-	}
-	static enableAddon(idOrFileOrAddon3) {
-		const addon = this.resolve(idOrFileOrAddon3);
-		if (!addon) return Logger.warn("PluginsManager", `Unable to enable plugin that isn't loaded!`);
-		if (this.isEnabled(addon)) return Logger.warn("PluginsManager", `Cannot enable addon twice!`);
-		const success = this.startPlugin(addon, false);
-		if (success) {
-			Logger.log("PluginsManager", `${addon.name} has been enabled!`);
-			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been enabled!`, {
+	static stopPlugin(e, t = !0) {
+		const n = this.resolve(e);
+		if (n) {
+			try {
+				"function" == typeof n.instance.stop && n.instance.stop(), t && (Logger.log("PluginsManager", n.name + " has been stopped!"), SettingsManager.isEnabled("showToastsPluginStartStop") && Toasts.show(n.name + " has been stopped!", {
 					type: "info"
-				});
+				}))
+			} catch (e) {
+				return Logger.error("PluginsManager", `Unable to fire stop() for ${n.name}:`, e), Toasts.show(n.name + " could not be stopped!", {
+						type: "error"
+					}), !1
+			} return !0
 		}
-		this.addonState[addon.name] = success;
-		DataStore.saveAddonState("plugins", this.addonState);
-		this.dispatch("toggled", addon.name, success);
 	}
-	static disableAddon(idOrFileOrAddon4) {
-		const addon = this.resolve(idOrFileOrAddon4);
-		if (!addon) return Logger.warn("PluginsManager", `Unable to disable non-loaded addon!`);
-		if (!this.isEnabled(addon)) return Logger.warn("PluginsManager", `Cannot disable addon twice!`);
-		const success = this.stopPlugin(addon, false);
-		if (success) {
-			Logger.log("PluginsManager", `${addon.name} has been stopped!`);
-			if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been stopped!`, {
-					type: "info"
-				});
-		}
-		this.addonState[addon.name] = false;
-		DataStore.saveAddonState("plugins", this.addonState);
-		this.dispatch("toggled", addon.name, false);
+	static isEnabled(e) {
+		var e = this.resolve(e);
+		if (e) return null !== (e = this.addonState[e.name]) && void 0 !== e && e
 	}
-	static toggleAddon(idOrFileOrAddon5) {
-		const addon = this.resolve(idOrFileOrAddon5);
-		if (this.isEnabled(addon)) this.disableAddon(addon);
-		else this.enableAddon(addon);
+	static enableAddon(e) {
+		e = this.resolve(e);
+		if (!e) return Logger.warn("PluginsManager", "Unable to enable plugin that isn't loaded!");
+		if (this.isEnabled(e)) return Logger.warn("PluginsManager", "Cannot enable addon twice!");
+		var t = this.startPlugin(e, !1);
+		t && (Logger.log("PluginsManager", e.name + " has been enabled!"), SettingsManager.isEnabled("showToastsPluginState") && Toasts.show(e.name + " has been enabled!", {
+			type: "info"
+		})), this.addonState[e.name] = t, DataStore.saveAddonState("plugins", this.addonState), this.dispatch("toggled", e.name, t)
 	}
-	static reloadAddon(idOrFileOrAddon6) {
-		const addon = this.resolve(idOrFileOrAddon6);
-		this.unloadAddon(addon, false);
-		this.loadAddon(addon.path, false, false);
-		Toasts.show(`${addon.name} was reloaded!`, {
+	static disableAddon(e) {
+		e = this.resolve(e);return e ? this.isEnabled(e) ? (this.stopPlugin(e, !1) && (Logger.log("PluginsManager", e.name + " has been stopped!"), SettingsManager.isEnabled("showToastsPluginState") && Toasts.show(e.name + " has been stopped!", {
+			type: "info"
+		})), this.addonState[e.name] = !1, DataStore.saveAddonState("plugins", this.addonState), void this.dispatch("toggled", e.name, !1)) : Logger.warn("PluginsManager", "Cannot disable addon twice!") : Logger.warn("PluginsManager", "Unable to disable non-loaded addon!")
+	}
+	static toggleAddon(e) {
+		e = this.resolve(e);
+		this.isEnabled(e) ? this.disableAddon(e) : this.enableAddon(e)
+	}
+	static reloadAddon(e) {
+		e = this.resolve(e);this.unloadAddon(e, !1), this.loadAddon(e.path, !1, !1), Toasts.show(e.name + " was reloaded!", {
 			type: "success"
-		});
-		if (SettingsManager.isEnabled("showToastsPluginReload")) Logger.log("PluginsManager", `${addon.name} was reloaded!`);
+		}), SettingsManager.isEnabled("showToastsPluginReload") && Logger.log("PluginsManager", e.name + " was reloaded!")
 	}
 	static onSwitch() {
-		for (const plugin of this.addons) {
-			if (typeof plugin.instance.onSwitch !== "function" || !this.isEnabled(plugin)) continue;
-			try {
-				plugin.instance.onSwitch();
-			} catch (error) {
-				Logger.error("PluginsManager", `Unable to fire onSwitch() for ${plugin.name}:`, error);
-			}
+		for (const t of this.addons)
+			if ("function" == typeof t.instance.onSwitch && this.isEnabled(t)) try {
+					t.instance.onSwitch()
+				} catch (e) {
+					Logger.error("PluginsManager", `Unable to fire onSwitch() for ${t.name}:`, e)
 		}
 	}
-	static onMutate(changes) {
-		for (const plugin of this.addons) {
-			if (typeof plugin.instance.observer !== "function" || !this.isEnabled(plugin)) continue;
-			try {
-				plugin.instance.observer(changes);
-			} catch (error) {
-				Logger.error("PluginsManager", `Unable to fire observer() for ${plugin.name}:`, error);
-			}
+	static onMutate(e) {
+		for (const t of this.addons)
+			if ("function" == typeof t.instance.observer && this.isEnabled(t)) try {
+					t.instance.observer(e)
+				} catch (e) {
+					Logger.error("PluginsManager", `Unable to fire observer() for ${t.name}:`, e)
 		}
 	}
 }
-PluginsManager.listeners = {
-};
-PluginsManager.folder = DataStore.pluginsFolder;
-PluginsManager.extension = ".plugin.js";
-PluginsManager.addons = [];
-PluginsManager.times = {
-};
-
+PluginsManager.listeners = {}, PluginsManager.folder = DataStore.pluginsFolder, PluginsManager.extension = ".plugin.js", PluginsManager.addons = [], PluginsManager.times = {};
 class ThemesManager {
-	static on(event, callback) {
-		if (!this.listeners[event])
-			this.listeners[event] = new Set();
-		return this.listeners[event].add(callback), this.off.bind(this, event, callback);
+	static on(e, t) {
+		return this.listeners[e] || (this.listeners[e] = new Set), this.listeners[e].add(t), this.off.bind(this, e, t)
 	}
-	static off(event1, callback1) {
-		if (!this.listeners[event1]) return;
-		return this.listeners[event1].delete(callback1);
+	static off(e, t) {
+		if (this.listeners[e]) return this.listeners[e].delete(t)
 	}
-	static dispatch(event2, ...args) {
-		if (!this.listeners[event2]) return;
-		for (const listener of this.listeners[event2]) {
-			try {
-				listener(...args);
-			} catch (error) {
-				Logger.error("Emitter", error);
-			}
+	static dispatch(e, ...t) {
+		if (this.listeners[e])
+			for (const n of this.listeners[e]) try {
+					n(...t)
+				} catch (e) {
+					Logger.error("Emitter", e)
 		}
 	}
 	static initialize() {
-		this.addonState = DataStore.getAddonState("themes");
-		Logger.log("ThemesManager", "Loading themes...");
-		this.loadAllThemes();
-		this.watchAddons();
+		this.addonState = DataStore.getAddonState("themes"), Logger.log("ThemesManager", "Loading themes..."), this.loadAllThemes(), this.watchAddons()
 	}
-	static resolve(idOrFileOrAddon) {
-		return this.addons.find((addon) => addon.id === idOrFileOrAddon || addon.name === idOrFileOrAddon || addon.path === idOrFileOrAddon || addon === idOrFileOrAddon
-		);
+	static resolve(t) {
+		return this.addons.find(e => e.id === t || e.name === t || e.path === t || e === t)
 	}
-	static isEnabled(idOrFileOrAddon1) {
-		const addon = this.resolve(idOrFileOrAddon1);
-		if (!addon) return;
-		var _name;
-		return (_name = this.addonState[addon.name]) !== null && _name !== void 0 ? _name : false;
+	static isEnabled(e) {
+		var e = this.resolve(e);
+		if (e) return null !== (e = this.addonState[e.name]) && void 0 !== e && e
 	}
 	static watchAddons() {
-		let lastCall = new Date();
+		let s = new Date;
 		this.watcher = fs1.watch(this.folder, {
-			persistent: false
-		}, (eventType, filename) => {
-			if (!eventType || !filename || new Date() - lastCall < 100) return;
-			lastCall = new Date();
-			const absolutePath = path.resolve(this.folder, filename);
-			if (!filename.endsWith(this.extension)) return;
-			// await new Promise(r => setTimeout(r, 100));
-			try {
-				const stats = fs1.statSync(absolutePath);
-				if (!stats.isFile() || !stats.mtime) return;
-				if (this.times[filename] === stats.mtime.getTime()) return;
-				this.times[filename] = stats.mtime.getTime();
-				if (eventType == "rename") this.loadTheme(absolutePath, true);
-				if (eventType == "change") this.reloadAddon(absolutePath, true);
-			} catch (err) {
-				if (fs1.existsSync(absolutePath)) return;
-				this.unloadAddon(absolutePath, true);
+			persistent: !1
+		}, (e, t) => {
+			if (e && t && !(new Date - s < 100)) {
+				s = new Date;
+				var n = path.resolve(this.folder, t);
+				if (t.endsWith(this.extension)) try {
+						const a = fs1.statSync(n);
+						if (!a.isFile() || !a.mtime) return;
+						if (this.times[t] === a.mtime.getTime()) return;
+						this.times[t] = a.mtime.getTime(), "rename" == e && this.loadTheme(n, !0), "change" == e && this.reloadAddon(n, !0)
+					} catch (e) {
+						if (fs1.existsSync(n)) return;
+						this.unloadAddon(n, !0)
+				}
 			}
-		});
+		})
 	}
 	static loadAllThemes() {
-		for (const filename of fs1.readdirSync(this.folder, "utf8")) {
-			const location = path.resolve(this.folder, filename);
-			const stats = fs1.statSync(location);
-			if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
-			this.times[filename] = stats.mtime.getTime();
-			try {
-				this.loadTheme(location, false);
-				this.dispatch("updated");
-			} catch (error) {
-				Logger.error("ThemesManager", `Failed to load ${filename}:`, error);
+		for (const t of fs1.readdirSync(this.folder, "utf8")) {
+			var e = path.resolve(this.folder, t);
+			const n = fs1.statSync(e);
+			if (t.endsWith(this.extension) && n.isFile()) {
+				this.times[t] = n.mtime.getTime();try {
+					this.loadTheme(e, !1), this.dispatch("updated")
+				} catch (e) {
+					Logger.error("ThemesManager", `Failed to load ${t}:`, e)
+				}
 			}
 		}
 	}
-	static loadTheme(location, showToast = true) {
-		const filecontent = fs1.readFileSync(location, "utf8");
-		const meta = Utilities.parseMETA(filecontent);
-		meta.filename = path.basename(location);
-		meta.path = location;
-		meta.css = filecontent;
-		if (this.resolve(meta.name))
-			throw new Error(`A theme with name ${meta.name} already exists!`);
-		this.addons.push(meta);
-		if (!(meta.name in this.addonState)) {
-			this.addonState[meta.name] = false;
-			DataStore.saveAddonState("themes", this.addonState);
-		}
-		if (this.addonState[meta.name]) {
-			this.applyTheme(meta, showToast);
-		}
-		return meta;
+	static loadTheme(e, t = !0) {
+		var n = fs1.readFileSync(e, "utf8");
+		const a = Utilities.parseMETA(n);
+		if (a.filename = path.basename(e), a.path = e, a.css = n, this.resolve(a.name))
+			throw new Error(`A theme with name ${a.name} already exists!`);
+		return this.addons.push(a), a.name in this.addonState || (this.addonState[a.name] = !1, DataStore.saveAddonState("themes", this.addonState)), this.addonState[a.name] && this.applyTheme(a, t), a
 	}
-	static unloadAddon(addon, showToast1 = true) {
-		const theme = this.resolve(addon);
-		if (!theme) return;
-		this.removeTheme(theme, false);
-		delete theme.css;
-		this.addons.splice(this.addons.indexOf(theme), 1);
-		if (showToast1) {
-			Logger.log("ThemesManager", `${theme.name} was unloaded!`);
-			Toasts.show(`${theme.name} was unloaded!`, {
-				type: "info"
-			});
-		}
-		this.dispatch("updated");
-	}
-	static applyTheme(addon1, showToast2 = true) {
-		const theme = this.resolve(addon1);
-		if (!theme) return;
-		theme.element = DOM.injectCSS(theme.name + "theme", theme.css);
-		if (showToast2) {
-			Toasts.show(`${theme.name} has been applied!`, {
-				type: "success"
-			});
-			Logger.log("ThemesManager", `${theme.name} has been applied!`);
-		}
-	}
-	static removeTheme(addon2, showToast3 = true) {
-		const theme = this.resolve(addon2);
-		if (!theme || !theme.element || !DOM.head.contains(theme.element)) return;
-		theme.element.remove();
-		delete theme.element;
-		if (showToast3) {
-			Logger.log("ThemesManager", `${theme.name} has been removed!`);
-			Toasts.show(`${theme.name} has been removed!`, {
-				type: "info"
-			});
-		}
-	}
-	static reloadAddon(addon3) {
-		const theme = this.resolve(addon3);
-		if (!theme || !this.isEnabled(theme)) return;
-		this.unloadAddon(theme, false);
-		this.loadTheme(theme.path, false);
-		Logger.log("ThemesManager", `${theme.name} was reloaded!`);
-		Toasts.show(`${theme.name} was reloaded!`, {
-			type: "success"
-		});
-	}
-	static enableAddon(addon4) {
-		const theme = this.resolve(addon4);
-		if (!theme || this.isEnabled(theme)) return;
-		this.applyTheme(theme, false);
-		Logger.log("ThemesManager", `${theme.name} has been enabled!`);
-		Toasts.show(`${theme.name} has been applied.`);
-		this.addonState[theme.name] = true;
-		DataStore.saveAddonState("themes", this.addonState);
-		this.dispatch("toggled", theme.name, true);
-	}
-	static disableAddon(addon5) {
-		const theme = this.resolve(addon5);
-		if (!theme || !this.isEnabled(theme)) return;
-		this.removeTheme(theme, false);
-		Logger.log("ThemesManager", `${theme.name} has been removed!`);
-		Toasts.show(`${theme.name} has been removed.`, {
+	static unloadAddon(e, t = !0) {
+		const n = this.resolve(e);
+		n && (this.removeTheme(n, !1),
+		delete n.css
+		, this.addons.splice(this.addons.indexOf(n), 1), t && (Logger.log("ThemesManager", n.name + " was unloaded!"), Toasts.show(n.name + " was unloaded!", {
 			type: "info"
-		});
-		this.addonState[theme.name] = false;
-		DataStore.saveAddonState("themes", this.addonState);
-		this.disableAddon("toggled", theme.name, false);
+		})), this.dispatch("updated"))
 	}
-	static toggleAddon(addon6) {
-		const theme = this.resolve(addon6);
-		if (!theme) return;
-		if (this.isEnabled(addon6)) this.disableAddon(addon6);
-		else this.enableAddon(addon6);
+	static applyTheme(e, t = !0) {
+		const n = this.resolve(e);
+		n && (n.element = DOM.injectCSS(n.name + "theme", n.css), t && (Toasts.show(n.name + " has been applied!", {
+			type: "success"
+		}), Logger.log("ThemesManager", n.name + " has been applied!")))
+	}
+	static removeTheme(e, t = !0) {
+		const n = this.resolve(e);
+		n && n.element && DOM.head.contains(n.element) && (n.element.remove(),
+		delete n.element
+		, t && (Logger.log("ThemesManager", n.name + " has been removed!"), Toasts.show(n.name + " has been removed!", {
+			type: "info"
+		})))
+	}
+	static reloadAddon(e) {
+		e = this.resolve(e);e && this.isEnabled(e) && (this.unloadAddon(e, !1), this.loadTheme(e.path, !1), Logger.log("ThemesManager", e.name + " was reloaded!"), Toasts.show(e.name + " was reloaded!", {
+			type: "success"
+		}))
+	}
+	static enableAddon(e) {
+		e = this.resolve(e);e && !this.isEnabled(e) && (this.applyTheme(e, !1), Logger.log("ThemesManager", e.name + " has been enabled!"), Toasts.show(e.name + " has been applied."), this.addonState[e.name] = !0, DataStore.saveAddonState("themes", this.addonState), this.dispatch("toggled", e.name, !0))
+	}
+	static disableAddon(e) {
+		e = this.resolve(e);e && this.isEnabled(e) && (this.removeTheme(e, !1), Logger.log("ThemesManager", e.name + " has been removed!"), Toasts.show(e.name + " has been removed.", {
+			type: "info"
+		}), this.addonState[e.name] = !1, DataStore.saveAddonState("themes", this.addonState), this.disableAddon("toggled", e.name, !1))
+	}
+	static toggleAddon(e) {
+		this.resolve(e) && (this.isEnabled(e) ? this.disableAddon(e) : this.enableAddon(e))
 	}
 }
-ThemesManager.folder = DataStore.themesFolder;
-ThemesManager.extension = ".theme.css";
-ThemesManager.listeners = {
-};
-ThemesManager.addons = [];
-ThemesManager.times = {
-};
-
-const createAddonAPI = (manager) => new class AddonAPI {
+ThemesManager.folder = DataStore.themesFolder, ThemesManager.extension = ".theme.css", ThemesManager.listeners = {}, ThemesManager.addons = [], ThemesManager.times = {};
+const createAddonAPI = t => new class {
 	get folder() {
-		return manager.folder;
+		return t.folder
 	}
-	isEnabled(idOrFile) {
-		return manager.isEnabled(idOrFile);
+	isEnabled(e) {
+		return t.isEnabled(e)
 	}
-	enable(idOrAddon) {
-		return manager.enableAddon(idOrAddon);
+	enable(e) {
+		return t.enableAddon(e)
 	}
-	disable(idOrAddon1) {
-		return manager.disableAddon(idOrAddon1);
+	disable(e) {
+		return t.disableAddon(e)
 	}
-	toggle(idOrAddon2) {
-		return manager.toggleAddon(idOrAddon2);
+	toggle(e) {
+		return t.toggleAddon(e)
 	}
-	reload(idOrAddon3) {
-		return manager.reloadAddon(idOrAddon3);
+	reload(e) {
+		return t.reloadAddon(e)
 	}
-	get(idOrFile1) {
-		return manager.resolve(idOrFile1);
+	get(e) {
+		return t.resolve(e)
 	}
 	getAll() {
-		return manager.addons.map((addon) => this.get(addon)
-		);
+		return t.addons.map(e => this.get(e))
 	}
 };
 class BdApi {
 	static get version() {
-		return "0.0.0";
+		return "0.0.0"
 	}
 	static get React() {
-		return DiscordModules.React;
+		return DiscordModules.React
 	}
 	static get ReactDOM() {
-		return DiscordModules.ReactDOM;
+		return DiscordModules.ReactDOM
 	}
 	static get WindowConfigFile() {
-		return "";
+		return ""
 	}
 	static get settings() {
-		return [];
+		return []
 	}
 	static isSettingEnabled() {
-		return true;
+		return !0
 	}
 	static disableSetting() {}
 	static enableSetting() {}
-	static __getPluginConfigPath(plugin) {
+	static __getPluginConfigPath(e) {
 		return console.log({
-				plugin
-			}), path.resolve(this.Plugins.folder, "..", "config", `${plugin}.json`);
+				plugin: e
+			}), path.resolve(this.Plugins.folder, "..", "config", e + ".json")
 	}
-	static injectCSS(id, css) {
-		return DOM.injectCSS(id, css);
+	static injectCSS(e, t) {
+		return DOM.injectCSS(e, t)
 	}
-	static clearCSS(id1) {
-		return DOM.clearCSS(id1);
+	static clearCSS(e) {
+		return DOM.clearCSS(e)
 	}
-	static alert(title, content) {
-		return Modals.alert(title, content);
+	static alert(e, t) {
+		return Modals.alert(e, t)
 	}
-	static showConfirmationModal(title1, content1, options3) {
-		return Modals.showConfirmationModal(title1, content1, options3);
+	static showConfirmationModal(e, t, n) {
+		return Modals.showConfirmationModal(e, t, n)
 	}
-	static showToast(content2, options1) {
-		return Toasts.show(content2, options1);
+	static showToast(e, t) {
+		return Toasts.show(e, t)
 	}
-	static findModule(filter) {
-		return Webpack.findModule(filter);
+	static findModule(e) {
+		return Webpack.findModule(e)
 	}
-	static findAllModules(filter1) {
-		return Webpack.findModules(filter1);
+	static findAllModules(e) {
+		return Webpack.findModules(e)
 	}
-	static findModuleByProps(...props) {
-		return Webpack.findByProps(...props);
+	static findModuleByProps(...e) {
+		return Webpack.findByProps(...e)
 	}
-	static findModuleByDisplayName(displayName) {
-		return Webpack.findByDisplayName(displayName);
+	static findModuleByDisplayName(e) {
+		return Webpack.findByDisplayName(e)
 	}
-	static findModuleByPrototypes(...protos) {
-		return Webpack.findModule((m) => typeof m === "function" && protos.every((proto) => proto in m.prototype
-		)
-		);
+	static findModuleByPrototypes(...e) {
+		return Webpack.findModule(t => "function" == typeof t && e.every(e => e in t.prototype))
 	}
-	static getInternalInstance(node) {
-		return node === null || node === void 0 ? void 0 : node.__reactFiber$;
+	static getInternalInstance(e) {
+		return null == e ? void 0 : e.__reactFiber$
 	}
-	static suppressErrors(method, message) {
-		return (...args) => {
+	static suppressErrors(t, n) {
+		return (...e) => {
 			try {
-				return method(...args);
-			} catch (error) {
-				Logger.error("SuppressErrors", message, error);
+				return t(...e)
+			} catch (e) {
+				Logger.error("SuppressErrors", n, e)
 			}
-		};
-	}
-	static testJSON(json) {
-		try {
-			return JSON.parse(json);
-		} catch (e) {
-			return false;
 		}
 	}
-	static loadData(pluginName, key3) {
-		return DataStore.getPluginData(pluginName, key3);
+	static testJSON(e) {
+		try {
+			return JSON.parse(e)
+		} catch (e) {
+			return !1
+		}
 	}
-	static saveData(pluginName1, key1, value) {
-		return DataStore.setPluginData(pluginName1, key1, value);
+	static loadData(e, t) {
+		return DataStore.getPluginData(e, t)
 	}
-	static deleteData(pluginName2, key2) {
-		return DataStore.deletePluginData(pluginName2, key2);
+	static saveData(e, t, n) {
+		return DataStore.setPluginData(e, t, n)
+	}
+	static deleteData(e, t) {
+		return DataStore.deletePluginData(e, t)
 	}
 	static get getData() {
-		return this.loadData;
+		return this.loadData
 	}
 	static get setData() {
-		return this.saveData;
+		return this.saveData
 	}
-	static monkeyPatch(module1, functionName1, options2) {
-		const {before, after, instead, once =false} = options2;
-		const patches = [];
-		const makePatch = (type, callback) => {
-			const data = {
-				originalMethod: module1[functionName1],
-				callOriginalMethod: () => Reflect.apply(data.originalMethod, data.thisObject, data.methodArguments)
+	static monkeyPatch(e, o, t) {
+		const {before:n, after:a, instead:s, once: c=!1} = t,
+			l = [];
+		t = (s, r) => {
+			const i = {
+				originalMethod: e[o],
+				callOriginalMethod: () => Reflect.apply(i.originalMethod, i.thisObject, i.methodArguments)
 			};
-			patches.push(data.cancelPatch = Patcher[type]("BDCompatPatch-monkeyPatch", module1, functionName1, (_this, args, rest) => {
-				data.thisObject = _this;
-				data.methodArguments = args;
-				data.returnValue = rest;
-				try {
-					const tempRet = Reflect.apply(callback, null, [
-						data
-					]);
-					if (once) data.cancelPatch();
-					return tempRet;
-				} catch (error) {
-					Logger.error(`BdApi.monkeyPatch`, `Error in the ${type} callback of ${functionName1}:`, error);
+			l.push(i.cancelPatch = Patcher[s]("BDCompatPatch-monkeyPatch", e, o, (e, t, n) => {
+				i.thisObject = e, i.methodArguments = t, i.returnValue = n;try {
+					var a = Reflect.apply(r, null, [i]);
+					return c && i.cancelPatch(), a
+				} catch (e) {
+					Logger.error("BdApi.monkeyPatch", `Error in the ${s} callback of ${o}:`, e)
 				}
-			}));
-		};
-		if (typeof before === "function") makePatch("before", before);
-		if (typeof after === "function") makePatch("after", after);
-		if (typeof instead === "function") makePatch("instead", instead);
-		return () => {
-			for (const patch of patches) patch();
-		};
-	}
-	static onRemoved(node1, callback1) {
-		return new MutationObserver((changes, observer) => {
-			for (const change of changes) {
-				for (const removed of change.removedNodes) {
-					if (removed === node1) {
-						observer.disconnect();
-						callback1();
-					} else if (removed.contains(node1)) {
-						observer.disconnect();
-						callback1();
-					}
-				}
-			}
-		}).observe(document, {
-			childList: true,
-			subtree: true
-		});
-	}
-}
-BdApi.Plugins = createAddonAPI(PluginsManager);
-BdApi.Themes = createAddonAPI(ThemesManager);
-BdApi.Patcher = {
-	patch(caller, module, functionName, callback, options) {
-		if (typeof caller !== "string") return Logger.error("BdApi.Patcher", `Parameter 0 of patch must be a string representing the caller`);
-		if ([
-				"after",
-				"before",
-				"instead"
-			].includes(options.type)) return Logger.error("BdApi.Patcher", `options.type must be one of (before | after | instead). Received ${options.type}.`);
-		return Patcher[options.type](caller, module, functionName, callback);
-	},
-	getPatchesByCaller(caller) {
-		if (typeof caller !== "string") return Logger.error("BDCompat", `Argument "caller" must be a typeof string. Received ${typeof caller} instead`);
-		return Patcher.getPatchesByCaller(caller);
-	},
-	unpatchAll(caller) {
-		if (typeof caller !== "string") return Logger.error("BDCompat", `Argument "caller" must be a typeof string. Received ${typeof caller} instead`);
-		return Patcher.unpatchAll(caller);
-	},
-	...Object.fromEntries([
-				"before",
-				"after",
-				"instead"
-	].map((type) => [
-				type,
-				function(caller, module, functionName, callback) {
-							return Patcher[type](caller, module, functionName, callback);
-				}
-	]
-	))
-};
-Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {
-	if (key === "prototype") return descriptors;
-	descriptors[key] = Object.assign({
-	}, Object.getOwnPropertyDescriptor(BdApi, key), {
-		enumerable: true
-	});
-	return descriptors;
-}, {
-}));
-
-var electron = {
-	shell: BDCompatNative.executeJS(`require("electron").shell`, new Error().stack),
-	clipboard: BDCompatNative.executeJS(`require("electron").clipboard`, new Error().stack),
-	ipcRenderer: BDCompatNative.executeJS(`Object.keys(require("electron").ipcRenderer)`, new Error().stack).slice(3).reduce((newElectron, key) => {
-		newElectron[key] = BDCompatNative.executeJS(`require("electron").ipcRenderer[${JSON.stringify(key)}].bind(require("electron").ipcRenderer)`, new Error().stack);
-		return newElectron;
-	}, {
-	})
-};
-
-class EventEmitter {
-	static get EventEmitter() {
-		return EventEmitter;
-	}
-	setMaxListeners() {}
-	on(event, callback) {
-		if (!this.events[event])
-			this.events[event] = new Set();
-		this.events[event].add(callback);
-	}
-	emit(event1, ...args) {
-		if (!this.events[event1]) return;
-		for (const [index, listener] of this.events[event1].entries()) {
-			try {
-				listener(...args);
-			} catch (error) {
-				Logger.error("Emitter", `Cannot fire listener for event ${event1} at position ${index}:`, error);
-			}
+			}))
+		};return "function" == typeof n && t("before", n), "function" == typeof a && t("after", a), "function" == typeof s && t("instead", s), () => {
+				for (const e of l) e()
 		}
 	}
-	off(event2, callback1) {
-		if (!this.events[event2]) return;
-		return this.events[event2].delete(callback1);
+	static onRemoved(s, r) {
+		return new MutationObserver((e, t) => {
+			for (const n of e)
+				for (const a of n.removedNodes) (a === s || a.contains(s)) && (t.disconnect(), r())
+		}).observe(document, {
+			childList: !0,
+			subtree: !0
+		})
+	}
+}
+BdApi.Plugins = createAddonAPI(PluginsManager), BdApi.Themes = createAddonAPI(ThemesManager), BdApi.Patcher = {
+	patch(e, t, n, a, s) {
+		return "string" != typeof e ? Logger.error("BdApi.Patcher", "Parameter 0 of patch must be a string representing the caller") : ["after", "before", "instead"].includes(s.type) ? Logger.error("BdApi.Patcher", `options.type must be one of (before | after | instead). Received ${s.type}.`) : Patcher[s.type](e, t, n, a)
+	},
+	getPatchesByCaller(e) {
+		return "string" != typeof e ? Logger.error("BDCompat", `Argument "caller" must be a typeof string. Received ${typeof e} instead`) : Patcher.getPatchesByCaller(e)
+	},
+	unpatchAll(e) {
+		return "string" != typeof e ? Logger.error("BDCompat", `Argument "caller" must be a typeof string. Received ${typeof e} instead`) : Patcher.unpatchAll(e)
+	},...Object.fromEntries(["before", "after", "instead"].map(s => [s, function(e, t, n, a) {
+				return Patcher[s](e, t, n, a)
+	}]))
+}, Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((e, t) => ("prototype" === t || (e[t] = Object.assign({}, Object.getOwnPropertyDescriptor(BdApi, t), {
+		enumerable: !0
+	})), e), {}));
+var electron = {
+	shell: BDCompatNative.executeJS("require(\"electron\").shell", (new Error).stack),
+	clipboard: BDCompatNative.executeJS("require(\"electron\").clipboard", (new Error).stack),
+	ipcRenderer: BDCompatNative.executeJS("Object.keys(require(\"electron\").ipcRenderer)", (new Error).stack).slice(3).reduce((e, t) => (e[t] = BDCompatNative.executeJS(`require("electron").ipcRenderer[${JSON.stringify(t)}].bind(require("electron").ipcRenderer)`, (new Error).stack), e), {})
+};
+class EventEmitter {
+	static get EventEmitter() {
+		return EventEmitter
+	}
+	setMaxListeners() {}
+	on(e, t) {
+		this.events[e] || (this.events[e] = new Set), this.events[e].add(t)
+	}
+	emit(t, ...e) {
+		if (this.events[t])
+			for (var [n, a] of this.events[t].entries()) try {
+					a(...e)
+				} catch (e) {
+					Logger.error("Emitter", `Cannot fire listener for event ${t} at position ${n}:`, e)
+		}
+	}
+	off(e, t) {
+		if (this.events[e]) return this.events[e].delete(t)
 	}
 	constructor() {
-		this.events = {
-		};
+		this.events = {}
 	}
 }
-
-const Buffer$1 = {
-};
-function setBuffer(buffer) {
-	Object.assign(Buffer$1, buffer);
+const Buffer$1 = {};
+function setBuffer(e) {
+	Object.assign(Buffer$1, e)
 }
-
 class RequestResponse extends Response {
 	get headers() {
-		return this._res.headers;
+		return this._res.headers
 	}
 	get url() {
-		return this._url;
+		return this._url
 	}
 	get type() {
-		return this._type;
+		return this._type
 	}
 	get statusCode() {
-		return this._res.statusCode;
+		return this._res.statusCode
 	}
 	get status() {
-		return this.statusCode;
+		return this.statusCode
 	}
 	get ok() {
-		return this.status >= 200 && this.status <= 299;
+		return 200 <= this.status && this.status <= 299
 	}
-	constructor({res: res1, body: body1, url: url1, type}) {
-		super(body1, {
-			statusText: res1.statusMessage,
-			status: res1.status
-		});
-		this._res = res1;
-		this._url = url1;
-		this._type = type;
+	constructor({res:e, body:t, url:n, type:a}) {
+		super(t, {
+			statusText: e.statusMessage,
+			status: e.status
+		}), this._res = e, this._url = n, this._type = a
 	}
 }
 try {
@@ -2290,560 +1407,406 @@ try {
             "url",
             "complete"
         ];
-    `);
-} catch (error1) {
-	console.error("[BDCompat] Fatal Error: Could not define request properties:", error1);
+    `)
+} catch (e) {
+	console.error("[BDCompat] Fatal Error: Could not define request properties:", e)
 }
-const request$1 = function(url, options, callback, method = "") {
-	if (typeof options === "function") {
-		callback = options;
-	}
-	const eventName = "request-" + Math.random().toString(36).slice(2, 10);
-	BDCompatNative.IPC.once(eventName, (error, res, body) => {
-		if (body instanceof Uint8Array)
-			body = Buffer$1.Buffer.from(body);
-		res = JSON.parse(res);
-		const resp = new RequestResponse({
-			body,
-			res,
-			url,
-			type: method.toLowerCase() || "default"
-		});
-		callback(error, resp, body);
-	});
-	return BDCompatNative.executeJS(`
+const request$1 = function(a, e, s, r = "") {
+	"function" == typeof e && (s = e);
+	var t = "request-" + Math.random().toString(36).slice(2, 10);
+	return BDCompatNative.IPC.once(t, (e, t, n) => {
+			n instanceof Uint8Array && (n = Buffer$1.Buffer.from(n)), t = JSON.parse(t);
+			t = new RequestResponse({
+				body: n,
+				res: t,
+				url: a,
+				type: r.toLowerCase() || "default"
+			});s(e, t, n)
+		}), BDCompatNative.executeJS(`
         const request = require("request");
-        const method = "${method}";
+        const method = "${r}";
 
-        (method ? request[method] : request)(${JSON.stringify(url)}, ${JSON.stringify(options)}, (error, res, body) => {
+        (method ? request[method] : request)(${JSON.stringify(a)}, ${JSON.stringify(e)}, (error, res, body) => {
             const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res?.[e]]));
             
-            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
+            BDCompatNative.IPC.dispatch("${t}", error, JSON.stringify(ret), body);   
         });
-    `, new Error().stack);
+    `, (new Error).stack)
 };
-Object.assign(request$1, Object.fromEntries([
-	"get",
-	"put",
-	"post",
-	"delete",
-	"head",
-	"del"
-].map((method) => [
-	method,
-	function(url, options, callback) {
-		return request$1(url, options, callback, method);
-	}
-]
-)));
-
-function get(url, options, res) {
-	if (typeof options === "function") {
-		res = options;
-		options = {
-		};
-	}
-	const id = "HTTPS_GET_" + Math.random().toString(36).slice(2);
-	const emitter = new EventEmitter();
-	BDCompatNative.IPC.on(id, (event, ...args) => {
-		if (event === "__data") {
-			return Object.assign(emitter, ...args);
-		}
-		if (args[0] instanceof Uint8Array) {
-			args[0].toString = () => String.fromCharCode(...args[0])
-			;
-		}
-		if (event === "end") {
-			Object.assign(emitter, args[0]);
-		}
-		emitter.emit(event, ...args);
-	});
-	Object.assign(emitter, {
-		end: () => void 0
-	});
-	BDCompatNative.executeJS(`
-        require("https").get(${JSON.stringify(url)}, ${JSON.stringify(options)}, (res) => {
+function get(e, t, n) {
+	"function" == typeof t && (n = t, t = {});var a = "HTTPS_GET_" + Math.random().toString(36).slice(2);
+	const s = new EventEmitter;
+	return BDCompatNative.IPC.on(a, (e, ...t) => {
+			if ("__data" === e) return Object.assign(s, ...t);
+			t[0] instanceof Uint8Array && (t[0].toString = () => String.fromCharCode(...t[0])), "end" === e && Object.assign(s, t[0]), s.emit(e, ...t)
+		}), Object.assign(s, {
+			end: () => {}
+		}), BDCompatNative.executeJS(`
+        require("https").get(${JSON.stringify(e)}, ${JSON.stringify(t)}, (res) => {
             for (const event of ["end", "data", "close"]) {
                 res.on(event, (...args) => {
                     if (event === "end") {
                         args.push(Object.fromEntries(["statusCode", "statusMessage", "url", "headers", "method", "aborted", "complete", "rawHeaders", "end"].map(e => [e, res[e]])));
                     }
 
-                    BDCompatNative.IPC.dispatch(${JSON.stringify(id)}, event, ...args);
+                    BDCompatNative.IPC.dispatch(${JSON.stringify(a)}, event, ...args);
 
                     if (event === "close") {
-                        delete BDCompatEvents[${JSON.stringify(id)}];
+                        delete BDCompatEvents[${JSON.stringify(a)}];
                     }
                 });
             }
         });
-    `, new Error().stack);
-	return res(emitter), emitter;
+    `, (new Error).stack), n(s), s
 }
 function request() {
-	return Reflect.apply(get, this, arguments);
+	return Reflect.apply(get, this, arguments)
 }
-const deserialize = function({props, name}) {
-	const object = {
-		[Symbol.toStringTag]: name
-	};
-	for (let i = 0; i < props.length; i++) {
-		const [key, value, nativeToString] = props[i];
-		object[key] = value;
-		if (typeof value !== "function" || Object.isFrozen(value)) continue;
-		Object.defineProperty(object[key], "toString", {
-			configurable: true,
-			enumerable: false,
-			writable: true,
-			value: () => nativeToString});
-	}
-	return object;
-};
-const __createServer__native = ((options) => {
-	// Javascript's Object.keys doesn't have a way to get non enumerable properties, so this works.
-	const getAllProperties = function(object) {
-		const keys = [];
-		for (const key in object) {
-			// Hide internals to reduce redundancy
-			if (key.charAt(0) === "_") continue;
-			keys.push(key);
-		}
-		return keys;
-	};
-	const serialize = function(object) {
-		var _toStringTag;
-		return {
-			props: getAllProperties(object).map((prop) => {
-				var ref,
-					ref1;
-				let value = typeof object[prop] === "function" ? object[prop].bind(object) : object[prop];
-				if (prop === "end") {
-					const original = value;
-					value = (chunk) => {
-						if (chunk && chunk instanceof Uint8Array)
-							chunk = Buffer. from (chunk);
-						return original.call(object, chunk);
-					};
-				}
-				var ref2;
-				return [
-					prop,
-					value,
-					(ref2 = (ref = object[prop]) === null || ref === void 0 ? void 0 : (ref1 = ref.toString) === null || ref1 === void 0 ? void 0 : ref1.call(ref)) !== null && ref2 !== void 0 ? ref2 : ""
-				];
-			}),
-			name: (_toStringTag = object[Symbol.toStringTag]) !== null && _toStringTag !== void 0 ? _toStringTag : object.constructor.name
+Object.assign(request$1, Object.fromEntries(["get", "put", "post", "delete", "head", "del"].map(a => [a, function(e, t, n) {
+	return request$1(e, t, n, a)
+}])));
+const deserialize = function({props:t, name:e}) {
+		const n = {
+			[Symbol.toStringTag]: e
 		};
-	};
-	let handler = () => {};
-	const {Server} = require("http");
-	const server = new Server(options, (req, res) => {
-		handler(serialize(req), serialize(res));
-	});
-	return {
-		props: serialize(server),
-		tag: server.constructor.name,
-		nativeHandle(callback) {
-			handler = callback;
+		for (let e = 0; e < t.length; e++) {
+			const [a, s, r] = t[e];
+			"function" != typeof (n[a] = s) || Object.isFrozen(s) || Object.defineProperty(n[a], "toString", {
+				configurable: !0,
+				enumerable: !1,
+				writable: !0,
+				value: () => r})
 		}
-	};
-}).toString();
-function createServer(options, listener) {
-	if (typeof options === "function") {
-		listener = options;
-		options = {
-		};
-	}
-	const server = BDCompatNative.executeJS(`(${__createServer__native})` + `(${JSON.stringify(options)})`, new Error().stack);
-	server.nativeHandle((req, res) => {
-		listener(deserialize(req), deserialize(res));
-	});
-	return deserialize(server.props);
+		return n
+	},
+	__createServer__native = (e => {
+		function n(s) {
+			var e;
+			return {
+				props: function(e) {
+					const t = [];
+					for (const n in e) "_" !== n.charAt(0) && t.push(n);
+					return t
+				}(s).map(e => {
+					var t;
+					let n = "function" == typeof s[e] ? s[e].bind(s) : s[e];
+					if ("end" === e) {
+						const a = n;
+						n = e => (e && e instanceof Uint8Array && (e = Buffer. from (e)), a.call(s, e))
+					}
+					return [e, n, null !== (t = null === (e = s[e]) || void 0 === e || null === (t = e.toString) || void 0 === t ? void 0 : t.call(e)) && void 0 !== t ? t : ""]
+				}),
+				name: null !== (e = s[Symbol.toStringTag]) && void 0 !== e ? e : s.constructor.name
+			}
+		}
+		let a = () => {};
+		const t = require("http")["Server"];
+		e = new t(e, (e, t) => {
+			a(n(e), n(t))
+		});return {
+			props: n(e),
+			tag: e.constructor.name,
+			nativeHandle(e) {
+				a = e
+			}
+		}
+	}).toString();
+function createServer(e, n) {
+	"function" == typeof e && (n = e, e = {});const t = BDCompatNative.executeJS(`(${__createServer__native})` + `(${JSON.stringify(e)})`, (new Error).stack);
+	return t.nativeHandle((e, t) => {
+			n(deserialize(e), deserialize(t))
+		}), deserialize(t.props)
 }
-
-var https = /*#__PURE__*/ Object.freeze({
-	__proto__: null,
-	get: get,
-	request: request,
-	createServer: createServer
-});
-
-var mimeTypes = BDCompatNative.executeJS(`(() => {
+var ref,
+	ref1,
+	https = Object.freeze({
+		__proto__: null,
+		get: get,
+		request: request,
+		createServer: createServer
+	}),
+	mimeTypes = BDCompatNative.executeJS(`(() => {
 try {
     return require("mime-types");
 } catch {
     return {};
 }
-})()`, new Error().stack);
-
-var url = {
-	parse: (...args) => BDCompatNative.executeJS(`
-        __cloneObject(require("url").parse(${args.map((e) => JSON.stringify(e)
-	).join(", ")}));
-    `, new Error().stack)
-};
-
-const os = BDCompatNative.executeJS(`require("os")`);
-
-var ref;
-var ref1;
-var Require = ((ref1 = (ref = window.process) === null || ref === void 0 ? void 0 : ref.contextIsolated) !== null && ref1 !== void 0 ? ref1 : true) ? function(mod) {
-	switch (mod) {
+})()`, (new Error).stack),
+	url = {
+		parse: (...e) => BDCompatNative.executeJS(`
+        __cloneObject(require("url").parse(${e.map(e => JSON.stringify(e)).join(", ")}));
+    `, (new Error).stack)
+	};
+const os = BDCompatNative.executeJS("require(\"os\")");
+var Require = null === (ref1 = null === (ref = window.process) || void 0 === ref ? void 0 : ref.contextIsolated) || void 0 === ref1 || ref1 ? function(e) {
+	switch (e) {
 		case "fs":
-			return fs1;
-		case "path":
-			return path;
-		case "request":
-			return request$1;
-		case "process":
-			return process;
-		case "electron":
-			return electron;
-		case "events":
-			return EventEmitter;
-		case "http":
+			return fs1;case "path":
+			return path;case "request":
+			return request$1;case "process":
+			return process;case "electron":
+			return electron;case "events":
+			return EventEmitter;case "http":
 		case "https":
-			return https;
-		case "mime-types":
-			return mimeTypes;
-		case "url":
-			return url;
-		case "os":
-			return os;
-		case "buffer":
-			return Buffer$1;
-		default:
-			console.warn(`${mod} was not found!`);
+			return https;case "mime-types":
+			return mimeTypes;case "url":
+			return url;case "os":
+			return os;case "buffer":
+			return Buffer$1;default:
+			console.warn(e + " was not found!")
 	}
 } : window.require;
-
-function _classStaticPrivateFieldSpecGet(receiver, classConstructor, descriptor) {
-	if (receiver !== classConstructor) {
+function _classStaticPrivateFieldSpecGet(e, t, n) {
+	if (e !== t)
 		throw new TypeError("Private static access of wrong provenance");
-	}
-	return descriptor.value;
+	return n.value
 }
 class Components {
-	static byProps(...props) {
-		const name = props.join(":");
-		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, _cache)[name] = Webpack.findModule((m) => props.every((p) => p in m
-			) && typeof m === "function"
-		);
-		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
+	static byProps(...e) {
+		var t = e.join(":");
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[t] || (_classStaticPrivateFieldSpecGet(this, Components, _cache)[t] = Webpack.findModule(t => e.every(e => e in t) && "function" == typeof t)), _classStaticPrivateFieldSpecGet(this, Components, _cache)[t]
 	}
-	static get(name, filter1 = (_) => _
-	) {
-		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[name]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
-		_classStaticPrivateFieldSpecGet(this, Components, _cache)[name] = Webpack.findModule((m) => m.displayName === name && filter1(m)
-		);
-		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[name];
+	static get(t, n = e => e) {
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[t] || (_classStaticPrivateFieldSpecGet(this, Components, _cache)[t] = Webpack.findModule(e => e.displayName === t && n(e))), _classStaticPrivateFieldSpecGet(this, Components, _cache)[t]
 	}
-	static bulk(id, ...filters) {
-		if (_classStaticPrivateFieldSpecGet(this, Components, _cache)[id]) return _classStaticPrivateFieldSpecGet(this, Components, _cache)[id];
-		_classStaticPrivateFieldSpecGet(this, Components, _cache)[id] = Webpack.bulk(...filters.map((filter) => {
-			if (typeof filter === "string") return (m) => m.displayName === filter && typeof m === "function";
-			if (Array.isArray(filter)) return (m) => filter.every((p) => p in m
-				);
-			return filter;
-		}));
-		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[id];
+	static bulk(e, ...t) {
+		return _classStaticPrivateFieldSpecGet(this, Components, _cache)[e] || (_classStaticPrivateFieldSpecGet(this, Components, _cache)[e] = Webpack.bulk(...t.map(n => "string" == typeof n ? e => e.displayName === n && "function" == typeof e : Array.isArray(n) ? t => n.every(e => e in t) : n))), _classStaticPrivateFieldSpecGet(this, Components, _cache)[e]
 	}
 }
 var _cache = {
-	writable: true,
-	value: {
-	}
+	writable: !0,
+	value: {}
 };
-
 function _extends$b() {
-	_extends$b = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$b = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$b.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function ColorPalette(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$b({
+function ColorPalette(e) {
+	return React.createElement("svg", _extends$b({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "16",
 		viewBox: "0 0 24 24",
 		width: "16",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		d: "M0 0h24v24H0z",
 		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
+	}), React.createElement("path", {
 		d: "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
-	})));
+	}))
 }
-
 function _extends$a() {
-	_extends$a = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$a = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$a.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Extension(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$a({
+function Extension(e) {
+	return React.createElement("svg", _extends$a({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "16",
 		viewBox: "0 0 24 24",
 		width: "16",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		d: "M0 0h24v24H0z",
 		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
+	}), React.createElement("path", {
 		d: "M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"
-	})));
+	}))
 }
-
 function _extends$9() {
-	_extends$9 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$9 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$9.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Globe(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$9({
+function Globe(e) {
+	return React.createElement("svg", _extends$9({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "24",
 		viewBox: "0 0 24 24",
 		width: "24",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		d: "M0 0h24v24H0z",
 		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
+	}), React.createElement("path", {
 		d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
-	})));
+	}))
 }
-
 function _extends$8() {
-	_extends$8 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$8 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$8.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Github(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$8({
+function Github(e) {
+	return React.createElement("svg", _extends$8({
 		width: "24",
 		height: "24",
 		role: "img",
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 496 512"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		fill: "currentColor",
 		d: "M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
-	})));
+	}))
 }
-
 function _extends$7() {
-	_extends$7 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$7 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$7.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Help(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$7({
+function Help(e) {
+	return React.createElement("svg", _extends$7({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "24",
 		viewBox: "0 0 24 24",
 		width: "24",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		d: "M0 0h24v24H0z",
 		fill: "none"
-	}), /*#__PURE__*/ React.createElement("path", {
+	}), React.createElement("path", {
 		d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
-	})));
+	}))
 }
-
 function _extends$6() {
-	_extends$6 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$6 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$6.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Donate(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$6({
+function Donate(e) {
+	return React.createElement("svg", _extends$6({
 		xmlns: "http://www.w3.org/2000/svg",
 		height: "24",
 		viewBox: "0 0 24 24",
 		width: "24",
 		fill: "currentColor"
-	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("rect", {
+	}, e), React.createElement("g", null, React.createElement("rect", {
 		fill: "none",
 		height: "24",
 		width: "24"
-	})), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
+	})), React.createElement("g", null, React.createElement("path", {
 		d: "M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12.88,17.76V19h-1.75v-1.29 c-0.74-0.18-2.39-0.77-3.02-2.96l1.65-0.67c0.06,0.22,0.58,2.09,2.4,2.09c0.93,0,1.98-0.48,1.98-1.61c0-0.96-0.7-1.46-2.28-2.03 c-1.1-0.39-3.35-1.03-3.35-3.31c0-0.1,0.01-2.4,2.62-2.96V5h1.75v1.24c1.84,0.32,2.51,1.79,2.66,2.23l-1.58,0.67 c-0.11-0.35-0.59-1.34-1.9-1.34c-0.7,0-1.81,0.37-1.81,1.39c0,0.95,0.86,1.31,2.64,1.9c2.4,0.83,3.01,2.05,3.01,3.45 C15.9,17.17,13.4,17.67,12.88,17.76z"
-	}))));
+	})))
 }
-
 function _extends$5() {
-	_extends$5 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$5 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$5.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Patreon(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$5({
+function Patreon(e) {
+	return React.createElement("svg", _extends$5({
 		width: "24",
 		height: "24",
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 512 512"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		fill: "currentColor",
 		d: "M512 194.8c0 101.3-82.4 183.8-183.8 183.8-101.7 0-184.4-82.4-184.4-183.8 0-101.6 82.7-184.3 184.4-184.3C429.6 10.5 512 93.2 512 194.8zM0 501.5h90v-491H0v491z"
-	})));
+	}))
 }
-
 const [useUpdaterStore, UpdaterApi] = createStore({
-	updates: {
-	}
+	updates: {}
 });
-
 function _extends$4() {
-	_extends$4 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$4 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$4.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function Icon1({name, ...props}) {
-	const Component = Components.get(name);
-	if (!Components) return null;
-	return React.createElement(Component, props);
+function Icon1({name:e, ...t}) {
+	e = Components.get(e);return Components ? React.createElement(e, t) : null
 }
-function ToolButton({label, icon, onClick, danger =false, disabled =false}) {
-	const Button = Components.byProps("DropdownSizes");
+function ToolButton({label:e, icon:t, onClick:n, danger: a=!1, disabled: s=!1}) {
+	const r = Components.byProps("DropdownSizes");
 	return React.createElement(Components.get("Tooltip"), {
-		text: label,
+		text: e,
 		position: "top"
-	}, (props) => React.createElement(Button, {
-		...props,
-		className: Utilities.joinClassNames("bd-toolbutton", [
-			danger,
-			"bd-danger"
-		]),
-		look: Button.Looks.BLANK,
-		size: Button.Sizes.NONE,
-		onClick: onClick,
-		disabled
+	}, e => React.createElement(r, {
+		...e,
+		className: Utilities.joinClassNames("bd-toolbutton", [a, "bd-danger"]),
+		look: r.Looks.BLANK,
+		size: r.Sizes.NONE,
+		onClick: n,
+		disabled: s
 	}, React.createElement(Icon1, {
-		name: icon,
+		name: t,
 		width: 20,
 		height: 20
-	}))
-	);
+	})))
 }
-function ButtonWrapper({value, onChange, disabled =false}) {
-	const {React} = DiscordModules;
-	const [isChecked, setChecked] = React.useState(value);
-	return React.createElement(Components.get("Switch"), {
-		checked: isChecked,
-		disabled,
+function ButtonWrapper({value:e, onChange:t, disabled: n=!1}) {
+	const a = DiscordModules["React"],
+		[s, r] = a.useState(e);
+	return a.createElement(Components.get("Switch"), {
+		checked: s,
+		disabled: n,
 		onChange: () => {
-			onChange(!isChecked);
-			setChecked(!isChecked);
+			t(!s), r(!s)
 		}
-	});
+	})
 }
-function ClickableName({addon}) {
-	var ref;
-	const isLink = React.useMemo(() => {
-		return addon.authorId != null || addon.authorLink != null;
-	}, [
-		addon
-	]);
-	const Tag = isLink ? "a" : "span";
-	const handleClick = function() {
-		if (addon.authorId) {
-			return DiscordModules.PrivateChannelActions.ensurePrivateChannel(addon.authorId).then(() => {
-				DiscordModules.PrivateChannelActions.openPrivateChannel(addon.authorId);
+function ClickableName({addon:e}) {
+	var t;
+	function a() {
+		if (e.authorId) return DiscordModules.PrivateChannelActions.ensurePrivateChannel(e.authorId).then(() => {
+				DiscordModules.PrivateChannelActions.openPrivateChannel(e.authorId)
 			}).catch(() => {});
-		} else {
-			window.open(addon.authorLink, "_blank");
-		}
-	};
-	var ref1;
-	return ( /*#__PURE__*/ React.createElement("div", {
+		window.open(e.authorLink, "_blank")
+	}
+	const s = React.useMemo(() => null != e.authorId || null != e.authorLink, [e]) ? "a" : "span";
+	return React.createElement("div", {
 		className: "bd-addon-author"
-	}, /*#__PURE__*/ React.createElement("span", {
+	}, React.createElement("span", {
 		className: "bd-author-text"
-	}, " by "), (ref1 = (ref = addon.author) === null || ref === void 0 ? void 0 : ref.split(/\s?,\s?/).map((author, index, authors) => /*#__PURE__*/ React.createElement(React.Fragment, {
-		key: author
-	}, /*#__PURE__*/ React.createElement(Tag, {
+	}, " by "), null !== (t = null === (t = e.author) || void 0 === t ? void 0 : t.split(/\s?,\s?/).map((e, t, n) => React.createElement(React.Fragment, {
+		key: e
+	}, React.createElement(s, {
 		className: "bd-link",
-		onClick: handleClick
-	}, author), index < authors.length - 1 && /*#__PURE__*/ React.createElement("span", {
+		onClick: a
+	}, e), t < n.length - 1 && React.createElement("span", {
 			className: "bd-comma"
-		}, ", "))
-	)) !== null && ref1 !== void 0 ? ref1 : "Unknown"));
+		}, ", ")))) && void 0 !== t ? t : "Unknown")
 }
 const IconsMap = {
 	website: {
@@ -2867,717 +1830,547 @@ const IconsMap = {
 		label: "Patreon"
 	}
 };
-function SupportIcons({addon}) {
-	const Button = Components.byProps("DropdownSizes");
-	const openSupportServer = async function() {
-		console.log("open?");
-		try {
-			const data = await DiscordModules.InviteActions.resolveInvite(addon.invite);
+function SupportIcons({addon:r}) {
+	async function i() {
+		console.log("open?");try {
+			var e = await DiscordModules.InviteActions.resolveInvite(r.invite);
 			console.log({
-				data
-			});
-			DiscordModules.Dispatcher.dispatch({
+				data: e
+			}), DiscordModules.Dispatcher.dispatch({
 				type: "INVITE_MODAL_OPEN",
-				code: addon.invite,
-				invite: data,
+				code: r.invite,
+				invite: e,
 				context: "APP"
-			});
-		} catch (error) {
-			Logger.error("InviteManager", `Failed to resolve invite for ${addon.name}:`, error);
-			Toasts.show("Could not resolve invite.", {
+			})
+		} catch (e) {
+			Logger.error("InviteManager", `Failed to resolve invite for ${r.name}:`, e), Toasts.show("Could not resolve invite.", {
 				type: "error"
-			});
-		}
-	};
-	return ( /*#__PURE__*/ React.createElement(React.Fragment, null, Object.entries(IconsMap).map(([type, props1]) => {
-		if (!addon[type]) return null;
-		const {icon: Icon, label} = props1;
-		const handleClick = function() {
-			window.open(addon[type]);
-		};
-		return ( /*#__PURE__*/ React.createElement(DiscordModules.Tooltips.default, {
-			text: label,
-			position: "top",
-			key: type
-		}, (props) => /*#__PURE__*/ React.createElement(Button, _extends$4({
-		}, props, {
-			look: Button.Looks.BLANK,
-			size: Button.Sizes.NONE,
-			onClick: type === "invite" ? openSupportServer : handleClick,
-			className: "bd-addon-support-button"
-		}), /*#__PURE__*/ React.createElement(Icon, {
-			width: "20",
-			height: "20"
-		}))
-		));
-	})));
-}
-function AddonCard({addon, manager, openSettings, hasSettings, type}) {
-	const {React: React1} = DiscordModules;
-	const [, forceUpdate] = React1.useReducer((n) => n + 1
-		, 0);
-	const Markdown = Components.get("Markdown", (e) => "rules" in e
-	);
-	const pendingUpdate = useUpdaterStore((s) => s.updates[addon.name]
-	);
-	React1.useEffect(() => {
-		return manager.on("toggled", (name) => {
-			if (name !== addon.name) return;
-			forceUpdate();
-		});
-	}, [
-		addon,
-		manager
-	]);
-	var _name,
-		_version,
-		_description;
-	return ( /*#__PURE__*/ React.createElement("div", {
-		className: Utilities.joinClassNames("bd-addon-card"),
-		"data-addon": addon.name
-	}, /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addoncard-header"
-	}, /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addoncard-info"
-	}, /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addoncard-icon"
-	}, type === "theme" ? /*#__PURE__*/ React.createElement(ColorPalette, null) : /*#__PURE__*/ React.createElement(Extension, null)), /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addon-name"
-	}, (_name = addon.name) !== null && _name !== void 0 ? _name : "???"), /*#__PURE__*/ React.createElement("span", {
-		className: "bd-addon-version"
-	}, "v" + ((_version = addon.version) !== null && _version !== void 0 ? _version : "Unknown")), /*#__PURE__*/ React.createElement(ClickableName, {
-		addon: addon
-	})), /*#__PURE__*/ React.createElement(ButtonWrapper, {
-		value: manager.isEnabled(addon),
-		onChange: () => {
-			manager.toggleAddon(addon);
-		}
-	})), /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addon-description"
-	}, /*#__PURE__*/ React.createElement(Markdown, null, (_description = addon.description) !== null && _description !== void 0 ? _description : `This ${type} has no description specified.`)), /*#__PURE__*/ React.createElement("div", {
-		className: "bd-addon-footer"
-	}, /*#__PURE__*/ React.createElement("div", {
-		className: "bd-support-bar"
-	}, /*#__PURE__*/ React.createElement(SupportIcons, {
-		addon: addon
-	})), /*#__PURE__*/ React.createElement("div", {
-		className: "bd-toolbar"
-	}, pendingUpdate && /*#__PURE__*/ React.createElement(ToolButton, {
-			label: "Download Update",
-			icon: "Download",
-			onClick: () => pendingUpdate.update()
-		}), /*#__PURE__*/ React.createElement(ToolButton, {
-			label: "Settings",
-			icon: "Gear",
-			disabled: !hasSettings || !manager.isEnabled(addon),
-			onClick: openSettings
-		}), /*#__PURE__*/ React.createElement(ToolButton, {
-			label: "Reload",
-			icon: "Replay",
-			onClick: () => manager.reloadAddon(addon)
-		}), /*#__PURE__*/ React.createElement(ToolButton, {
-			label: "Open Path",
-			icon: "Folder",
-			onClick: () => {
-				BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`, new Error().stack);
-			}
-		}), /*#__PURE__*/ React.createElement(ToolButton, {
-			danger: true,
-			label: "Delete",
-			icon: "Trash",
-			onClick: () => {
-				Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
-					onConfirm: () => {
-						BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`, new Error().stack);
-					}
-				});
-			}
-		})))));
-}
-
-function DOMWrapper({children}) {
-	const ref = DiscordModules.React.useRef();
-	DiscordModules.React.useEffect(() => {
-		if (!ref.current) return;
-		ref.current.appendChild(children);
-	}, [
-		ref,
-		children
-	]);
-	return DiscordModules.React.createElement("div", {
-		className: "react-wrapper",
-		ref
-	});
-}
-
-var ErrorBoundary = (() => {
-	class ErrorBoundary extends React.Component {
-		static getDerivedStateFromError(error) {
-			return {
-				hasError: true
-			};
-		}
-		componentDidCatch(error1, errorInfo) {
-			console.error(error1, errorInfo);
-		}
-		render() {
-			if (this.state.hasError) {
-				return DiscordModules.React.createElement("span", {
-					style: {
-						color: "red"
-					}
-				}, "There was an error.");
-			}
-			return this.props.children;
-		}
-		constructor(props) {
-			super(props);
-			this.state = {
-				hasError: false
-			};
+			})
 		}
 	}
-	return ErrorBoundary;
-});
-
-let Boundary = null;
-function AddonPanel({type, manager}) {
-	const {React: React1} = DiscordModules;
-	Boundary !== null && Boundary !== void 0 ? Boundary : Boundary = ErrorBoundary();
-	const [, forceUpdate] = React1.useReducer((n) => n + 1
-		, 0);
-	const [pluginSettings, setPluginSettings] = React1.useState(null);
-	const Button = Components.byProps("DropdownSizes");
-	const Caret = Components.get("Caret");
-	const FormNotice = Components.get("FormNotice");
-	const Arrow = Components.get("Arrow");
-	const pendingUpdates = useUpdaterStore((s) => {
-		const result = [];
-		for (const addonId in s.updates) {
-			if (s.updates[addonId].type !== type) continue;
-			result.push(addonId);
+	const o = Components.byProps("DropdownSizes");
+	return React.createElement(React.Fragment, null, Object.entries(IconsMap).map(([t, e]) => {
+		if (!r[t]) return null;
+		function n() {
+			window.open(r[t])
 		}
-		return result;
-	});
-	const formatter = new Intl.ListFormat(document.documentElement.lang, {
+		const {icon:a, label:s} = e;
+		return React.createElement(DiscordModules.Tooltips.default, {
+			text: s,
+			position: "top",
+			key: t
+		}, e => React.createElement(o, _extends$4({}, e, {
+			look: o.Looks.BLANK,
+			size: o.Sizes.NONE,
+			onClick: "invite" === t ? i : n,
+			className: "bd-addon-support-button"
+		}), React.createElement(a, {
+			width: "20",
+			height: "20"
+		})))
+	}))
+}
+function AddonCard({addon:t, manager:e, openSettings:n, hasSettings:a, type:s}) {
+	const r = DiscordModules["React"],
+		[, i] = r.useReducer(e => e + 1, 0);
+	var o,
+		c = Components.get("Markdown", e => "rules" in e);
+	const l = useUpdaterStore(e => e.updates[t.name]);
+	return r.useEffect(() => e.on("toggled", e => {
+			e === t.name && i()
+		}), [t, e]), React.createElement("div", {
+			className: Utilities.joinClassNames("bd-addon-card"),
+			"data-addon": t.name
+		}, React.createElement("div", {
+			className: "bd-addoncard-header"
+		}, React.createElement("div", {
+			className: "bd-addoncard-info"
+		}, React.createElement("div", {
+			className: "bd-addoncard-icon"
+		}, "theme" === s ? React.createElement(ColorPalette, null) : React.createElement(Extension, null)), React.createElement("div", {
+			className: "bd-addon-name"
+		}, null !== (o = t.name) && void 0 !== o ? o : "???"), React.createElement("span", {
+			className: "bd-addon-version"
+		}, "v" + (null !== (o = t.version) && void 0 !== o ? o : "Unknown")), React.createElement(ClickableName, {
+			addon: t
+		})), React.createElement(ButtonWrapper, {
+			value: e.isEnabled(t),
+			onChange: () => {
+				e.toggleAddon(t)
+			}
+		})), React.createElement("div", {
+			className: "bd-addon-description"
+		}, React.createElement(c, null, null !== (o = t.description) && void 0 !== o ? o : `This ${s} has no description specified.`)), React.createElement("div", {
+			className: "bd-addon-footer"
+		}, React.createElement("div", {
+			className: "bd-support-bar"
+		}, React.createElement(SupportIcons, {
+			addon: t
+		})), React.createElement("div", {
+			className: "bd-toolbar"
+		}, l && React.createElement(ToolButton, {
+				label: "Download Update",
+				icon: "Download",
+				onClick: () => l.update()
+			}), React.createElement(ToolButton, {
+				label: "Settings",
+				icon: "Gear",
+				disabled: !a || !e.isEnabled(t),
+				onClick: n
+			}), React.createElement(ToolButton, {
+				label: "Reload",
+				icon: "Replay",
+				onClick: () => e.reloadAddon(t)
+			}), React.createElement(ToolButton, {
+				label: "Open Path",
+				icon: "Folder",
+				onClick: () => {
+					BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(t.path)})`, (new Error).stack)
+				}
+			}), React.createElement(ToolButton, {
+				danger: !0,
+				label: "Delete",
+				icon: "Trash",
+				onClick: () => {
+					Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${s} "${t.name}"?`, {
+						onConfirm: () => {
+							BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(t.path)})`, (new Error).stack)
+						}
+					})
+				}
+			}))))
+}
+function DOMWrapper({children:e}) {
+	const t = DiscordModules.React.useRef();
+	return DiscordModules.React.useEffect(() => {
+			t.current && t.current.appendChild(e)
+		}, [t, e]), DiscordModules.React.createElement("div", {
+			className: "react-wrapper",
+			ref: t
+		})
+}
+var ErrorBoundary = () => {
+	class e extends React.Component {
+		static getDerivedStateFromError(e) {
+			return {
+				hasError: !0
+			}
+		}
+		componentDidCatch(e, t) {
+			console.error(e, t)
+		}
+		render() {
+			return this.state.hasError ? DiscordModules.React.createElement("span", {
+				style: {
+					color: "red"
+				}
+			}, "There was an error.") : this.props.children
+		}
+		constructor(e) {
+			super(e), this.state = {
+				hasError: !1
+			}
+		}
+	}
+	return e
+};
+let Boundary = null;
+function AddonPanel({type:a, manager:n}) {
+	const s = DiscordModules["React"],
+		[, e] = (null !== Boundary && void 0 !== Boundary ? Boundary : Boundary = ErrorBoundary(), s.useReducer(e => e + 1, 0)),
+		[t, r] = s.useState(null);
+	var i = Components.byProps("DropdownSizes"),
+		o = Components.get("Caret"),
+		c = Components.get("FormNotice"),
+		d = Components.get("Arrow"),
+		l = useUpdaterStore(e => {
+			const t = [];
+			for (const n in e.updates) e.updates[n].type === a && t.push(n);
+			return t
+		});
+	const u = new Intl.ListFormat(document.documentElement.lang, {
 		style: "long",
 		type: "conjunction"
 	});
-	React1.useEffect(() => manager.on("updated", () => forceUpdate()
-	)
-		, [
-			type,
-			manager,
-			pluginSettings,
-			forceUpdate
-		]);
-	return ( /*#__PURE__*/ React.createElement("div", {
-		className: `bdc-addon-panel ${type}`
-	}, /*#__PURE__*/ React.createElement("div", {
-		className: "bdc-title"
-	}, pluginSettings && /*#__PURE__*/ React.createElement(Button, {
-			size: Button.Sizes.NONE,
-			look: Button.Looks.BLANK,
-			onClick: () => setPluginSettings(null)
-		}, /*#__PURE__*/ React.createElement(Arrow, {
-			direction: "LEFT"
-		})), /*#__PURE__*/ React.createElement("span", {
-			className: "bdc-FlexCenter"
-		}, type[0].toUpperCase() + type.slice(1), "s - ", manager.addons.length, pluginSettings && /*#__PURE__*/ React.createElement("span", {
+	return s.useEffect(() => n.on("updated", () => e()), [a, n, t, e]), React.createElement("div", {
+			className: "bdc-addon-panel " + a
+		}, React.createElement("div", {
+			className: "bdc-title"
+		}, t && React.createElement(i, {
+				size: i.Sizes.NONE,
+				look: i.Looks.BLANK,
+				onClick: () => r(null)
+			}, React.createElement(d, {
+				direction: "LEFT"
+			})), React.createElement("span", {
 				className: "bdc-FlexCenter"
-			}, /*#__PURE__*/ React.createElement(Caret, {
-				direction: Caret.Directions.RIGHT,
-				className: "bdc-settings-caret"
-			}), pluginSettings.name)), !pluginSettings && /*#__PURE__*/ React.createElement(ToolButton, {
-			label: "Open Folder",
-			icon: "Folder",
-			onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(manager.folder)})`, new Error().stack)
-		})), pluginSettings ? /*#__PURE__*/ React.createElement(Boundary, null, pluginSettings.element) : /*#__PURE__*/ React.createElement("div", {
-		className: "bdc-addon-list"
-	}, pendingUpdates.length ? /*#__PURE__*/ React.createElement(FormNotice, {
-		key: "update-notice",
-		type: FormNotice.Types.BRAND,
-		className: "marginBottom20",
-		title: `Outdated ${type[0].toUpperCase() + type.slice(1)}${pendingUpdates.length > 1 ? "s" : ""}`,
-		imageData: {
-			src: "/assets/6e97f6643e7df29b26571d96430e92f4.svg",
-			width: 60,
-			height: 60
-		},
-		body: /*#__PURE__*/ React.createElement(React1.Fragment, null, `The following ${type}${pendingUpdates.length > 1 ? "s" : ""} needs to be updated:`, /*#__PURE__*/ React.createElement("br", null), formatter.format(pendingUpdates))
-	}) : null, manager.addons.map((addon) => {
-		var ref;
-		return ( /*#__PURE__*/ React.createElement(AddonCard, {
-			key: addon.name,
-			addon: addon,
-			manager: manager,
-			type: type,
-			hasSettings: typeof ((ref = addon.instance) === null || ref === void 0 ? void 0 : ref.getSettingsPanel) === "function",
-			openSettings: () => {
-				let element;
-				try {
-					element = addon.instance.getSettingsPanel.apply(addon.instance, []);
-				} catch (error) {
-					Logger.error("Modals", `Cannot show addon settings modal for ${addon.name}:`, error);
-					return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-						type: "error"
-					});
+			}, a[0].toUpperCase() + a.slice(1), "s - ", n.addons.length, t && React.createElement("span", {
+					className: "bdc-FlexCenter"
+				}, React.createElement(o, {
+					direction: o.Directions.RIGHT,
+					className: "bdc-settings-caret"
+				}), t.name)), !t && React.createElement(ToolButton, {
+				label: "Open Folder",
+				icon: "Folder",
+				onClick: () => BDCompatNative.executeJS(`require("electron").shell.openPath(${JSON.stringify(n.folder)})`, (new Error).stack)
+			})), t ? React.createElement(Boundary, null, t.element) : React.createElement("div", {
+			className: "bdc-addon-list"
+		}, l.length ? React.createElement(c, {
+			key: "update-notice",
+			type: c.Types.BRAND,
+			className: "marginBottom20",
+			title: "Outdated " + (a[0].toUpperCase() + a.slice(1)) + (1 < l.length ? "s" : ""),
+			imageData: {
+				src: "/assets/6e97f6643e7df29b26571d96430e92f4.svg",
+				width: 60,
+				height: 60
+			},
+			body: React.createElement(s.Fragment, null, `The following ${a}${1 < l.length ? "s" : ""} needs to be updated:`, React.createElement("br", null), u.format(l))
+		}) : null, n.addons.map(t => {
+			var e;
+			return React.createElement(AddonCard, {
+				key: t.name,
+				addon: t,
+				manager: n,
+				type: a,
+				hasSettings: "function" == typeof (null === (e = t.instance) || void 0 === e ? void 0 : e.getSettingsPanel),
+				openSettings: () => {
+					let e;
+					try {
+						e = t.instance.getSettingsPanel.apply(t.instance, [])
+					} catch (e) {
+						return Logger.error("Modals", `Cannot show addon settings modal for ${t.name}:`, e), void Toasts.show(`Unable to open settings panel for ${t.name}.`, {
+								type: "error"
+							})
+					}
+					if (Element.prototype.isPrototypeOf(e) ? e = s.createElement(DOMWrapper, {
+							children: e
+						}) : "function" == typeof e && (e = s.createElement(e, {})), !e) return Logger.error("Modals", "Unable to find settings panel for " + t.name), void Toasts.show(`Unable to open settings panel for ${t.name}.`, {
+								type: "error"
+							});
+					e && r({
+						name: t.name,
+						element: e
+					})
 				}
-				if (Element.prototype.isPrototypeOf(element))
-					element = React1.createElement(DOMWrapper, {
-						children: element
-					});
-				else if (typeof element === "function")
-					element = React1.createElement(element, {
-					});
-				// Bruh
-				if (!element) {
-					Logger.error("Modals", `Unable to find settings panel for ${addon.name}`);
-					return void Toasts.show(`Unable to open settings panel for ${addon.name}.`, {
-						type: "error"
-					});
-				}
-				if (!element) return;
-				setPluginSettings({
-					name: addon.name,
-					element
-				});
-			}
-		}));
-	}))));
+			})
+		})))
 }
-
 function _extends$3() {
-	_extends$3 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$3 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$3.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function ChannelCategory(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$3({
+function ChannelCategory(e) {
+	return React.createElement("svg", _extends$3({
 		width: "16",
 		height: "16",
 		viewBox: "0 0 16 16",
 		xmlns: "http://www.w3.org/2000/svg"
-	}, props), /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("path", {
 		transform: "translate(2.000000, 2.000000)",
 		fillRule: "nonzero",
 		fill: "currentColor",
 		d: "M4,0 L4,3 L0,3 L0,0 L4,0 Z M12,4 L12,7 L8,7 L8,4 L12,4 Z M8,9 L12,9 L12,12 L8,12 L8,9.33333333 L8,9 Z M7,7 L3,7 L3,10 L7,10 L7,12 L3,12 L1,12 L1,4 L3,4 L3,5 L7,5 L7,7 Z"
-	})));
+	}))
 }
-
 function _extends$2() {
-	_extends$2 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$2 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$2.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function SwitchItem({id, name, ...props}) {
-	const SwitchForm = Components.get("SwitchItem");
-	const value = SettingsManager.useState(() => SettingsManager.isEnabled(id)
-	);
-	return ( /*#__PURE__*/ React.createElement(SwitchForm, _extends$2({
-	}, props, {
-		value: value,
+function SwitchItem({id:e, name:t, ...n}) {
+	var a = Components.get("SwitchItem");
+	const s = SettingsManager.useState(() => SettingsManager.isEnabled(e));
+	return React.createElement(a, _extends$2({}, n, {
+		value: s,
 		onChange: () => {
-			SettingsManager.setSetting(id, !value);
+			SettingsManager.setSetting(e, !s)
 		}
-	}), name));
+	}), t)
 }
-function renderItems(items) {
-	return items.map((item, i) => {
-		switch (item.type) {
+function renderItems(e) {
+	return e.map((e, t) => {
+		switch (e.type) {
 			case "category":
-				return React.createElement(Category, Object.assign({
-				}, item, {
-					key: "category-" + i
-				}));
-			case "switch":
-				return React.createElement(SwitchItem, Object.assign({
-				}, item, {
-					key: item.id
-				}));
-			default:
-				return null;
+				return React.createElement(Category, Object.assign({}, e, {
+					key: "category-" + t
+				}));case "switch":
+				return React.createElement(SwitchItem, Object.assign({}, e, {
+					key: e.id
+				}));default:
+				return null
 		}
-	});
+	})
 }
-function Category({name, requires, items}) {
-	const [opened, setOpened] = React.useState(false);
-	const [FormTitle, Caret] = Components.bulk("CategoryComponent", "FormTitle", "Caret");
-	const isDisabled = SettingsManager.useState(() => !requires.every((id) => SettingsManager.isEnabled(id)
-	)
-	);
-	const isOpened = React.useMemo(() => opened && !isDisabled
-		, [
-			isDisabled,
-			opened
-		]);
-	return ( /*#__PURE__*/ React.createElement("div", {
-		className: Utilities.joinClassNames("bd-category", [
-			isOpened,
-			"bd-category-opened"
-		], [
-			isDisabled,
-			"bd-category-disabled"
-		])
-	}, /*#__PURE__*/ React.createElement("div", {
+function Category({name:e, requires:t, items:n}) {
+	const [a, s] = React.useState(!1);
+	var [r, i] = Components.bulk("CategoryComponent", "FormTitle", "Caret");
+	const o = SettingsManager.useState(() => !t.every(e => SettingsManager.isEnabled(e)));
+	var c = React.useMemo(() => a && !o, [o, a]);
+	return React.createElement("div", {
+		className: Utilities.joinClassNames("bd-category", [c, "bd-category-opened"], [o, "bd-category-disabled"])
+	}, React.createElement("div", {
 		className: "bd-category-header",
-		onClick: () => setOpened(!opened)
-	}, /*#__PURE__*/ React.createElement(FormTitle, {
-		tag: FormTitle.Tags.H3
-	}, name), /*#__PURE__*/ React.createElement(Caret, {
+		onClick: () => s(!a)
+	}, React.createElement(r, {
+		tag: r.Tags.H3
+	}, e), React.createElement(i, {
 		className: "bd-caret",
-		direction: isOpened ? Caret.Directions.DOWN : Caret.Directions.LEFT
-	})), /*#__PURE__*/ React.createElement("div", {
+		direction: c ? i.Directions.DOWN : i.Directions.LEFT
+	})), React.createElement("div", {
 		className: "bd-category-body"
-	}, isOpened && renderItems(items))));
+	}, c && renderItems(n)))
 }
 function SettingsPanel() {
-	const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
+	const [n] = Components.bulk("SettingsPanel", "FormTitle");
 	return DiscordModules.React.createElement("div", {
 		className: "bdc-settings-panel",
-		children: [
-			DiscordModules.React.createElement("div", {
-				className: "bdc-title"
-			}, "Settings"),
-			Object.entries(SettingsManager.items).map(([collection, {settings}]) => {
-				return [
-						/*#__PURE__*/ React.createElement(FormTitle, {
-						className: "bd-collection-title",
-						tag: FormTitle.Tags.H2,
-						key: "title-" + collection
-					}, /*#__PURE__*/ React.createElement(ChannelCategory, {
-						color: "var(--text-muted)"
-					}), collection),
-					...renderItems(settings)
-				];
-			})
-		]
-	});
+		children: [DiscordModules.React.createElement("div", {
+			className: "bdc-title"
+		}, "Settings"), Object.entries(SettingsManager.items).map(([e, {settings:t}]) => [React.createElement(n, {
+			className: "bd-collection-title",
+			tag: n.Tags.H2,
+			key: "title-" + e
+		}, React.createElement(ChannelCategory, {
+			color: "var(--text-muted)"
+		}), e), ...renderItems(t)])]
+	})
 }
-
-function DiscordProviders({children}) {
-	const {AccessibilityProvider, LayerProvider, container} = DiscordModules.DiscordProviders;
-	return React.createElement(AccessibilityProvider, {
+function DiscordProviders({children:e}) {
+	var {AccessibilityProvider:t, LayerProvider:n, container:a} = DiscordModules.DiscordProviders;
+	return React.createElement(t, {
 		value: {
 			reducedMotion: {
-				value: false,
+				value: !1,
 				rawValue: "no-preference"
 			}
 		}
-	}, React.createElement(LayerProvider, {
-		value: [
-			container
-		]
-	}, children));
+	}, React.createElement(n, {
+		value: [a]
+	}, e))
 }
-
 function _extends$1() {
-	_extends$1 = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends$1 = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends$1.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
-function BDLogo(props) {
-	return ( /*#__PURE__*/ React.createElement("svg", _extends$1({
+function BDLogo(e) {
+	return React.createElement("svg", _extends$1({
 		width: "24",
 		height: "24",
 		viewBox: "0 0 2000 2000"
-	}, props), /*#__PURE__*/ React.createElement("g", null, /*#__PURE__*/ React.createElement("path", {
+	}, e), React.createElement("g", null, React.createElement("path", {
 		fill: "#3E82E5",
 		d: "M1402.2,631.7c-9.7-353.4-286.2-496-642.6-496H68.4v714.1l442,398V490.7h257c274.5,0,274.5,344.9,0,344.9H597.6v329.5h169.8c274.5,0,274.5,344.8,0,344.8h-699v354.9h691.2c356.3,0,632.8-142.6,642.6-496c0-162.6-44.5-284.1-122.9-368.6C1357.7,915.8,1402.2,794.3,1402.2,631.7z"
-	}), /*#__PURE__*/ React.createElement("path", {
+	}), React.createElement("path", {
 		fill: "#FFFFFF",
 		d: "M1262.5,135.2L1262.5,135.2l-76.8,0c26.6,13.3,51.7,28.1,75,44.3c70.7,49.1,126.1,111.5,164.6,185.3c39.9,76.6,61.5,165.6,64.3,264.6l0,1.2v1.2c0,141.1,0,596.1,0,737.1v1.2l0,1.2c-2.7,99-24.3,188-64.3,264.6c-38.5,73.8-93.8,136.2-164.6,185.3c-22.6,15.7-46.9,30.1-72.6,43.1h72.5c346.2,1.9,671-171.2,671-567.9V716.7C1933.5,312.2,1608.7,135.2,1262.5,135.2z"
-	}))));
+	})))
 }
-
 function _extends() {
-	_extends = Object.assign || function(target) {
-		for (var i = 1; i < arguments.length; i++) {
-			var source = arguments[i];
-			for (var key in source) {
-				if (Object.prototype.hasOwnProperty.call(source, key)) {
-					target[key] = source[key];
-				}
-			}
+	return (_extends = Object.assign || function(e) {
+		for (var t = 1; t < arguments.length; t++) {
+			var n,
+				a = arguments[t];
+			for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n])
 		}
-		return target;
-	};
-	return _extends.apply(this, arguments);
+		return e
+	}).apply(this, arguments)
 }
 function UpdaterContextMenu() {
-	const {ContextMenu} = DiscordModules;
-	return ( /*#__PURE__*/ React.createElement(ContextMenu.Menu, {
+	var e = DiscordModules["ContextMenu"];
+	return React.createElement(e.Menu, {
 		navId: "UpdaterContextMenu",
-		onClose: ContextMenu.close
-	}, /*#__PURE__*/ React.createElement(ContextMenu.Item, {
+		onClose: e.close
+	}, React.createElement(e.Item, {
 		label: "Update All",
 		id: "update-all",
-		action: async () => {
-			const updates = Object.values(UpdaterApi.getState().updates);
-			for (let i = 0; i < updates.length; i++) {
-				var ref,
-					ref1;
-				(ref = updates[i]) === null || ref === void 0 ? void 0 : (ref1 = ref.data) === null || ref1 === void 0 ? void 0 : ref1.update(false);
-			}
+		action: async() => {
+			var t,
+				n = Object.values(UpdaterApi.getState().updates);
+			for (let e = 0; e < n.length; e++) null === (t = n[e]) || void 0 === t || null !== (t = t.data) && void 0 !== t && t.update(!1)
 		}
-	}), /*#__PURE__*/ React.createElement(ContextMenu.Item, {
+	}), React.createElement(e.Item, {
 		label: "Skip Updates",
 		id: "skip-updates",
 		action: () => {
 			UpdaterApi.setState({
-				updates: {
-				}
-			});
-			Toasts.show("Updates Skipped!", {
+				updates: {}
+			}), Toasts.show("Updates Skipped!", {
 				type: "success"
-			});
+			})
 		}
-	})));
+	}))
 }
 function UpdaterButton() {
-	const {ContextMenu} = DiscordModules;
-	const count = useUpdaterStore((state) => Object.keys(state.updates).length
-	);
-	if (count < 1) return null;
-	const handleContextMenu = function(event) {
-		ContextMenu.open(event, UpdaterContextMenu);
-	};
-	return ( /*#__PURE__*/ React.createElement(DiscordProviders, null, /*#__PURE__*/ React.createElement(DiscordModules.Tooltips.default, {
-		text: `${count} update${count > 1 ? "s" : ""} available!`,
+	const t = DiscordModules["ContextMenu"],
+		n = useUpdaterStore(e => Object.keys(e.updates).length);
+	if (n < 1) return null;
+	function a(e) {
+		t.open(e, UpdaterContextMenu)
+	}
+	return React.createElement(DiscordProviders, null, React.createElement(DiscordModules.Tooltips.default, {
+		text: `${n} update${1 < n ? "s" : ""} available!`,
 		position: "left"
-	}, (props) => /*#__PURE__*/ React.createElement("div", _extends({
-	}, props, {
+	}, e => React.createElement("div", _extends({}, e, {
 		className: "bd-updater-button",
 		onClick: () => {},
-		onContextMenu: handleContextMenu,
-		"data-updates": count
-	}), /*#__PURE__*/ React.createElement(BDLogo, {
+		onContextMenu: a,
+		"data-updates": n
+	}), React.createElement(BDLogo, {
 		width: "28",
 		height: "28"
-	}))
-	)));
-} // @ts-ignore
+	}))))
+}
 window.BDUpdater = {
-	useUpdaterStore
+	useUpdaterStore: useUpdaterStore
 };
-
-const warnings = new Set();
+const warnings = new Set;
 class UpdaterNode {
-	async update(showToast) {
-		await new Promise((res, rej) => {
-			fs1.writeFile(this.addon.path, this.code, (error) => {
-				if (error) rej(error);
-				else res();
-			});
-		});
-		UpdaterApi.setState((state) => {
-			const updates = {
-				...state.updates
+	async update(e) {
+		await new Promise((t, n) => {
+			fs1.writeFile(this.addon.path, this.code, e => {
+				e ? n(e) : t()
+			})
+		}), UpdaterApi.setState(e => {
+			const t = {
+				...e.updates
 			};
-			delete updates[this.addon.name];
-			return {
-				updates
-			};
-		});
-		if (showToast) this.showNotice();
+			return delete t[this.addon.name]
+				, {
+					updates: t
+			}
+		}), e && this.showNotice()
 	}
 	showNotice() {
-		Toasts.show(`${this.addon.name} was updated from ${this.currentVersion} to ${this.remoteVersion}.`);
+		Toasts.show(`${this.addon.name} was updated from ${this.currentVersion} to ${this.remoteVersion}.`)
 	}
-	constructor(addon1, code, currentVersion, remoteVersion1, pending) {
+	constructor(e, t, n, a, s) {
 		Object.assign(this, {
-			code,
-			currentVersion,
-			remoteVersion: remoteVersion1,
-			addon: addon1,
-			pending
-		});
+			code: t,
+			currentVersion: n,
+			remoteVersion: a,
+			addon: e,
+			pending: s
+		})
 	}
 }
 class AddonUpdater {
-	static getAddons(type) {
-		let manager = null;
-		switch (type) {
-			case "plugin": {
-				manager = PluginsManager;
-				break;
-			}
-			case "theme": {
-				manager = ThemesManager;
-				break;
-			}
-			default: {
-				Logger.error("AddonUpdater", `Unsupported addon type: ${type}`);
-			}
+	static getAddons(e) {
+		let t = null;
+		switch (e) {
+			case "plugin":
+				t = PluginsManager;
+				break;case "theme":
+				t = ThemesManager;
+				break;default:
+				Logger.error("AddonUpdater", "Unsupported addon type: " + e)
 		}
-		if (!manager) return;
-		var _updateUrl;
-		return Object.fromEntries(manager.addons.map((addon) => {
-			var ref,
-				ref1,
-				ref2;
-			return [
-				addon.name,
-				{
-					version: this.parseVersion(addon),
-					addon,
-					updateUrl: (_updateUrl = addon.updateUrl) !== null && _updateUrl !== void 0 ? _updateUrl : (ref = addon.instance) === null || ref === void 0 ? void 0 : (ref1 = ref._config) === null || ref1 === void 0 ? void 0 : (ref2 = ref1.info) === null || ref2 === void 0 ? void 0 : ref2.github_raw
-				}
-			];
-		}));
+		var a;
+		if (t) return Object.fromEntries(t.addons.map(e => {
+				var t,
+					n;
+				return [e.name, {
+					version: this.parseVersion(e),
+					addon: e,
+					updateUrl: null !== (a = e.updateUrl) && void 0 !== a ? a : null === (e = e.instance) || void 0 === e || null === (t = e._config) || void 0 === t || null === (n = t.info) || void 0 === n ? void 0 : n.github_raw
+				}]
+			}))
 	}
-	static parseVersionString(code1) {
-		var ref;
-		const version = (ref = code1.match(this.versionRegex)) === null || ref === void 0 ? void 0 : ref.toString();
-		if (!version) return null;
-		return version.replace(/['"]/g, "");
+	static parseVersionString(e) {
+		const t = null === (e = e.match(this.versionRegex)) || void 0 === e ? void 0 : e.toString();
+		return t ? t.replace(/['"]/g, "") : null
 	}
-	static parseVersion(addonOrString) {
-		var ref,
-			ref3,
-			ref4,
-			ref5,
-			ref6,
-			ref7,
-			ref8;
-		if (typeof addonOrString === "string") return this.parseVersionString(addonOrString);
-		// Fix some plugins. :zere_zoom:
-		if ((ref = addonOrString.instance) === null || ref === void 0 ? void 0 : (ref3 = ref._config) === null || ref3 === void 0 ? void 0 : (ref4 = ref3.info) === null || ref4 === void 0 ? void 0 : ref4.version) return (ref5 = addonOrString.instance) === null || ref5 === void 0 ? void 0 : (ref6 = ref5._config) === null || ref6 === void 0 ? void 0 : (ref7 = ref6.info) === null || ref7 === void 0 ? void 0 : ref7.version;
-		if (addonOrString.version) return addonOrString.version;
-		var ref9;
-		if (typeof ((ref8 = addonOrString.instance) === null || ref8 === void 0 ? void 0 : ref8.getVersion) === "function") return (ref9 = addonOrString.instance.getVersion()) !== null && ref9 !== void 0 ? ref9 : "0.0.0";
-		return "0.0.0";
+	static parseVersion(e) {
+		var t,
+			n,
+			a,
+			s;
+		return "string" == typeof e ? this.parseVersionString(e) : null !== (a = e.instance) && void 0 !== a && (null !== (a = a._config) && void 0 !== a && (null !== (a = a.info) && void 0 !== a && a.version)) ? null === (a = e.instance) || void 0 === a || null === (t = a._config) || void 0 === t || null === (n = t.info) || void 0 === n ? void 0 : n.version : e.version || ("function" == typeof (null === (a = e.instance) || void 0 === a ? void 0 : a.getVersion) && null !== (s = e.instance.getVersion()) && void 0 !== s ? s : "0.0.0")
 	}
 	static initialize() {
-		const wrapper = DOM.createElement("div", {
+		var e = DOM.createElement("div", {
 			className: "bd-updater-wrapper"
 		});
-		DiscordModules.ReactDOM.render(React.createElement(UpdaterButton, {
-		}), wrapper);
-		document.body.appendChild(wrapper);
-		this.patchZlibUpdater();
-		this.checkAllUpdates();
-		setInterval(() => this.checkAllUpdates()
-			, 1800000); // 30minutes
+		DiscordModules.ReactDOM.render(React.createElement(UpdaterButton, {}), e), document.body.appendChild(e), this.patchZlibUpdater(), this.checkAllUpdates(), setInterval(() => this.checkAllUpdates(), 18e5)
 	}
 	static patchZlibUpdater() {
 		try {
-			const updater = window.PluginUpdater;
-			if (updater && typeof updater.checkAll === "function") {
-				updater.checkAll = async () => {};
-			}
-		} catch (error) {
-			Logger.error("AddonUpdater", "Failed to patch zlibrary updater:", error);
+			const e = window.PluginUpdater;
+			e && "function" == typeof e.checkAll && (e.checkAll = async() => {})
+		} catch (e) {
+			Logger.error("AddonUpdater", "Failed to patch zlibrary updater:", e)
 		}
 	}
 	static async checkAllUpdates() {
-		let found = {
-		};
-		for (const type of [
-				"theme",
-				"plugin"
-		]) {
-			const addons = this.getAddons(type);
-			for (const addonId in addons) {
-				const {addon, updateUrl} = addons[addonId];
-				if (!updateUrl) {
-					if (!warnings.has(addonId)) {
-						Logger.warn(`AddonUpdater:${type}s`, `Could not resolve updating url for ${addonId}.`);
-						warnings.add(addonId);
-					}
-					continue;
-				}
-				try {
-					const data = await this.fetchUpdate(addon, updateUrl);
-					if (data.pending)
-						found[addonId] = {
-							type: type,
-							data
-						};
-				} catch (error) {
-					Logger.error("AddonUpdater", `Failed to fetch update for ${addonId}:`, error);
-				}
+		let t = {};
+		for (const r of ["theme", "plugin"]) {
+			var e = this.getAddons(r);
+			for (const i in e) {
+				var {addon:n, updateUrl:a} = e[i];
+				if (a) try {
+						var s = await this.fetchUpdate(n, a);
+						s.pending && (t[i] = {
+							type: r,
+							data: s
+						})
+					} catch (e) {
+						Logger.error("AddonUpdater", `Failed to fetch update for ${i}:`, e)
+				} else warnings.has(i) || (Logger.warn(`AddonUpdater:${r}s`, `Could not resolve updating url for ${i}.`), warnings.add(i))
 			}
 		}
-		if (Object.keys(found) == 0) return;
-		UpdaterApi.setState((state) => ({
-			updates: Object.assign({
-			}, state.updates, found)
+		0 != Object.keys(t) && UpdaterApi.setState(e => ({
+			updates: Object.assign({}, e.updates, t)
+		}))
+	}
+	static fetchUpdate(i, e) {
+		return new Promise((r, t) => {
+			request(e, e => {
+				const s = [];
+				e.on("data", e => s.push(e)), e.on("end", () => {
+					var e = s.join(""),
+						t = this.parseVersionString(e),
+						n = this.parseVersion(i),
+						a = t && this.compareVersions(t, n);
+					r(new UpdaterNode(i, e, n, t, a))
+				}), e.on("error", t)
+			})
 		})
-		);
 	}
-	static fetchUpdate(addon, url) {
-		return new Promise((resolve, rej) => {
-			request(url, (res) => {
-				const data = [];
-				res.on("data", (chunk) => data.push(chunk)
-				);
-				res.on("end", () => {
-					const raw = data.join("");
-					const remoteVersion = this.parseVersionString(raw);
-					const localVersion = this.parseVersion(addon);
-					const hasChanges = remoteVersion && this.compareVersions(remoteVersion, localVersion);
-					resolve(new UpdaterNode(addon, raw, localVersion, remoteVersion, hasChanges));
-				});
-				res.on("error", rej);
-			});
-		});
-	}
-	static compareVersions(version1, version2) {
-		// Very very lazy compare, I don't wanna bother with people versioning their addons like 1.   beta.aplha.24
-		return version1 !== version2;
+	static compareVersions(e, t) {
+		return e !== t
 	}
 }
 AddonUpdater.versionRegex = /['"][0-9]+\.[0-9]+\.[0-9]+['"]/i;
-
-const EXPOSE_PROCESS_GLOBAL = "bdcompat-expose-process-global";
-
-/// <reference path="../../types.d.ts" />
-const SettingsSections = [
-	{
+const EXPOSE_PROCESS_GLOBAL = "bdcompat-expose-process-global",
+	SettingsSections = [{
 		section: "DIVIDER"
-	},
-	{
+	}, {
 		section: "HEADER",
 		label: "BetterDiscord"
-	},
-	{
+	}, {
 		id: "bdcompat-settings-settings",
 		section: "settings",
 		label: "Settings",
 		className: "bdcompat-settings-item-settings",
-		element: () => DiscordModules.React.createElement(SettingsPanel, {
-		})
-	},
-	{
+		element: () => DiscordModules.React.createElement(SettingsPanel, {})
+	}, {
 		id: "bdcompat-settings-plugins",
 		section: "plugins",
 		label: "Plugins",
@@ -3586,8 +2379,7 @@ const SettingsSections = [
 			manager: PluginsManager,
 			type: "plugin"
 		})
-	},
-	{
+	}, {
 		id: "bdcompat-settings-themes",
 		section: "themes",
 		label: "Themes",
@@ -3596,111 +2388,60 @@ const SettingsSections = [
 			manager: ThemesManager,
 			type: "theme"
 		})
-	}
-];
-if (!window.process) {
-	BDCompatNative.IPC.dispatch(EXPOSE_PROCESS_GLOBAL);
-}
-var index = new class BDCompat {
+	}];
+window.process || BDCompatNative.IPC.dispatch(EXPOSE_PROCESS_GLOBAL);
+var index = new class {
 	start() {
-		Logger.log("Core", "Loading...");
-		Webpack.whenReady.then(this.onStart.bind(this));
+		Logger.log("Core", "Loading..."), Webpack.whenReady.then(this.onStart.bind(this))
 	}
 	onStart() {
-		this.polyfillWebpack();
-		setBuffer(Webpack.findByProps("Buffer"));
-		Object.assign(window, {
+		this.polyfillWebpack(), setBuffer(Webpack.findByProps("Buffer")), Object.assign(window, {
 			require: Require,
 			Buffer: Buffer$1.Buffer,
 			React: DiscordModules.React
-		});
-		this.exposeBdApi();
-		DataStore.initialize();
-		SettingsManager.initialize();
-		Toasts.initialize();
-		this.appendStyles();
-		ThemesManager.initialize();
-		PluginsManager.initialize();
-		this.injectSettings();
-		AddonUpdater.initialize();
+		}), this.exposeBdApi(), DataStore.initialize(), SettingsManager.initialize(), Toasts.initialize(), this.appendStyles(), ThemesManager.initialize(), PluginsManager.initialize(), this.injectSettings(), AddonUpdater.initialize()
 	}
 	exposeBdApi() {
-		Object.freeze(BdApi);
-		Object.freeze(BdApi.Plugins);
-		Object.freeze(BdApi.Themes);
-		Object.freeze(BdApi.Patcher);
-		Object.defineProperty(window, "BdApi", {
+		Object.freeze(BdApi), Object.freeze(BdApi.Plugins), Object.freeze(BdApi.Themes), Object.freeze(BdApi.Patcher), Object.defineProperty(window, "BdApi", {
 			value: BdApi,
-			configurable: false,
-			writable: false
-		});
+			configurable: !1,
+			writable: !1
+		})
 	}
 	polyfillWebpack() {
-		if (typeof webpackJsonp !== "undefined") return;
-		window.webpackJsonp = [];
-		Object.defineProperty(window.webpackJsonp, "__polyfill", {
-			value: true
-		});
-		window.webpackJsonp.length = 10000; // In case plugins are waiting for that.
-		window.webpackJsonp.flat = () => window.webpackJsonp
-		;
-		window.webpackJsonp.push = ([[], module, [[id]]]) => {
-			return module[id]({
-			}, {
-			}, Webpack.request());
-		};
+		"undefined" == typeof webpackJsonp && (window.webpackJsonp = [], Object.defineProperty(window.webpackJsonp, "__polyfill", {
+			value: !0
+		}), window.webpackJsonp.length = 1e4, window.webpackJsonp.flat = () => window.webpackJsonp, window.webpackJsonp.push = ([[], e, [[t]]]) => e[t]({}, {}, Webpack.request()))
 	}
 	appendStyles() {
-		const dist = BDCompatNative.executeJS("__dirname", new Error().stack);
-		const stylesPath = path.resolve(dist, "style.css");
-		if (!fs1.existsSync(stylesPath)) return;
-		DOM.injectCSS("core", fs1.readFileSync(stylesPath, "utf8"));
+		var e = BDCompatNative.executeJS("__dirname", (new Error).stack),
+			e = path.resolve(e, "style.css");
+		fs1.existsSync(e) && DOM.injectCSS("core", fs1.readFileSync(e, "utf8"))
 	}
 	async injectSettings() {
 		if ("SettingsNative" in window) {
-			if (typeof KernelSettings === "undefined") await new Promise((resolve) => {
-					const listener = () => {
-						resolve();
-						DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", listener);
-					};
-					DiscordModules.Dispatcher.subscribe("KERNEL_SETTINGS_INIT", listener);
-				});
-			for (const panel of SettingsSections) {
-				if (panel.section === "HEADER" || panel.section === "DIVIDER") continue;
-				this._flush.push(KernelSettings.register("BetterDiscord" + panel.label, {
-					...panel,
-					render: panel.element,
+			"undefined" == typeof KernelSettings && await new Promise(e => {
+				const t = () => {
+					e(), DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", t)
+				};
+				DiscordModules.Dispatcher.subscribe("KERNEL_SETTINGS_INIT", t)
+			});
+			for (const e of SettingsSections) "HEADER" !== e.section && "DIVIDER" !== e.section && this._flush.push(KernelSettings.register("BetterDiscord" + e.label, {
+					...e,
+					render: e.element,
 					icon: React.createElement(BDLogo, {
 						className: "bd-logo",
 						width: 16,
 						height: 16
 					})
-				}));
-			}
-		} else {
-			BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
-		// const SettingsView = Webpack.findByDisplayName("SettingsView");
-		// Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
-		//     if (!Array.isArray(res) || !res.some(e => e?.section?.toLowerCase() === "changelog") || res.some(s => s?.id === "bdcompat-settings-settings")) return;
-		//     const index = res.findIndex(s => s?.section?.toLowerCase() === "changelog") - 1;
-		//     if (index < 0) return;
-		//     res.splice(index, 0, ...SettingsSections);
-		// });
-		}
+				}))
+		} else BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
 	}
 	stop() {
-		for (let i = 0; i < this._flush.length; i++) {
-			this._flush[i]();
-		}
+		for (let e = 0; e < this._flush.length; e++) this._flush[e]()
 	}
 	constructor() {
-		this.styles = [
-			"./ui/toast.css",
-			"./ui/addons.css",
-			"./ui/settings.css"
-		];
-		this._flush = [];
+		this.styles = ["./ui/toast.css", "./ui/addons.css", "./ui/settings.css"], this._flush = []
 	}
 };
-
 export { index as default };
