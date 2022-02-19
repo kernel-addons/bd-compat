@@ -384,42 +384,7 @@ class WebpackModule {
 		_listeners.set(this, {
 			writable: !0,
 			value: new Set
-		}), this.cache = null, this.waitForGlobal.then(() => {
-			let a = window[this.chunkName].push;
-			const t = e => {
-				const [, t] = e;
-				for (const n in t) {
-					const s = t[n];
-					t[n] = (e, t, n) => {
-						try {
-							s.call(s, e, t, n);const a = [..._classPrivateFieldGet(this, _listeners)];
-							for (let e = 0; e < a.length; e++) try {
-									a[e](t)
-								} catch (e) {
-									console.error("[Webpack]", "Could not fire callback listener:", e)
-							}
-						} catch (e) {
-							console.error(e)
-						}
-					}, Object.assign(t[n], s, {
-						toString: s.toString.bind(s),
-						__original: s
-					})
-				}
-				return a.apply(window[this.chunkName], [e])
-			};
-			Object.defineProperty(window[this.chunkName], "push", {
-				configurable: !0,
-				get: () => t,
-				set: e => {
-					a = e, Object.defineProperty(window[this.chunkName], "push", {
-						value: t,
-						configurable: !0,
-						writable: !0
-					})
-				}
-			})
-		}), this.whenReady = this.waitForGlobal.then(() => new Promise(async e => {
+		}), this.cache = null, this.whenReady = this.waitForGlobal.then(() => new Promise(async e => {
 			const [t, {ActionTypes:n} ={}, a] = await this.findByProps(["dirtyDispatch"], ["API_HOST", "ActionTypes"], ["getCurrentUser", "_dispatchToken"], {
 				cache: !1,
 				bulk: !0,
@@ -431,7 +396,43 @@ class WebpackModule {
 				t.unsubscribe(n.START_SESSION, s), t.unsubscribe(n.CONNECTION_OPEN, s), e()
 			}
 			t.subscribe(n.START_SESSION, s), t.subscribe(n.CONNECTION_OPEN, s)
-		}))
+		})), this.whenReady.then(() => {
+			let s = window[this.chunkName].push;
+			const t = e => {
+				const [, t] = e;
+				for (const n in t) {
+					const a = t[n];
+					t[n] = (...e) => {
+						var [, t] = e;
+						try {
+							a.apply(a, e);const n = [..._classPrivateFieldGet(this, _listeners)];
+							for (let e = 0; e < n.length; e++) try {
+									n[e](t)
+								} catch (e) {
+									console.error("[Webpack]", "Could not fire callback listener:", e)
+							}
+						} catch (e) {
+							console.error(e)
+						}
+					}, Object.assign(t[n], a, {
+						toString: a.toString.bind(a),
+						__original: a
+					})
+				}
+				return s.apply(window[this.chunkName], [e])
+			};
+			Object.defineProperty(window[this.chunkName], "push", {
+				configurable: !0,
+				get: () => t,
+				set: e => {
+					s = e, Object.defineProperty(window[this.chunkName], "push", {
+						value: t,
+						configurable: !0,
+						writable: !0
+					})
+				}
+			})
+		})
 	}
 }
 var _listeners = new WeakMap;
