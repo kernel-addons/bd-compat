@@ -124,7 +124,7 @@ export default new class BDCompat {
     }
 
     async injectSettings() {
-        if ("SettingsNative" in window) {
+        if ("SettingsNative" in window && !global.isUnbound) {
             if (typeof KernelSettings === "undefined") await new Promise<void>(resolve => {
                 const listener = () => {
                     resolve();
