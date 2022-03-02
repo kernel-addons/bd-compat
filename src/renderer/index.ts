@@ -75,12 +75,12 @@ export default new class BDCompat {
 
         this.exposeBdApi();
 
-        
+
         DataStore.initialize();
         SettingsManager.initialize();
         Toasts.initialize();
         this.appendStyles();
-        
+
         ThemesManager.initialize();
         PluginsManager.initialize();
         this.injectSettings();
@@ -104,7 +104,7 @@ export default new class BDCompat {
         if (typeof(webpackJsonp) !== "undefined") return;
 
         window.webpackJsonp = [];
-        
+
         Object.defineProperty(window.webpackJsonp, "__polyfill", {value: true});
 
         window.webpackJsonp.length = 10000; // In case plugins are waiting for that.
@@ -124,7 +124,7 @@ export default new class BDCompat {
     }
 
     async injectSettings() {
-        if ("SettingsNative" in window) {
+        if ("SettingsNative" in window && !global.isUnbound) {
             if (typeof KernelSettings === "undefined") await new Promise<void>(resolve => {
                 const listener = () => {
                     resolve();
@@ -148,7 +148,9 @@ export default new class BDCompat {
                 }));
             }
         } else {
-            BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
+            if (!global.isUnbound) {
+                BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
+            }
             // const SettingsView = Webpack.findByDisplayName("SettingsView");
 
             // Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {

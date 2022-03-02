@@ -109,12 +109,10 @@ export const IconsMap = {
 
 export function SupportIcons({addon}) {
     const Button = Components.byProps("DropdownSizes");
-    
+
     const openSupportServer = async function () {
-        console.log("open?");
         try {
             const data = await DiscordModules.InviteActions.resolveInvite(addon.invite);
-            console.log({data});
             DiscordModules.Dispatcher.dispatch({
                 type: "INVITE_MODAL_OPEN",
                 code: addon.invite,
@@ -133,12 +131,12 @@ export function SupportIcons({addon}) {
                 Object.entries(IconsMap).map(([type, props]) => {
                     if (!addon[type]) return null;
                     const {icon: Icon, label} = props;
-            
+
                     const handleClick = function () {
                         window.open(addon[type]);
                     };
-            
-            
+
+
                     return (
                         <DiscordModules.Tooltips.default text={label} position="top" key={type}>
                             {props => (
@@ -171,7 +169,7 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
             if (name !== addon.name) return;
             forceUpdate();
         });
-    }, [addon, manager]); 
+    }, [addon, manager]);
 
     return (
         <div className={Utilities.joinClassNames("bd-addon-card")} data-addon={addon.name}>

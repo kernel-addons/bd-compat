@@ -13,7 +13,7 @@ export default class PluginsManager {
     static listeners = {};
     static folder = DataStore.pluginsFolder;
     static extension = ".plugin.js";
-    static addons = []; 
+    static addons = [];
     static times = {};
 
     static on(event, callback) {
@@ -58,7 +58,7 @@ export default class PluginsManager {
             if (!eventType || !filename) return;
             const absolutePath = path.resolve(this.folder, filename);
             if (!filename.endsWith(this.extension)) return;
-            
+
             // await new Promise(r => setTimeout(r, 100));
             try {
                 const stats = fs.statSync(absolutePath);
@@ -78,14 +78,14 @@ export default class PluginsManager {
 
     static loadAllPlugins() {
         const files = fs.readdirSync(this.folder, "utf8");
-        
+
         for (let i = 0; i < files.length; i++) {
             const filename = files[i];
             const location = path.resolve(this.folder, filename);
             const stats = fs.statSync(location);
             if (!filename.endsWith(this.extension) || !stats.isFile()) continue;
             this.times[filename] = stats.mtime.getTime();
-    
+
             try {
                 this.loadAddon(location, false);
                 this.dispatch("updated");
@@ -125,7 +125,7 @@ export default class PluginsManager {
         catch (error) {
             Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
         }
-        
+
         meta.exports = typeof module.exports === "function"
             ? module.exports
             : module.exports?.__esModule
@@ -133,7 +133,7 @@ export default class PluginsManager {
                 : module.exports.exports;
 
         if (typeof meta.exports !== "function") throw "Plugin had no exports.";
-        
+
         try {
             const instance = new meta.exports(meta);
             meta.instance = instance;
@@ -146,9 +146,9 @@ export default class PluginsManager {
                     Logger.error("PluginsManager", `Unable to fire load() for ${meta.name || meta.filename}:`, error);
                 }
             }
-            if (!meta.version && typeof (instance.getVersion) === "function") meta.version = instance.getVersion(); 
-            if (!meta.description && typeof (instance.getDescription) === "function") meta.description = instance.getDescription(); 
-            if (!meta.author && typeof (instance.getAuthor) === "function") meta.author = `${instance.getAuthor()}`; // Prevent clever escaping. 
+            if (!meta.version && typeof (instance.getVersion) === "function") meta.version = instance.getVersion();
+            if (!meta.description && typeof (instance.getDescription) === "function") meta.description = instance.getDescription();
+            if (!meta.author && typeof (instance.getAuthor) === "function") meta.author = `${instance.getAuthor()}`; // Prevent clever escaping.
 
             if (this.addonState[meta.name] == null) {
                 this.addonState[meta.name] = false;
@@ -157,6 +157,7 @@ export default class PluginsManager {
             this.addons.push(meta);
 
             if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
+            this.dispatch("updated");
         } catch (error) {
             return void Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
         } finally {
@@ -176,6 +177,13 @@ export default class PluginsManager {
             if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${addon.name} was unloaded!`, {type: "info"});
         }
         this.dispatch("updated");
+    }
+
+    static delete(addon) {
+        const file = this.resolve(addon);
+        if (!file) return;
+
+        return fs.unlinkSync(file.path);
     }
 
     static startPlugin(plugin, showToast = true) {
@@ -237,7 +245,7 @@ export default class PluginsManager {
 
         this.addonState[addon.name] = success;
         DataStore.saveAddonState("plugins", this.addonState);
-        this.dispatch("toggled", addon.name, success);
+        this.dispatch("toggle", addon.name, success);
     }
 
     static disableAddon(idOrFileOrAddon) {
@@ -245,16 +253,16 @@ export default class PluginsManager {
         if (!addon) return Logger.warn("PluginsManager", `Unable to disable non-loaded addon!`);
 
         if (!this.isEnabled(addon)) return Logger.warn("PluginsManager", `Cannot disable addon twice!`);
-        
+
         const success = this.stopPlugin(addon, false);
         if (success) {
             Logger.log("PluginsManager", `${addon.name} has been stopped!`);
             if (SettingsManager.isEnabled("showToastsPluginState")) Toasts.show(`${addon.name} has been stopped!`, {type: "info"});
         }
-        
+
         this.addonState[addon.name] = false;
         DataStore.saveAddonState("plugins", this.addonState);
-        this.dispatch("toggled", addon.name, false);
+        this.dispatch("toggle", addon.name, false);
     }
 
     static toggleAddon(idOrFileOrAddon) {
@@ -278,7 +286,7 @@ export default class PluginsManager {
             if (typeof (plugin.instance.onSwitch) !== "function" || !this.isEnabled(plugin)) continue;
 
             try {plugin.instance.onSwitch();}
-            catch (error) {Logger.error("PluginsManager", `Unable to fire onSwitch() for ${plugin.name}:`, error);} 
+            catch (error) {Logger.error("PluginsManager", `Unable to fire onSwitch() for ${plugin.name}:`, error);}
         }
     }
 
