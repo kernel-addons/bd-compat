@@ -836,10 +836,7 @@ class Toasts {
 		}
 	}
 	static show(t, n = {}) {
-		if (console.log({
-				content: t,
-				options: n
-			}), SettingsManager.isEnabled("showToasts")) return SettingsManager.isEnabled("useBuiltinToasts") ? this.showDiscordToast(t, n) : void this.API.setState(e => ({
+		if (SettingsManager.isEnabled("showToasts")) return SettingsManager.isEnabled("useBuiltinToasts") ? this.showDiscordToast(t, n) : void this.API.setState(e => ({
 				...e,
 				id: Math.random().toString(36).slice(2),
 				toasts: e.toasts.concat({
@@ -985,7 +982,7 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 					})
 				} catch (e) {
 					Logger.error("PluginsManager", `Unable to fire load() for ${r.name || r.filename}:`, e)
-			} r.version || "function" != typeof o.getVersion || (r.version = o.getVersion()), r.description || "function" != typeof o.getDescription || (r.description = o.getDescription()), r.author || "function" != typeof o.getAuthor || (r.author = "" + o.getAuthor()), null == this.addonState[r.name] && (this.addonState[r.name] = !1, DataStore.saveAddonState("plugins", this.addonState)), this.addons.push(r), this.addonState[r.name] && this.startPlugin(r, n)
+			} r.version || "function" != typeof o.getVersion || (r.version = o.getVersion()), r.description || "function" != typeof o.getDescription || (r.description = o.getDescription()), r.author || "function" != typeof o.getAuthor || (r.author = "" + o.getAuthor()), null == this.addonState[r.name] && (this.addonState[r.name] = !1, DataStore.saveAddonState("plugins", this.addonState)), this.addons.push(r), this.addonState[r.name] && this.startPlugin(r, n), this.dispatch("updated")
 		} catch (e) {
 			return void Logger.error("PluginsManager", `Unable to load ${r.name || r.filename}:`, e)
 		} finally {
@@ -998,6 +995,10 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		e = this.resolve(e);e && (this.stopPlugin(e, !1), this.addons.splice(this.addons.indexOf(e), 1), t && (Logger.log("PluginsManager", e.name + " was unloaded!"), SettingsManager.isEnabled("showToastsPluginLoad") && Toasts.show(e.name + " was unloaded!", {
 			type: "info"
 		})), this.dispatch("updated"))
+	}
+	static delete(e) {
+		e = this.resolve(e);
+		if (e) return fs1.unlinkSync(e.path)
 	}
 	static startPlugin(e, t = !0) {
 		const n = this.resolve(e);
@@ -1038,12 +1039,12 @@ if (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.
 		var t = this.startPlugin(e, !1);
 		t && (Logger.log("PluginsManager", e.name + " has been enabled!"), SettingsManager.isEnabled("showToastsPluginState") && Toasts.show(e.name + " has been enabled!", {
 			type: "info"
-		})), this.addonState[e.name] = t, DataStore.saveAddonState("plugins", this.addonState), this.dispatch("toggled", e.name, t)
+		})), this.addonState[e.name] = t, DataStore.saveAddonState("plugins", this.addonState), this.dispatch("toggle", e.name, t)
 	}
 	static disableAddon(e) {
 		e = this.resolve(e);return e ? this.isEnabled(e) ? (this.stopPlugin(e, !1) && (Logger.log("PluginsManager", e.name + " has been stopped!"), SettingsManager.isEnabled("showToastsPluginState") && Toasts.show(e.name + " has been stopped!", {
 			type: "info"
-		})), this.addonState[e.name] = !1, DataStore.saveAddonState("plugins", this.addonState), void this.dispatch("toggled", e.name, !1)) : Logger.warn("PluginsManager", "Cannot disable addon twice!") : Logger.warn("PluginsManager", "Unable to disable non-loaded addon!")
+		})), this.addonState[e.name] = !1, DataStore.saveAddonState("plugins", this.addonState), void this.dispatch("toggle", e.name, !1)) : Logger.warn("PluginsManager", "Cannot disable addon twice!") : Logger.warn("PluginsManager", "Unable to disable non-loaded addon!")
 	}
 	static toggleAddon(e) {
 		e = this.resolve(e);
@@ -1135,7 +1136,7 @@ class ThemesManager {
 		const a = Utilities.parseMETA(n);
 		if (a.filename = path.basename(e), a.path = e, a.css = n, this.resolve(a.name))
 			throw new Error(`A theme with name ${a.name} already exists!`);
-		return this.addons.push(a), a.name in this.addonState || (this.addonState[a.name] = !1, DataStore.saveAddonState("themes", this.addonState)), this.addonState[a.name] && this.applyTheme(a, t), a
+		return this.addons.push(a), a.name in this.addonState || (this.addonState[a.name] = !1, DataStore.saveAddonState("themes", this.addonState)), this.addonState[a.name] && this.applyTheme(a, t), this.dispatch("updated"), a
 	}
 	static unloadAddon(e, t = !0) {
 		const n = this.resolve(e);
@@ -1144,6 +1145,10 @@ class ThemesManager {
 		, this.addons.splice(this.addons.indexOf(n), 1), t && (Logger.log("ThemesManager", n.name + " was unloaded!"), Toasts.show(n.name + " was unloaded!", {
 			type: "info"
 		})), this.dispatch("updated"))
+	}
+	static delete(e) {
+		e = this.resolve(e);
+		if (e) return fs1.unlinkSync(e.path)
 	}
 	static applyTheme(e, t = !0) {
 		const n = this.resolve(e);
@@ -1177,30 +1182,39 @@ class ThemesManager {
 	}
 }
 ThemesManager.folder = DataStore.themesFolder, ThemesManager.extension = ".theme.css", ThemesManager.listeners = {}, ThemesManager.addons = [], ThemesManager.times = {};
-const createAddonAPI = t => new class {
+const createAddonAPI = n => new class {
 	get folder() {
-		return t.folder
+		return n.folder
 	}
 	isEnabled(e) {
-		return t.isEnabled(e)
+		return n.isEnabled(e)
 	}
 	enable(e) {
-		return t.enableAddon(e)
+		return n.enableAddon(e)
 	}
 	disable(e) {
-		return t.disableAddon(e)
+		return n.disableAddon(e)
 	}
 	toggle(e) {
-		return t.toggleAddon(e)
+		return n.toggleAddon(e)
 	}
 	reload(e) {
-		return t.reloadAddon(e)
+		return n.reloadAddon(e)
 	}
 	get(e) {
-		return t.resolve(e)
+		return n.resolve(e)
 	}
 	getAll() {
-		return t.addons.map(e => this.get(e))
+		return n.addons.map(e => this.get(e))
+	}
+	on(e, t) {
+		return n.on(e, t)
+	}
+	off(e, t) {
+		return n.off(e, t)
+	}
+	delete(e) {
+		return n.delete(e)
 	}
 };
 class BdApi {
@@ -1225,9 +1239,7 @@ class BdApi {
 	static disableSetting() {}
 	static enableSetting() {}
 	static __getPluginConfigPath(e) {
-		return console.log({
-				plugin: e
-			}), path.resolve(this.Plugins.folder, "..", "config", e + ".json")
+		return path.resolve(this.Plugins.folder, "..", "config", e + ".json")
 	}
 	static injectCSS(e, t) {
 		return DOM.injectCSS(e, t)
@@ -1833,11 +1845,9 @@ const IconsMap = {
 };
 function SupportIcons({addon:r}) {
 	async function i() {
-		console.log("open?");try {
+		try {
 			var e = await DiscordModules.InviteActions.resolveInvite(r.invite);
-			console.log({
-				data: e
-			}), DiscordModules.Dispatcher.dispatch({
+			DiscordModules.Dispatcher.dispatch({
 				type: "INVITE_MODAL_OPEN",
 				code: r.invite,
 				invite: e,
@@ -2420,7 +2430,7 @@ var index = new class {
 		fs1.existsSync(e) && DOM.injectCSS("core", fs1.readFileSync(e, "utf8"))
 	}
 	async injectSettings() {
-		if ("SettingsNative" in window) {
+		if ("SettingsNative" in window && !global.isUnbound) {
 			"undefined" == typeof KernelSettings && await new Promise(e => {
 				const t = () => {
 					e(), DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", t)
@@ -2436,7 +2446,7 @@ var index = new class {
 						height: 16
 					})
 				}))
-		} else BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
+		} else global.isUnbound || BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
 	}
 	stop() {
 		for (let e = 0; e < this._flush.length; e++) this._flush[e]()
