@@ -124,7 +124,7 @@ export default new class BDCompat {
     }
 
     async injectSettings() {
-        if ("SettingsNative" in window && !global.isUnbound) {
+        if ("SettingsNative" in window && !window.isUnbound) {
             if (typeof KernelSettings === "undefined") await new Promise<void>(resolve => {
                 const listener = () => {
                     resolve();
@@ -148,7 +148,7 @@ export default new class BDCompat {
                 }));
             }
         } else {
-            if (!global.isUnbound) {
+            if (!window.isUnbound) {
                 BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
             }
             // const SettingsView = Webpack.findByDisplayName("SettingsView");
