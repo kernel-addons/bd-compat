@@ -2430,7 +2430,7 @@ var index = new class {
 		fs1.existsSync(e) && DOM.injectCSS("core", fs1.readFileSync(e, "utf8"))
 	}
 	async injectSettings() {
-		if ("SettingsNative" in window && !global.isUnbound) {
+		if ("SettingsNative" in window && !window.isUnbound) {
 			"undefined" == typeof KernelSettings && await new Promise(e => {
 				const t = () => {
 					e(), DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", t)
@@ -2446,7 +2446,7 @@ var index = new class {
 						height: 16
 					})
 				}))
-		} else global.isUnbound || BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
+		} else window.isUnbound || BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
 	}
 	stop() {
 		for (let e = 0; e < this._flush.length; e++) this._flush[e]()
