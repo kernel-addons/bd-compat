@@ -1,9 +1,13 @@
 // @ts-nocheck
 
-if (typeof (Array.prototype.at) !== "function") {
-    Array.prototype.at = function (index) {
-        return index < 0 ? this[this.length - Math.abs(index)] : this[index];
-    };
+if (typeof Array.prototype.at !== "function") {
+    Object.defineProperty(Array.prototype, 'at', {
+        value: function at(index) {
+           return index < 0 ? this[this.length - Math.abs(index)] : this[index];
+        },
+        enumerable: false,
+        configurable: true
+    })
 }
 
 if (typeof (setImmediate) === "undefined") {
@@ -42,7 +46,7 @@ class WebpackModule {
             );
 
             if (UserStore.getCurrentUser()) return onReady();
-            
+
             const listener = function () {
                 Dispatcher.unsubscribe(ActionTypes.START_SESSION, listener);
                 Dispatcher.unsubscribe(ActionTypes.CONNECTION_OPEN, listener);
@@ -127,7 +131,7 @@ class WebpackModule {
                     resolve(m);
                     return void remove();
                 }
-                
+
                 if (!m.default) return;
                 const defaultMatch = filter(m.default);
                 if (!defaultMatch) return;
@@ -184,7 +188,7 @@ class WebpackModule {
         for (const id in __webpack_require__.c) {
             const module = __webpack_require__.c[id].exports;
             if (!module || module === window) continue;
-            
+
             switch (typeof module) {
                 case "object": {
                     if (wrapFilter(module, id)) {
@@ -210,7 +214,7 @@ class WebpackModule {
                             found.push(module[key]);
                         }
                     }
-                
+
                     break;
                 }
 
@@ -224,7 +228,7 @@ class WebpackModule {
                 }
             }
         }
-        
+
         if (hasError) {
             setImmediate(() => {
                 console.warn("[Webpack] filter threw an error. This can cause lag spikes at the user's end. Please fix asap.\n\n", hasError);
@@ -254,7 +258,7 @@ class WebpackModule {
             for (let i = 0; i < wrappedFilters.length; i++) {
                 const filter = wrappedFilters[i];
                 if (typeof filter !== "function" || !filter(module) || found[i] != null) continue;
-    
+
                 found[i] = module;
 
             }
@@ -283,7 +287,7 @@ class WebpackModule {
 
             return this.bulk(...filters);
         }
-        
+
 
         return null;
     }
@@ -304,7 +308,7 @@ class WebpackModule {
 
             return this.bulk(...filters);
         }
-            
+
         return null;
     }
 
@@ -312,7 +316,7 @@ class WebpackModule {
         let foundIndex = -1;
 
         this.findModule((module, index) => {
-            if (filter(module)) foundIndex = index; 
+            if (filter(module)) foundIndex = index;
         });
 
         return foundIndex;
