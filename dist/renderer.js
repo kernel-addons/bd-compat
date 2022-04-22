@@ -200,8 +200,12 @@ function _classPrivateFieldGet(e, t) {
 		throw new TypeError("attempted to get private field on non-instance");
 	return t.get(e).value
 }
-DataStore.pluginData = {}, DataStore.settingsData = null, DataStore.pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins"), DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes"), DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config"), DataStore.settingsFile = path.resolve(DataStore.dataFolder, "settings.json"), "function" != typeof Array.prototype.at && (Array.prototype.at = function(e) {
-	return e < 0 ? this[this.length - Math.abs(e)] : this[e]
+DataStore.pluginData = {}, DataStore.settingsData = null, DataStore.pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins"), DataStore.themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes"), DataStore.dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config"), DataStore.settingsFile = path.resolve(DataStore.dataFolder, "settings.json"), "function" != typeof Array.prototype.at && Object.defineProperty(Array.prototype, "at", {
+	value: function(e) {
+		return e < 0 ? this[this.length - Math.abs(e)] : this[e]
+	},
+	enumerable: !1,
+	configurable: !0
 }), "undefined" == typeof setImmediate && (window.setImmediate = e => setTimeout(e, 0));
 class Filters {
 	static byProps(...e) {
