@@ -5,7 +5,7 @@ class Request extends EventEmitter {
 
     constructor(req) {
         super();
-        
+
         this._req = req;
     }
 
@@ -50,7 +50,7 @@ export function get(url, options, res) {
     const socket = makeRequest(url, options, (event, data) => {
         if (event === "end") {
             request._setData(data);
-            data = undefined;
+            data = [];
         }
 
         if (event === "data" && data[0] instanceof Uint8Array) {
