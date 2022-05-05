@@ -1,53 +1,66 @@
 import EventEmitter from "./events.js";
 
+class Request extends EventEmitter {
+    _req = null;
+
+    constructor(req) {
+        this._req = req;
+    }
+
+    end() {
+        this._req.end();
+    }
+
+    _setData(data) {
+        Object.assign(this, data);
+    }
+}
+
+const makeRequest = BDCompatNative.executeJS((
+(url, options = {}, callback) => {
+    const socket = require("https").get(url, options, (res) => {
+        for (const event of ["data", "end", "close"]) {
+            res.on(event, (...args) => {
+                if (event === "end") {
+                    const items = ["statusCode", "statusMessage", "url", "headers", "method", "aborted", "complete", "rawHeaders", "end"];
+
+                    callback("end", Object.fromEntries(
+                        items.map(item => [item, res[item]])
+                    ));
+                } else {
+                    callback(event, args);
+                }
+            });
+        }
+    });
+    
+    return {
+        end() {socket.end();}
+    };
+}).toString(), new Error().stack);
+
 export function get(url, options, res) {
     if (typeof options === "function") {
         res = options;
         options = {};
     }
 
-    const id = "HTTPS_GET_" + Math.random().toString(36).slice(2);
-    const emitter = new EventEmitter();
-
-    BDCompatNative.IPC.on(id, (event, ...args) => {
-        if (event === "__data") {
-            return Object.assign(emitter, ...args);
-        }
-
-        if (args[0] instanceof Uint8Array) {
-            args[0].toString = () => String.fromCharCode(...args[0]);
-        }
-
+    const socket = makeRequest(url, options, (event, data) => {
         if (event === "end") {
-            Object.assign(emitter, args[0]);
+            request._setData(data);
+            data = undefined;
         }
 
-        emitter.emit(event, ...args);
+        if (event === "data" && data[0] instanceof Uint8Array) {
+            data[0].toString = () => String.fromCharCode(...data[0]);
+        }
+
+        request.emit(event, ...data);
     });
 
-    Object.assign(emitter, {
-        end: () => void 0
-    });
+    const request = new Request(socket);
 
-    BDCompatNative.executeJS(`
-        require("https").get(${JSON.stringify(url)}, ${JSON.stringify(options)}, (res) => {
-            for (const event of ["end", "data", "close"]) {
-                res.on(event, (...args) => {
-                    if (event === "end") {
-                        args.push(Object.fromEntries(["statusCode", "statusMessage", "url", "headers", "method", "aborted", "complete", "rawHeaders", "end"].map(e => [e, res[e]])));
-                    }
-
-                    BDCompatNative.IPC.dispatch(${JSON.stringify(id)}, event, ...args);
-
-                    if (event === "close") {
-                        delete BDCompatEvents[${JSON.stringify(id)}];
-                    }
-                });
-            }
-        });
-    `, new Error().stack);
-
-    return res(emitter), emitter;
+    return res(request), request;
 }
 
 export function request() {return Reflect.apply(get, this, arguments);}

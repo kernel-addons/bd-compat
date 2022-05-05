@@ -35,34 +35,32 @@ try {
     console.error("[BDCompat] Fatal Error: Could not define request properties:", error);
 }
 
+const makeRequest = BDCompatNative.executeJS((
+({url, options, method}, callback) => {
+    const request = require("request");
+    
+    return (method ? request[method] : request)(url, options, (error, res, body) => {
+        const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res?.[e]]));
+
+        callback(error, ret, body);
+    });
+}).toString(), new Error().stack);
+
 const request = function (url, options, callback, method = "") {
     if (typeof (options) === "function") {
         callback = options;
     }
 
-    const eventName = "request-" + Math.random().toString(36).slice(2, 10);
-    BDCompatNative.IPC.once(eventName, (error, res, body) => {
+    return makeRequest({url, options, method}, (error, res, body) => {
         if (body instanceof Uint8Array) body = BufferModule.Buffer.from(body);
 
-        res = JSON.parse(res);
         const resp = new RequestResponse({
             body, res, url,
             type: method.toLowerCase() || "default"
-        });   
-
+        });
+    
         callback(error, resp, body);
     });
-
-    return BDCompatNative.executeJS(`
-        const request = require("request");
-        const method = "${method}";
-
-        (method ? request[method] : request)(${JSON.stringify(url)}, ${JSON.stringify(options)}, (error, res, body) => {
-            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res?.[e]]));
-            
-            BDCompatNative.IPC.dispatch("${eventName}", error, JSON.stringify(ret), body);   
-        });
-    `, new Error().stack);
 };
 
 Object.assign(request,
@@ -73,4 +71,5 @@ Object.assign(request,
         }
     ]))
 );
+
 export default request;

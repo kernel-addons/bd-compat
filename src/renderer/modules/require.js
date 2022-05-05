@@ -9,7 +9,7 @@ import url from "./api/url.ts";
 import os from "./api/os";
 import Buffer from "./api/buffer";
 
-export default (window.process?.contextIsolated ?? true) ? function (mod) {
+export default function (mod) {
     switch (mod) {
         case "fs": return fs;
         case "path": return path;
@@ -26,4 +26,4 @@ export default (window.process?.contextIsolated ?? true) ? function (mod) {
 
         default: console.warn(`${mod} was not found!`);
     }
-} : window.require;
+};

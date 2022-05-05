@@ -7,7 +7,6 @@ import BdApi from "./modules/bdapi.js";
 import DataStore from "./modules/datastore.js";
 import DiscordModules from "./modules/discord.js";
 import DOM from "./modules/dom.js";
-import Patcher from "./modules/patcher.js";
 import PluginsManager from "./modules/pluginsmanager.js";
 import Require from "./modules/require.js";
 import ThemesManager from "./modules/themesmanager.js";
@@ -55,9 +54,19 @@ if (!window.process) {
     BDCompatNative.IPC.dispatch(IPCEvents.EXPOSE_PROCESS_GLOBAL);
 }
 
+declare global {
+    const webpackJsonp: any[];
+    const isUnbound: boolean;
+
+    interface Window {
+        webpackJsonp: any[];
+        isUnbound: boolean;
+    }
+}
+
 export default new class BDCompat {
     styles = ["./ui/toast.css", "./ui/addons.css", "./ui/settings.css"];
-    _flush = []
+    _flush = [];
 
     start() {
         Logger.log("Core", "Loading...");
@@ -67,14 +76,18 @@ export default new class BDCompat {
     onStart() {
         this.polyfillWebpack();
         setBuffer(Webpack.findByProps("Buffer"));
+
+        if ((process as any)?.contextIsolated ?? true) {
+            window.require = Require as any;
+        }
+
         Object.assign(window, {
-            require: Require,
+            "bd_require": Require,
             Buffer: Buffer.Buffer,
             React: DiscordModules.React
         });
 
         this.exposeBdApi();
-
 
         DataStore.initialize();
         SettingsManager.initialize();
@@ -124,7 +137,9 @@ export default new class BDCompat {
     }
 
     async injectSettings() {
-        if ("SettingsNative" in window && !window.isUnbound) {
+        if (window.isUnbound) return;
+
+        if ("SettingsNative" in window) {
             if (typeof KernelSettings === "undefined") await new Promise<void>(resolve => {
                 const listener = () => {
                     resolve();
@@ -148,19 +163,7 @@ export default new class BDCompat {
                 }));
             }
         } else {
-            if (!window.isUnbound) {
-                BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
-            }
-            // const SettingsView = Webpack.findByDisplayName("SettingsView");
-
-            // Patcher.after("BDCompatSettings", SettingsView.prototype, "getPredicateSections", (_, __, res) => {
-            //     if (!Array.isArray(res) || !res.some(e => e?.section?.toLowerCase() === "changelog") || res.some(s => s?.id === "bdcompat-settings-settings")) return;
-
-            //     const index = res.findIndex(s => s?.section?.toLowerCase() === "changelog") - 1;
-            //     if (index < 0) return;
-
-            //     res.splice(index, 0, ...SettingsSections);
-            // });
+            BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
         }
     }
 
