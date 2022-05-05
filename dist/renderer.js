@@ -1482,7 +1482,7 @@ const makeRequest = BDCompatNative.executeJS(((e, t = {}, s) => {
 function get(e, t, n) {
 	"function" == typeof t && (n = t, t = {});
 	e = makeRequest(e, t, (e, t) => {
-		"end" === e && (a._setData(t), t = void 0), "data" === e && t[0] instanceof Uint8Array && (t[0].toString = () => String.fromCharCode(...t[0])), a.emit(e, ...t)
+		"end" === e && (a._setData(t), t = []), "data" === e && t[0] instanceof Uint8Array && (t[0].toString = () => String.fromCharCode(...t[0])), a.emit(e, ...t)
 	});const a = new Request(e);
 	return n(a), a
 }
