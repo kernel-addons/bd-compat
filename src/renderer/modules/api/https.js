@@ -4,6 +4,8 @@ class Request extends EventEmitter {
     _req = null;
 
     constructor(req) {
+        super();
+        
         this._req = req;
     }
 
