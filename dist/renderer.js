@@ -1428,60 +1428,67 @@ try {
 } catch (e) {
 	console.error("[BDCompat] Fatal Error: Could not define request properties:", e)
 }
-const request$1 = function(a, e, s, r = "") {
-	"function" == typeof e && (s = e);
-	var t = "request-" + Math.random().toString(36).slice(2, 10);
-	return BDCompatNative.IPC.once(t, (e, t, n) => {
-			n instanceof Uint8Array && (n = Buffer$1.Buffer.from(n)), t = JSON.parse(t);
-			t = new RequestResponse({
-				body: n,
-				res: t,
+const makeRequest$1 = BDCompatNative.executeJS((({url:e, options:t, method:n}, s) => {
+		const a = require("request");
+		return (n ? a[n] : a)(e, t, (e, t, n) => {
+			var a = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, null == t ? void 0 : t[e]]));
+			s(e, a, n)
+		})
+	}).toString(), (new Error).stack),
+	request1$1 = function(a, e, s, r = "") {
+		return "function" == typeof e && (s = e), makeRequest$1({
 				url: a,
-				type: r.toLowerCase() || "default"
-			});s(e, t, n)
-		}), BDCompatNative.executeJS(`
-        const request = require("request");
-        const method = "${r}";
-
-        (method ? request[method] : request)(${JSON.stringify(a)}, ${JSON.stringify(e)}, (error, res, body) => {
-            const ret = Object.fromEntries(__REQUEST_RES_RET__.map(e => [e, res?.[e]]));
-            
-            BDCompatNative.IPC.dispatch("${t}", error, JSON.stringify(ret), body);   
-        });
-    `, (new Error).stack)
-};
-function get(e, t, n) {
-	"function" == typeof t && (n = t, t = {});var a = "HTTPS_GET_" + Math.random().toString(36).slice(2);
-	const s = new EventEmitter;
-	return BDCompatNative.IPC.on(a, (e, ...t) => {
-			if ("__data" === e) return Object.assign(s, ...t);
-			t[0] instanceof Uint8Array && (t[0].toString = () => String.fromCharCode(...t[0])), "end" === e && Object.assign(s, t[0]), s.emit(e, ...t)
-		}), Object.assign(s, {
-			end: () => {}
-		}), BDCompatNative.executeJS(`
-        require("https").get(${JSON.stringify(e)}, ${JSON.stringify(t)}, (res) => {
-            for (const event of ["end", "data", "close"]) {
-                res.on(event, (...args) => {
-                    if (event === "end") {
-                        args.push(Object.fromEntries(["statusCode", "statusMessage", "url", "headers", "method", "aborted", "complete", "rawHeaders", "end"].map(e => [e, res[e]])));
-                    }
-
-                    BDCompatNative.IPC.dispatch(${JSON.stringify(a)}, event, ...args);
-
-                    if (event === "close") {
-                        delete BDCompatEvents[${JSON.stringify(a)}];
-                    }
-                });
-            }
-        });
-    `, (new Error).stack), n(s), s
+				options: e,
+				method: r
+			}, (e, t, n) => {
+				n instanceof Uint8Array && (n = Buffer$1.Buffer.from(n));
+				t = new RequestResponse({
+					body: n,
+					res: t,
+					url: a,
+					type: r.toLowerCase() || "default"
+				});s(e, t, n)
+			})
+	};
+Object.assign(request1$1, Object.fromEntries(["get", "put", "post", "delete", "head", "del"].map(a => [a, function(e, t, n) {
+	return request1$1(e, t, n, a)
+}])));
+class Request extends EventEmitter {
+	end() {
+		this._req.end()
+	}
+	_setData(e) {
+		Object.assign(this, e)
+	}
+	constructor(e) {
+		this._req = null, this._req = e
+	}
 }
-function request() {
+const makeRequest = BDCompatNative.executeJS(((e, t = {}, s) => {
+	const n = require("https").get(e, t, n => {
+		for (const a of ["data", "end", "close"]) n.on(a, (...e) => {
+				if ("end" === a) {
+					const t = ["statusCode", "statusMessage", "url", "headers", "method", "aborted", "complete", "rawHeaders", "end"];
+					s("end", Object.fromEntries(t.map(e => [e, n[e]])))
+				} else s(a, e)
+			})
+	});
+	return {
+		end() {
+			n.end()
+		}
+	}
+}).toString(), (new Error).stack);
+function get(e, t, n) {
+	"function" == typeof t && (n = t, t = {});
+	e = makeRequest(e, t, (e, t) => {
+		"end" === e && (a._setData(t), t = void 0), "data" === e && t[0] instanceof Uint8Array && (t[0].toString = () => String.fromCharCode(...t[0])), a.emit(e, ...t)
+	});const a = new Request(e);
+	return n(a), a
+}
+function request1() {
 	return Reflect.apply(get, this, arguments)
 }
-Object.assign(request$1, Object.fromEntries(["get", "put", "post", "delete", "head", "del"].map(a => [a, function(e, t, n) {
-	return request$1(e, t, n, a)
-}])));
 const deserialize = function({props:t, name:e}) {
 		const n = {
 			[Symbol.toStringTag]: e
@@ -1534,12 +1541,10 @@ function createServer(e, n) {
 			n(deserialize(e), deserialize(t))
 		}), deserialize(t.props)
 }
-var ref,
-	ref1,
-	https = Object.freeze({
+var https = Object.freeze({
 		__proto__: null,
 		get: get,
-		request: request,
+		request: request1,
 		createServer: createServer
 	}),
 	mimeTypes = BDCompatNative.executeJS(`(() => {
@@ -1555,12 +1560,12 @@ try {
     `, (new Error).stack)
 	};
 const os = BDCompatNative.executeJS("require(\"os\")");
-var Require = null === (ref1 = null === (ref = window.process) || void 0 === ref ? void 0 : ref.contextIsolated) || void 0 === ref1 || ref1 ? function(e) {
+function Require(e) {
 	switch (e) {
 		case "fs":
 			return fs1;case "path":
 			return path;case "request":
-			return request$1;case "process":
+			return request1$1;case "process":
 			return process;case "electron":
 			return electron;case "events":
 			return EventEmitter;case "http":
@@ -1572,7 +1577,7 @@ var Require = null === (ref1 = null === (ref = window.process) || void 0 === ref
 			return Buffer$1;default:
 			console.warn(e + " was not found!")
 	}
-} : window.require;
+}
 function _classStaticPrivateFieldSpecGet(e, t, n) {
 	if (e !== t)
 		throw new TypeError("Private static access of wrong provenance");
@@ -2356,7 +2361,7 @@ class AddonUpdater {
 	}
 	static fetchUpdate(i, e) {
 		return new Promise((r, t) => {
-			request(e, e => {
+			request1(e, e => {
 				const s = [];
 				e.on("data", e => s.push(e)), e.on("end", () => {
 					var e = s.join(""),
@@ -2410,8 +2415,9 @@ var index = new class {
 		Logger.log("Core", "Loading..."), Webpack.whenReady.then(this.onStart.bind(this))
 	}
 	onStart() {
-		this.polyfillWebpack(), setBuffer(Webpack.findByProps("Buffer")), Object.assign(window, {
-			require: Require,
+		var e;
+		this.polyfillWebpack(), setBuffer(Webpack.findByProps("Buffer")), null !== (e = null === (e = process) || void 0 === e ? void 0 : e.contextIsolated) && void 0 !== e && !e || (window.require = Require), Object.assign(window, {
+			bd_require: Require,
 			Buffer: Buffer$1.Buffer,
 			React: DiscordModules.React
 		}), this.exposeBdApi(), DataStore.initialize(), SettingsManager.initialize(), Toasts.initialize(), this.appendStyles(), ThemesManager.initialize(), PluginsManager.initialize(), this.injectSettings(), AddonUpdater.initialize()
@@ -2434,23 +2440,24 @@ var index = new class {
 		fs1.existsSync(e) && DOM.injectCSS("core", fs1.readFileSync(e, "utf8"))
 	}
 	async injectSettings() {
-		if ("SettingsNative" in window && !window.isUnbound) {
-			"undefined" == typeof KernelSettings && await new Promise(e => {
-				const t = () => {
-					e(), DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", t)
-				};
-				DiscordModules.Dispatcher.subscribe("KERNEL_SETTINGS_INIT", t)
-			});
-			for (const e of SettingsSections) "HEADER" !== e.section && "DIVIDER" !== e.section && this._flush.push(KernelSettings.register("BetterDiscord" + e.label, {
-					...e,
-					render: e.element,
-					icon: React.createElement(BDLogo, {
-						className: "bd-logo",
-						width: 16,
-						height: 16
-					})
-				}))
-		} else window.isUnbound || BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
+		if (!window.isUnbound)
+			if ("SettingsNative" in window) {
+				"undefined" == typeof KernelSettings && await new Promise(e => {
+					const t = () => {
+						e(), DiscordModules.Dispatcher.unsubscribe("KERNEL_SETTINGS_INIT", t)
+					};
+					DiscordModules.Dispatcher.subscribe("KERNEL_SETTINGS_INIT", t)
+				});
+				for (const e of SettingsSections) "HEADER" !== e.section && "DIVIDER" !== e.section && this._flush.push(KernelSettings.register("BetterDiscord" + e.label, {
+						...e,
+						render: e.element,
+						icon: React.createElement(BDLogo, {
+							className: "bd-logo",
+							width: 16,
+							height: 16
+						})
+					}))
+			} else BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.")
 	}
 	stop() {
 		for (let e = 0; e < this._flush.length; e++) this._flush[e]()
