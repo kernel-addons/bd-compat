@@ -1461,7 +1461,7 @@ class Request extends EventEmitter {
 		Object.assign(this, e)
 	}
 	constructor(e) {
-		this._req = null, this._req = e
+		super(), this._req = null, this._req = e
 	}
 }
 const makeRequest = BDCompatNative.executeJS(((e, t = {}, s) => {
