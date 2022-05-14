@@ -2419,6 +2419,14 @@ var index = new class {
 		this.polyfillWebpack(), setBuffer(Webpack.findByProps("Buffer")), null !== (e = null === (e = process) || void 0 === e ? void 0 : e.contextIsolated) && void 0 !== e && !e || (window.require = Require), Object.assign(window, {
 			bd_require: Require,
 			Buffer: Buffer$1.Buffer,
+			BDInternal: {
+				SettingsManager: SettingsManager,
+				AddonUpdater: AddonUpdater,
+				Webpack: Webpack,
+				Patcher: Patcher,
+				DataStore: DataStore,
+				Toasts: Toasts
+			},
 			React: DiscordModules.React
 		}), this.exposeBdApi(), DataStore.initialize(), SettingsManager.initialize(), Toasts.initialize(), this.appendStyles(), ThemesManager.initialize(), PluginsManager.initialize(), this.injectSettings(), AddonUpdater.initialize()
 	}
