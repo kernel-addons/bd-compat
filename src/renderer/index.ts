@@ -20,6 +20,7 @@ import SettingsManager from "./modules/settingsmanager.js";
 import AddonUpdater from "./modules/addonupdater.js";
 import * as IPCEvents from "../common/IPCEvents";
 import BDLogo from "./ui/icons/bdlogo";
+import Patcher from "./modules/patcher";
 
 const SettingsSections = [
     {section: "DIVIDER"},
@@ -84,6 +85,14 @@ export default new class BDCompat {
         Object.assign(window, {
             "bd_require": Require,
             Buffer: Buffer.Buffer,
+            BDInternal: {
+               SettingsManager,
+               AddonUpdater,
+               Webpack,
+               Patcher,
+               DataStore,
+               Toasts,
+            },
             React: DiscordModules.React
         });
 
