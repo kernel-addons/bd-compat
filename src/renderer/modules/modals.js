@@ -18,7 +18,7 @@ export default class Modals {
     static get ConfirmationModal() {return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal"));}
 
     /**@returns {typeof import("react")} */
-    static get Text() {return memoize(this, "Text", () => Webpack.findByDisplayName("Text"));}
+    static get Text() {return memoize(this, "Text", () => Webpack.findByDisplayName("LegacyText"));}
 
     static showConfirmationModal(title, content, options = {}) {
         const {confirmText = "Okay", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}} = options;
