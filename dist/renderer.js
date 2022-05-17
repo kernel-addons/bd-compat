@@ -531,7 +531,7 @@ class Modals {
 		return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal"))
 	}
 	static get Text() {
-		return memoize(this, "Text", () => Webpack.findByDisplayName("Text"))
+		return memoize(this, "Text", () => Webpack.findByDisplayName("LegacyText"))
 	}
 	static showConfirmationModal(t, n, e = {}) {
 		const {confirmText: a="Okay", cancelText: s="Cancel", onConfirm: r=() => {}, onCancel: i=() => {}} = e;
