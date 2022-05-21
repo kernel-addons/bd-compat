@@ -9,7 +9,7 @@ import {exposeGlobal} from "./util";
 
 // Fix typings
 type ActualModule = typeof NodeModule & {globalPaths: string[]};
-const Module = NodeModule as ActualModule; 
+const Module = NodeModule as ActualModule;
 
 // Attach onSwitch() event
 HookOnSwitch();
@@ -47,7 +47,7 @@ const API = {
 exposeGlobal("BDCompatNative", API);
 exposeGlobal("BDCompatEvents", events, {renderer: false});
 
-if (!process.contextIsolated) {
+if (process.contextIsolated) {
     IPC.once(IPCEvents.EXPOSE_PROCESS_GLOBAL, () => {
         exposeGlobal("process", Process, {preload: false});
     });

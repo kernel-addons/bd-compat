@@ -81,7 +81,7 @@ const Process = cloneObject(process),
 }
 exposeGlobal("BDCompatNative", API), exposeGlobal("BDCompatEvents", events, {
 	renderer: !1
-}), process.contextIsolated || IPC.once(EXPOSE_PROCESS_GLOBAL, () => {
+}), process.contextIsolated && IPC.once(EXPOSE_PROCESS_GLOBAL, () => {
 	exposeGlobal("process", Process, {
 		preload: !1
 	})

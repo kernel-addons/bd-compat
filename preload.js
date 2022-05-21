@@ -1,1 +1,1 @@
-if (!process.cwd().toLowerCase().includes("ptb")) module.exports = require("./dist/preload.js");
+module.exports = require("./dist/preload.js");
