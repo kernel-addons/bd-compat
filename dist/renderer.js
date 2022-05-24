@@ -939,7 +939,7 @@ class PluginsManager {
 			const s = fs1.statSync(n);
 			if (a.endsWith(this.extension) && s.isFile()) {
 				this.times[a] = s.mtime.getTime();try {
-					this.loadAddon(n, !1), this.dispatch("updated")
+					this.loadAddon(n, !1)
 				} catch (e) {
 					Logger.error("PluginsManager", `Failed to load plugin ${a}:`, e)
 				}
@@ -1128,7 +1128,7 @@ class ThemesManager {
 			const n = fs1.statSync(e);
 			if (t.endsWith(this.extension) && n.isFile()) {
 				this.times[t] = n.mtime.getTime();try {
-					this.loadTheme(e, !1), this.dispatch("updated")
+					this.loadTheme(e, !1)
 				} catch (e) {
 					Logger.error("ThemesManager", `Failed to load ${t}:`, e)
 				}
