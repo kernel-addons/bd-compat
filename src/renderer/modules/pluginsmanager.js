@@ -88,7 +88,6 @@ export default class PluginsManager {
 
             try {
                 this.loadAddon(location, false);
-                this.dispatch("updated");
             } catch (error) {
                 Logger.error("PluginsManager", `Failed to load plugin ${filename}:`, error);
             }
@@ -176,6 +175,7 @@ export default class PluginsManager {
             Logger.log("PluginsManager", `${addon.name} was unloaded!`);
             if (SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${addon.name} was unloaded!`, {type: "info"});
         }
+
         this.dispatch("updated");
     }
 

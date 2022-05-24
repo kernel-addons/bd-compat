@@ -90,7 +90,6 @@ export default class ThemesManager {
 
             try {
                 this.loadTheme(location, false);
-                this.dispatch("updated");
             } catch (error) {
                 Logger.error("ThemesManager", `Failed to load ${filename}:`, error);
             }
@@ -133,6 +132,7 @@ export default class ThemesManager {
             Logger.log("ThemesManager", `${theme.name} was unloaded!`);
             Toasts.show(`${theme.name} was unloaded!`, {type: "info"});
         }
+
         this.dispatch("updated");
     }
 
