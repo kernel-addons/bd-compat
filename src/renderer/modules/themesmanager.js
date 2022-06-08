@@ -189,7 +189,7 @@ export default class ThemesManager {
         this.addonState[theme.name] = true;
 
         DataStore.saveAddonState("themes", this.addonState);
-        this.dispatch("toggled", theme.name, true);
+        this.dispatch("toggle", theme.name, true);
     }
 
     static disableAddon(addon) {
@@ -203,7 +203,7 @@ export default class ThemesManager {
         this.addonState[theme.name] = false;
 
         DataStore.saveAddonState("themes", this.addonState);
-        this.disableAddon("toggled", theme.name, false);
+        this.disableAddon("toggle", theme.name, false);
     }
 
     static toggleAddon(addon) {
