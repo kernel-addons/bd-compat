@@ -1174,12 +1174,12 @@ class ThemesManager {
 		}))
 	}
 	static enableAddon(e) {
-		e = this.resolve(e);e && !this.isEnabled(e) && (this.applyTheme(e, !1), Logger.log("ThemesManager", e.name + " has been enabled!"), Toasts.show(e.name + " has been applied."), this.addonState[e.name] = !0, DataStore.saveAddonState("themes", this.addonState), this.dispatch("toggled", e.name, !0))
+		e = this.resolve(e);e && !this.isEnabled(e) && (this.applyTheme(e, !1), Logger.log("ThemesManager", e.name + " has been enabled!"), Toasts.show(e.name + " has been applied."), this.addonState[e.name] = !0, DataStore.saveAddonState("themes", this.addonState), this.dispatch("toggle", e.name, !0))
 	}
 	static disableAddon(e) {
 		e = this.resolve(e);e && this.isEnabled(e) && (this.removeTheme(e, !1), Logger.log("ThemesManager", e.name + " has been removed!"), Toasts.show(e.name + " has been removed.", {
 			type: "info"
-		}), this.addonState[e.name] = !1, DataStore.saveAddonState("themes", this.addonState), this.disableAddon("toggled", e.name, !1))
+		}), this.addonState[e.name] = !1, DataStore.saveAddonState("themes", this.addonState), this.disableAddon("toggle", e.name, !1))
 	}
 	static toggleAddon(e) {
 		this.resolve(e) && (this.isEnabled(e) ? this.disableAddon(e) : this.enableAddon(e))
