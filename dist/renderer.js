@@ -1179,7 +1179,7 @@ class ThemesManager {
 	static disableAddon(e) {
 		e = this.resolve(e);e && this.isEnabled(e) && (this.removeTheme(e, !1), Logger.log("ThemesManager", e.name + " has been removed!"), Toasts.show(e.name + " has been removed.", {
 			type: "info"
-		}), this.addonState[e.name] = !1, DataStore.saveAddonState("themes", this.addonState), this.disableAddon("toggle", e.name, !1))
+		}), this.addonState[e.name] = !1, DataStore.saveAddonState("themes", this.addonState), this.dispatch("toggle", e.name, !1))
 	}
 	static toggleAddon(e) {
 		this.resolve(e) && (this.isEnabled(e) ? this.disableAddon(e) : this.enableAddon(e))
