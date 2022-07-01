@@ -28,7 +28,7 @@ export default class DiscordModules {
             return {
                 AccessibilityProvider,
                 LayerProvider: Layers.AppLayerProvider().props.layerContext.Provider,
-                container: document.querySelector(`#app-mount > .${LayerClassName}`)
+                get container() {return document.querySelector(`#app-mount .${LayerClassName}`);}
             };
         });
     }

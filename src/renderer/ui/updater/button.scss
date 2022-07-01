@@ -1,16 +1,40 @@
 .bd-updater-button {
+    --bd-updater-bounce-height: 20px;
     position: fixed;
     bottom: 10px;
     right: 10px;
     padding: 12px;
     background: var(--background-floating);
-    border-radius: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: var(--elevation-high);
     cursor: pointer;
     z-index: 999;
+    color: #ddd;
+    
+    @keyframes BdUpdateBounce {
+       0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 
+       40% {transform: translateY(calc(var(--bd-updater-bounce-height) * -1));} 
+       60% {transform: translateY(calc(var(--bd-updater-bounce-height) * -.5));} 
+    }
+    
+    &:not(.opened) {
+        border-radius: 200px;
+        animation-name: BdUpdateBounce;
+        animation-delay: 1s;
+        animation-duration: 1.5s;
+        animation-iteration-count: infinite;
+    }
+
+    &.opened {
+        border-radius: 4px;
+        border-bottom-right-radius: 20px;
+    }
+
+    & > svg {
+        margin-top: auto;
+    }
 
     &::before {
         content: attr(data-updates);
@@ -23,9 +47,8 @@
         font-weight: 600;
         font-size: 12px;
         justify-content: center;
-        color: #ddd;
         border-radius: 100px;
-        top: 4px;
+        bottom: 25px;
         border: 4px solid var(--background-floating);
         right: 4px;
     }

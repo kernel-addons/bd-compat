@@ -13,6 +13,7 @@ export default class EventEmitter {
         if (!this.events[event]) this.events[event] = new Set();
 
         this.events[event].add(callback);
+        return this;
     }
 
     emit(event, ...args) {
@@ -25,11 +26,14 @@ export default class EventEmitter {
                 Logger.error("Emitter", `Cannot fire listener for event ${event} at position ${index}:`, error);
             }
         }
+
+        return this;
     }
 
     off(event, callback) {
         if (!this.events[event]) return;
 
-        return this.events[event].delete(callback);
+        this.events[event].delete(callback);
+        return this;
     }
 };

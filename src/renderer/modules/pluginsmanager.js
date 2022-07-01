@@ -1,6 +1,7 @@
 import fs from "./api/fs";
 import path from "./api/path";
 import DataStore from "./datastore";
+import Events from "./events";
 import Logger from "./logger";
 import SettingsManager from "./settingsmanager";
 import Toasts from "./toasts";
@@ -8,6 +9,19 @@ import Utilities from "./utilities";
 
 const showDebug = () => SettingsManager.isEnabled("showDebug");
 const startTimes = {};
+
+
+const fileModification = name => `
+if (module.exports["${name}"]) {
+    module.exports = module.exports["${name}"];
+}
+
+if (module.exports.default) {
+    module.exports = module.exports.default;
+}
+if (typeof(module.exports) !== "function") {
+    module.exports = eval("${name}");
+}`;
 
 export default class PluginsManager {
     static listeners = {};
@@ -70,7 +84,6 @@ export default class PluginsManager {
                 if (eventType === "change") this.reloadAddon(absolutePath, true);
             }
             catch (err) {
-                if (fs.existsSync(absolutePath)) return;
                 this.unloadAddon(absolutePath, true);
             }
         });
@@ -100,7 +113,7 @@ export default class PluginsManager {
     }
 
     static compile(filecontent, name, location) {
-        return `(function (module, exports, __dirname, __filename, global) {\n${filecontent}\nif (module.exports["${name}"]) {module.exports = module.exports["${name}"];}\nif (!module.exports || !module.exports.prototype) {module.exports = eval(${JSON.stringify(name)});}\n})\n//# sourceURL=${_.escape(location)}`;
+        return `\n${filecontent}\n${fileModification(name)}\n//# sourceURL=${JSON.stringify(location).slice(1, -1)}`;
     }
 
     static resolve(idOrFileOrAddon) {
@@ -120,7 +133,14 @@ export default class PluginsManager {
         if (this.resolve(meta.name) || this.resolve(meta.filename)) throw new Error(`There's already a plugin with name ${meta.name || meta.filename}!`);
 
         let module = {exports: {}};
-        try {window.eval(this.compile(filecontent, meta.name, location))(module, module.exports, path.dirname(location), location, window);}
+        try {
+            const wrapped = new Function(
+                ["module", "exports", "__dirname", "__filename", "global"],
+                this.compile(filecontent, meta.name, location)
+            );
+            
+            wrapped(module, module.exports, path.dirname(location), location, window);
+        }
         catch (error) {
             Logger.error("PluginsManager", `Failed to compile ${meta.name || path.basename(location)}:`, error);
         }
@@ -134,35 +154,41 @@ export default class PluginsManager {
         if (typeof meta.exports !== "function") throw "Plugin had no exports.";
 
         try {
-            const instance = new meta.exports(meta);
+            const instance = meta.exports.prototype ? new meta.exports(meta) : meta.exports(meta);
             meta.instance = instance;
+
             if (typeof (instance.load) === "function") {
                 try {
                     instance.load(meta);
-                    // Logger.log("PluginsManager", `${meta.name} was loaded!`);
+
                     if (showToast && SettingsManager.isEnabled("showToastsPluginLoad")) Toasts.show(`${meta.name} was loaded!`, {type: "success"});
+
+                    if (meta.name === "ZeresPluginLibrary") {
+                        Events.dispatch("ZERES_LIB_LOADED");
+                    }
                 } catch (error) {
                     Logger.error("PluginsManager", `Unable to fire load() for ${meta.name || meta.filename}:`, error);
                 }
             }
-            if (!meta.version && typeof (instance.getVersion) === "function") meta.version = instance.getVersion();
-            if (!meta.description && typeof (instance.getDescription) === "function") meta.description = instance.getDescription();
+            if (!meta.version && typeof (instance.getVersion) === "function") meta.version = `${instance.getVersion()}`;
+            if (!meta.description && typeof (instance.getDescription) === "function") meta.description = `${instance.getDescription()}`;
             if (!meta.author && typeof (instance.getAuthor) === "function") meta.author = `${instance.getAuthor()}`; // Prevent clever escaping.
 
             if (this.addonState[meta.name] == null) {
                 this.addonState[meta.name] = false;
                 DataStore.saveAddonState("plugins", this.addonState);
             }
+
             this.addons.push(meta);
 
             if (this.addonState[meta.name]) this.startPlugin(meta, showStart);
             this.dispatch("updated");
         } catch (error) {
-            return void Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
-        } finally {
-            if (showDebug()) startTimes[meta.name] = {"time in ms": Math.round(Date.now() - start)};
-            return meta.instance;
+            return Logger.error("PluginsManager", `Unable to load ${meta.name || meta.filename}:`, error);
         }
+
+        if (showDebug()) startTimes[meta.name] = {"time in ms": Math.round(Date.now() - start)};
+        return meta.instance;
     }
 
     static unloadAddon(idOrFileOrAddon, showToast = true) {
@@ -192,8 +218,8 @@ export default class PluginsManager {
 
         try {
             if (typeof(addon.instance.start) === "function") addon.instance.start();
+
             if (showToast) {
-                // Logger.log("PluginsManager", `${addon.name} has been started!`);
                 if (SettingsManager.isEnabled("showToastsPluginStartStop")) Toasts.show(`${addon.name} has been started!`, {type: "info"});
             }
         } catch (error) {

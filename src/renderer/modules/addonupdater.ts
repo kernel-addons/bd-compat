@@ -8,6 +8,7 @@ import * as https from "./api/https";
 import fs from "./api/fs";
 import {UpdaterApi} from "../stores/updater";
 import Toasts from "./toasts";
+import Events from "./events";
 
 const warnings = new Set();
 
@@ -48,14 +49,13 @@ export default class AddonUpdater {
     static versionRegex = /['"][0-9]+\.[0-9]+\.[0-9]+['"]/i;
 
     static getAddons(type: "theme" | "plugin") {
-        let manager = null;
-
-        switch (type) {
+        let manager: typeof PluginsManager | typeof ThemesManager; switch (type) {
             case "plugin": {manager = PluginsManager; break;}
             case "theme": {manager = ThemesManager; break;}
 
             default: {
                 Logger.error("AddonUpdater", `Unsupported addon type: ${type}`);
+                return {};
             }
         }
 
@@ -93,17 +93,21 @@ export default class AddonUpdater {
         document.body.appendChild(wrapper);
 
         this.patchZlibUpdater();
-        this.checkAllUpdates();
 
         setInterval(() => this.checkAllUpdates(), 1.8e+6); // 30minutes
     }
 
-    static patchZlibUpdater() {
+    static async patchZlibUpdater() {
+        await new Promise(loaded => Events.once("ZERES_LIB_LOADED", loaded));
+
         try {
-            const updater = (window as any).PluginUpdater;
-            if (updater && typeof(updater.checkAll) === "function") {
-                updater.checkAll = async () => {};
+            const updater = (window as any).ZLibrary?.PluginUpdater;
+            if (updater && typeof(updater.processUpdateCheck) === "function") {
+                updater.processUpdateCheck = async () => {};
+                updater.showUpdateNotice = () => {};
             }
+    
+            Logger.info("AddonUpdater", "Patched ZeresLib updater.");
         } catch (error) {
             Logger.error("AddonUpdater", "Failed to patch zlibrary updater:", error);
         }
@@ -147,7 +151,7 @@ export default class AddonUpdater {
     static fetchUpdate(addon: any, url: string) {
         return new Promise<UpdaterNode>((resolve, rej) => {
             https.request(url, res => {
-                const data = [];
+                const data: any[] = [];
 
                 res.on("data", chunk => data.push(chunk));
 

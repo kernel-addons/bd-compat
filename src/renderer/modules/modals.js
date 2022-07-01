@@ -1,9 +1,5 @@
-import DOMWrapper from "../ui/domwrapper.js";
-import ErrorBoundary from "../ui/errorboundary.js";
 import DiscordModules from "./discord.js";
-import Logger from "./logger.js";
 import memoize from "./memoize.js";
-import Toasts from "./toasts.js";
 import Webpack from "./webpack";
 
 export default class Modals {
@@ -13,22 +9,22 @@ export default class Modals {
 
     static get Forms() {return memoize(this, "Forms", () => Webpack.findByProps("FormTitle", "FormItem"));}
 
-    static get Button() {return memoize(this, "Button", () => Webpack.findByProps("DropdownSizes"));}
+    static get Button() {return memoize(this, "Button", () => Webpack.findByProps("BorderColors"));}
 
     static get ConfirmationModal() {return memoize(this, "ConfirmationModal", () => Webpack.findByDisplayName("ConfirmModal"));}
 
-    /**@returns {typeof import("react")} */
     static get Text() {return memoize(this, "Text", () => Webpack.findByDisplayName("LegacyText"));}
 
     static showConfirmationModal(title, content, options = {}) {
-        const {confirmText = "Okay", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}} = options;
+        const {confirmText = "Okay", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}, danger = false} = options;
 
         return this.ModalsAPI.openModal(props => DiscordModules.React.createElement(this.ConfirmationModal, Object.assign({
             header: title,
             confirmText: confirmText,
             cancelText: cancelText,
             onConfirm,
-            onCancel
+            onCancel,
+            confirmButtonColor: danger ? this.Button.Colors.RED : this.Button.Colors.BRAND
         }, props), DiscordModules.React.createElement(this.Text, null, content)));
     }
 

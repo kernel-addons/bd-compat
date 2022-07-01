@@ -80,11 +80,11 @@ export default new class BDCompat {
 
         if ((process as any)?.contextIsolated ?? true) {
             window.require = Require as any;
+            window.Buffer = Buffer.Buffer;
         }
 
         Object.assign(window, {
             "bd_require": Require,
-            Buffer: Buffer.Buffer,
             BDInternal: {
                SettingsManager,
                AddonUpdater,
@@ -103,10 +103,11 @@ export default new class BDCompat {
         Toasts.initialize();
         this.appendStyles();
 
+        AddonUpdater.initialize();
         ThemesManager.initialize();
         PluginsManager.initialize();
+        AddonUpdater.checkAllUpdates();
         this.injectSettings();
-        AddonUpdater.initialize();
     }
 
     exposeBdApi() {

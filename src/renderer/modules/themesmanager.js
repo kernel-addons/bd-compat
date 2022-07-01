@@ -59,8 +59,8 @@ export default class ThemesManager {
         let lastCall = new Date();
 
         this.watcher = fs.watch(this.folder, {persistent: false}, (eventType, filename) => {
-            if (!eventType || !filename || new Date() - lastCall < 100) return;
-            lastCall = new Date();
+            if (!eventType || !filename/* || new Date() - lastCall < 100*/) return;
+            // lastCall = new Date();
             const absolutePath = path.resolve(this.folder, filename);
             if (!filename.endsWith(this.extension)) return;
 
@@ -111,9 +111,15 @@ export default class ThemesManager {
             DataStore.saveAddonState("themes", this.addonState);
         }
 
+        if (showToast) {
+            Logger.log("ThemesManager", `${meta.name} was loaded!`);
+            Toasts.show(`${meta.name} was loaded!`);
+        }
+
         if (this.addonState[meta.name]) {
             this.applyTheme(meta, showToast);
         }
+
 
         this.dispatch("updated");
 

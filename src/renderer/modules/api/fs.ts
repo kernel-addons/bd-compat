@@ -14,7 +14,10 @@ const methods = [
     ["copyFile"],
     ["copyFileSync"],
     // ["createReadStream"],
-    // ["createWriteStream"],
+    ["createWriteStream", path => ({
+        $$type: Symbol.for("FS_WRITE_STREAM"),
+        path
+    }), true],
     ["exists"],
     ["existsSync"],
     ["fchown"],
@@ -107,12 +110,12 @@ const methods = [
 const fs: typeof import("node:fs") = ((fs) => {
     const passthrough = _ => _;
     for (let i = 0; i < methods.length; i++) {
-        const [method, factory = passthrough] = methods[i];
+        const [method, factory = passthrough, instead] = methods[i];
         const nativeMethod = BDCompatNative.executeJS(`
             const factory = ${factory.toString()};
             const method = require("fs")["${method}"];
             const override = (() => {
-                if (typeof method === "function") return (...args) => factory(method(...args));
+                if (typeof method === "function") return (...args) => factory.apply(null, [].concat(${instead} ? args : [method(...args)]));
                 if (typeof method === "object") {
                     const clone = {};
                     const keys = Object.keys(method);

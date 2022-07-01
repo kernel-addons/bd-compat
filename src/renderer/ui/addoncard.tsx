@@ -162,7 +162,7 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
     const {React} = DiscordModules;
     const [, forceUpdate] = React.useReducer(n => n + 1, 0);
     const Markdown = Components.get("Markdown", e => "rules" in e);
-    const pendingUpdate = useUpdaterStore(s => s.updates[addon.name]);
+    const pendingUpdate = useUpdaterStore(s => s.updates[addon.name]?.data);
 
     React.useEffect(() => {
         return manager.on("toggled", (name: string) => {

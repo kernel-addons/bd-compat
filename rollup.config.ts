@@ -33,15 +33,6 @@ export default args => {
                 extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
                 preferBuiltins: false
             }),
-            esFormatter({
-                plugins: ["esformatter-quotes"],
-                quotes: {
-                    type: "double"
-                },
-                indent: {
-                    value: "\t"
-                }
-            }),
             swc({
                 jsc: {
                     parser: {
@@ -49,7 +40,7 @@ export default args => {
                         syntax: "typescript",
                         decorators: true
                     },
-                    target: "es2019"
+                    target: "es2022"
                 }
             })
         ].filter(Boolean)

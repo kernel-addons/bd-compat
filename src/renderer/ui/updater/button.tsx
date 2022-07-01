@@ -4,6 +4,7 @@ import {UpdaterApi, useUpdaterStore} from "../../stores/updater";
 import DiscordProviders from "../discordproviders";
 import BDLogo from "../icons/bdlogo";
 import "./button.scss";
+import UpdaterPanel from "./panel";
 
 export function UpdaterContextMenu() {
     const {ContextMenu} = DiscordModules;
@@ -35,8 +36,8 @@ export function UpdaterContextMenu() {
 
 export default function UpdaterButton() {
     const {ContextMenu} = DiscordModules;
+    const [opened, toggle] = React.useReducer(n => false, false); // TODO: Enable this once it's ready to use.
     const count = useUpdaterStore(state => Object.keys(state.updates).length);
-
     if (count < 1) return null;
 
     const handleContextMenu = function (event: React.MouseEvent) {
@@ -45,9 +46,10 @@ export default function UpdaterButton() {
 
     return (
         <DiscordProviders>
-            <DiscordModules.Tooltips.default text={`${count} update${count > 1 ? "s" : ""} available!`} position="left">
+            <DiscordModules.Tooltips.default shouldShow={!opened} text={`${count} update${count > 1 ? "s" : ""} available!`} position="left">
                 {props => (
-                    <div {...props} className="bd-updater-button" onClick={() => {}} onContextMenu={handleContextMenu} data-updates={count}>
+                    <div {...props} className={`bd-updater-button${opened ? " opened" : ""}`} onClick={toggle} onContextMenu={handleContextMenu} data-updates={count}>
+                        {opened && <UpdaterPanel />}
                         <BDLogo width="28" height="28" />
                     </div>
                 )}
