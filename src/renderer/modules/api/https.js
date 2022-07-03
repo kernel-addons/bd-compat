@@ -26,6 +26,12 @@ class Request extends EventEmitter {
     }
 }
 
+const fakeRequest = {end() {}, pipe() {}};
+const blockList = [
+    // Block Lighty's analytics
+    "astranika.com"
+].map(e => new RegExp(e, "i"));
+
 const makeRequest = BDCompatNative.executeJS((
 (url, options = {}, callback) => {
     let response;
@@ -59,7 +65,12 @@ export function get(url, options, res) {
         options = {};
     }
 
-    const socket = makeRequest(url, options, (event, data) => {
+    let socket;
+    
+    if (blockList.some(e => e.test(`${url}`))) {
+        socket = fakeRequest;
+        console.warn("Blocked a request to", url);
+    } else socket = makeRequest(url, options, (event, data) => {
         if (event === "SET_HEADERS") {
             request._setData(data);
             res(request);
