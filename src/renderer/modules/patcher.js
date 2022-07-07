@@ -68,7 +68,8 @@ export default class Patcher {
         }
         module[functionName] = this.makeOverride(patch);
         Object.assign(module[functionName], patch.originalFunction, {
-            __originalFunction: patch.originalFunction
+            __originalFunction: patch.originalFunction,
+            toString: patch.originalFunction.toString.bind(patch.originalFunction)
         });
         return this._patches.push(patch), patch;
     }
