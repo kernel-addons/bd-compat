@@ -5,14 +5,18 @@ import Logger from "./logger.js";
 export default class DataStore {
     static pluginData = {};
     static settingsData = null;
-    static pluginsFolder = path.resolve(BDCompatNative.getBasePath(), "plugins");
-    static themesFolder = path.resolve(DataStore.pluginsFolder, "..", "themes");
-    static dataFolder = path.resolve(DataStore.pluginsFolder, "..", "config");
-    static settingsFile = path.resolve(DataStore.dataFolder, "settings.json");
+    static pluginsFolderOld = path.resolve(BDCompatNative.getBasePath(), "plugins");
+    static rootFolder = path.resolve(BDCompatNative.getBasePath(), "..", "..", "betterdiscord");
+    static pluginsFolder = path.resolve(DataStore.rootFolder, "plugins");
+    static themesFolderOld = path.resolve(BDCompatNative.getBasePath(), "themes");
+    static themesFolder = path.resolve(DataStore.rootFolder, "themes");
+    static configFolderOld = path.resolve(BDCompatNative.getBasePath(), "config");
+    static configFolder = path.resolve(DataStore.rootFolder, "config");
+    static settingsFile = path.resolve(DataStore.configFolder, "settings.json");
 
     static getAddonState(type) {
         try {
-            return JSON.parse(fs.readFileSync(path.resolve(this.dataFolder, `${type}States.json`), "utf8"));
+            return JSON.parse(fs.readFileSync(path.resolve(this.configFolder, `${type}States.json`), "utf8"));
         } catch (error) {
             return {};
         }
@@ -20,7 +24,7 @@ export default class DataStore {
 
     static saveAddonState(type, state = {}) {
         try {
-            fs.writeFileSync(path.resolve(this.dataFolder, `${type}States.json`), JSON.stringify(state, null, "\t"));
+            fs.writeFileSync(path.resolve(this.configFolder, `${type}States.json`), JSON.stringify(state, null, "\t"));
         } catch (error) {
             Logger.error("DataStore", `Unable to save addon states:`, error);
         }
@@ -29,13 +33,28 @@ export default class DataStore {
     static initialize() {
         const folders = ["config", "plugins", "themes"];
 
+        if(!fs.existsSync(this.rootFolder)) {
+            fs.mkdirSync(this.rootFolder, { recursive: true });
+        }
+
         Logger.log("DataStore", "Ensuring directories...");
         for (const folder of folders) {
-            const location = path.resolve(BDCompatNative.getBasePath(), folder);
-            if (fs.existsSync(location)) continue;
+            const location = path.resolve(BDCompatNative.getBasePath(), "..", "..", "betterdiscord", folder);
 
             try {
-                fs.mkdirSync(location);
+                if (!fs.existsSync(location)) {
+                    fs.mkdirSync(location, { recursive: true });
+                }
+
+                const old = this[`${folder}FolderOld`];
+                if(old && fs.existsSync(old)) {
+                    const addons = fs.readdirSync(old);
+                    for (const addon of addons) {
+                        fs.renameSync(path.join(old, addon), path.join(location, addon));
+                    }
+
+                    fs.rmdirSync(old);
+                }
             } catch (error) {
                 Logger.error("DataStore", `Failed to create missing ${folder} folder:`, error);
             }
@@ -64,7 +83,7 @@ export default class DataStore {
         }
     }
 
-    static saveData(type, data, _path = DataStore.dataFolder, extension = ".json") {
+    static saveData(type, data, _path = DataStore.configFolder, extension = ".json") {
         try {
             fs.writeFileSync(path.resolve(_path, `${type}${extension}`), JSON.stringify(data, null, "\t"), "utf8");
         } catch (error) {
@@ -72,7 +91,7 @@ export default class DataStore {
         }
     }
 
-    static loadData(type, _path = DataStore.dataFolder, extension = ".json") {
+    static loadData(type, _path = DataStore.configFolder, extension = ".json") {
         try {
             return JSON.parse(fs.readFileSync(path.resolve(_path, `${type}${extension}`), "utf8"));
         } catch (error) {
@@ -97,7 +116,7 @@ export default class DataStore {
 
     static setSettings(id, value) {
         const newSettings = Object.assign({}, this.settingsData, {[id]: value});
-        
+
         try {
             this.saveData("settings", newSettings);
         } catch (error) {
