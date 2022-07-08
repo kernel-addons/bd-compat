@@ -13,7 +13,7 @@ export default args => {
     delete args.minify;
 
     return defineConfig({
-        input: `./src/${mode}/index.ts`,
+        input: `./src/${mode}/index.tsx`,
         external: ["electron", "fs", "path", "module", "sucrase", "sass", "inspector"],
         output: {
             format: mode === "renderer" ? "esm" : "commonjs",

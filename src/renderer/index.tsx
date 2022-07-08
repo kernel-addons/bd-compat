@@ -2,22 +2,22 @@
 /// <reference path="../../../settings/types.d.ts" />
 
 import fs from "./modules/api/fs";
-import path from "./modules/api/path.js";
-import BdApi from "./modules/bdapi.js";
-import DataStore from "./modules/datastore.js";
-import DiscordModules from "./modules/discord.js";
-import DOM from "./modules/dom.js";
-import PluginsManager from "./modules/pluginsmanager.js";
-import Require from "./modules/require.js";
-import ThemesManager from "./modules/themesmanager.js";
-import Toasts from "./modules/toasts.js";
+import path from "./modules/api/path";
+import BdApi from "./modules/bdapi";
+import DataStore from "./modules/datastore";
+import DiscordModules from "./modules/discord";
+import DOM from "./modules/dom";
+import PluginsManager from "./modules/pluginsmanager";
+import Require from "./modules/require";
+import ThemesManager from "./modules/themesmanager";
+import Toasts from "./modules/toasts";
 import Webpack from "./modules/webpack";
 import AddonPanel from "./ui/addonpanel";
-import SettingsPanel from "./ui/settings.js";
+import SettingsPanel from "./ui/settings";
 import Buffer, {setBuffer} from "./modules/api/buffer";
-import Logger from "./modules/logger.js";
-import SettingsManager from "./modules/settingsmanager.js";
-import AddonUpdater from "./modules/addonupdater.js";
+import Logger from "./modules/logger";
+import SettingsManager from "./modules/settingsmanager";
+import AddonUpdater from "./modules/addonupdater";
 import * as IPCEvents from "../common/IPCEvents";
 import BDLogo from "./ui/icons/bdlogo";
 import Patcher from "./modules/patcher";
@@ -174,7 +174,11 @@ export default new class BDCompat {
                 }));
             }
         } else {
-            BdApi.alert("Missing Dependency", "BDCompat needs the kernel-settings package.");
+            BdApi.alert("Missing Dependency", <>
+                BetterDiscord Compatibility requires the <a onClick={() => {
+                    open("https://github.com/strencher-kernel/kernel-settings")
+                }}>settings</a> package to register its settings tabs.
+            </>);
         }
     }
 
