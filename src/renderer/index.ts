@@ -92,6 +92,7 @@ export default new class BDCompat {
                Patcher,
                DataStore,
                Toasts,
+               DiscordModules
             },
             React: DiscordModules.React
         });

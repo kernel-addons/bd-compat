@@ -1,0 +1,322 @@
+.bd-settings-title {
+    display: flex;
+    color: #FFFFFF;
+    font-weight: 600;
+    cursor: default;
+    margin-bottom: 20px;
+    line-height: 24px;
+    font-size: 20px;
+    flex: 1;
+}
+
+.bd-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3E82E5;
+    color: #FFFFFF;
+    border-radius: 3px;
+    padding: 4px 8px;
+    transition: background-color 0.17s ease, color 0.17s ease, opacity 250ms ease;
+}
+
+.bd-settings-title.has-settings {
+    color: var(--header-secondary);
+    cursor: pointer;
+    gap: .3rem;
+}
+
+.bd-settings-title.has-settings .bd-settings-title-text:hover {
+    color: var(--interactive-hover);
+}
+
+.bd-settings-title.has-settings .bd-settings-title-text:active {
+    color: var(--interactive-active);
+}
+
+.bd-settings-title-settings {
+    display: flex;
+    cursor: default;
+    align-items: center;
+    gap: .3rem;
+    color: var(--header-primary) !important;
+}
+
+.bd-settings-title-caret {
+    color: var(--header-secondary);
+    width: 16px;
+    height: 16px;
+}
+
+.bd-button:hover {
+    background-color: #3875CE;
+}
+
+.bd-button:active {
+    background-color: #3268B7;
+}
+
+.bd-button.bd-button-danger {
+    background-color: #F04747;
+}
+
+.bd-button.bd-button-danger:hover {
+    background-color: #D84040;
+}
+
+.bd-button.bd-button-danger:active {
+    background-color: #C03939;
+}
+
+.bd-button-disabled {
+    opacity: 0.4;
+}
+
+.bd-button-disabled:hover {
+    cursor: not-allowed;
+}
+
+.bd-button-title {
+    margin-left: 10px;
+}
+
+.bd-select-wrapper {
+    color: var(--text-muted);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+}
+
+.bd-select-wrapper + .bd-select-wrapper {
+    margin-left: 10px;
+}
+
+.bd-select-wrapper label {
+    margin-right: 5px;
+}
+
+.bd-select {
+    position: relative;
+    cursor: pointer;
+    color: var(--text-normal);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--deprecated-text-input-bg);
+    border: 1px solid var(--deprecated-text-input-border);
+    border-radius: 3px;
+    padding: 5px 5px 5px 0;
+    transition: 150ms ease border-color;
+}
+
+.bd-select:hover,
+.bd-select.menu-open {
+    border-color: var(--background-tertiary);
+}
+
+.bd-select.bd-select-transparent {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.bd-select-value {
+    padding-left: 8px;
+}
+
+.bd-select-arrow {
+    margin-left: 10px;
+    fill: var(--interactive-normal);
+}
+
+.bd-select .bd-select-options {
+    position: absolute;
+    background: var(--background-secondary);
+    border-radius: 0 0 3px 3px;
+    max-height: 300px;
+    min-width: calc(100% + 2px);
+    overflow-y: auto;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 5px 0;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-top: 0;
+    margin-top: -1px;
+    margin-left: -1px;
+    z-index: 2;
+    top: 100%;
+}
+
+.bd-select-transparent .bd-select-options {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    margin-top: 3px;
+    border-radius: 3px;
+}
+
+.bd-select .bd-select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    white-space: pre;
+}
+
+.bd-select .bd-select-option:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.bd-select .bd-select-option.selected {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.bd-setting-item .bd-select {
+    min-width: 200px;
+}
+
+.bd-search-wrapper {
+    padding: 3px;
+    border-radius: 3px;
+    outline: none;
+    border: 0;
+    background-color: var(--background-tertiary);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+.bd-search {
+    padding: 2px 3px;
+    background: none;
+    border: 0;
+    color: var(--text-normal);
+    flex: 1;
+}
+
+.bd-search::-webkit-input-placeholder {
+    color: var(--text-muted);
+}
+
+.bd-search-wrapper > svg {
+    margin-right: 2px;
+    fill: var(--interactive-normal);
+}
+
+.bd-controls {
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.bd-controls, .bd-controls-advanced, .bd-addon-dropdowns {
+    display: flex;
+}
+
+.bd-addon-controls .bd-search {
+    font-size: 13px;
+    margin: 0;
+    width: 200px;
+}
+
+.bd-addon-views .bd-view-button {
+    background-color: transparent;
+    padding: 3px 4px;
+}
+
+.bd-addon-views .bd-view-button svg {
+    fill: var(--interactive-normal);
+}
+
+.bd-addon-views .bd-view-button.selected svg {
+    fill: #FFFFFF;
+}
+
+.bd-addon-views .bd-view-button:hover {
+    background-color: var(--background-modifier-selected);
+}
+
+.bd-addon-views .bd-view-button:active {
+    background-color: var(--background-modifier-accent);
+}
+
+.bd-addon-controls .bd-search {
+    font-size: 13px;
+    margin: 0;
+    width: 200px;
+}
+
+.bd-controls + .bd-addon-list {
+    margin-top: 10px;
+}
+
+.bd-addon-views {
+    display: flex;
+    margin-left: 10px;
+}
+
+.bd-addon-views .bd-view-button.selected {
+    background-color: #3E82E5;
+}
+
+.bd-addon-views .bd-view-button + .bd-view-button {
+    margin-left: 5px;
+}
+
+.bd-empty-image-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0;
+    max-width: 720px;
+    border-radius: 8px;
+}
+
+.bd-link:hover {
+    text-decoration: underline;
+}
+
+.bd-empty-image {
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.bd-empty-image {
+    width: 314px;
+    height: 145px;
+    background-image: url(/assets/3c32e44f20ad22e786aed0252582983c.svg);
+}
+
+.bd-empty-image-header {
+    color: var(--header-primary);
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 32px;
+}
+
+.bd-empty-image-message {
+    color: var(--header-secondary);
+    margin-bottom: 8px;
+}
+
+.bd-empty-image-container .bd-button {
+    margin-top: 10px;
+    padding: 10px 16px;
+}
+
+.bd-grid-view .bd-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.bd-grid-view .bd-meta {
+    font-size: 12px;
+}
+
+.bd-addon-list.bd-grid-view {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    row-gap: 10px;
+}
+
+.bd-addon-list.bd-grid-view .bd-addon-card {
+    margin-bottom: 0;
+}

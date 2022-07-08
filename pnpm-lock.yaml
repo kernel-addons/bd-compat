@@ -1,9 +1,10 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@rollup/plugin-json': ^4.1.0
   '@rollup/plugin-node-resolve': ^13.0.6
   '@swc/core': ^1.2.106
+  '@types/node': ^18.0.3
   buffer: ^6.0.3
   esformatter-quotes: ^1.1.0
   rollup: ^2.59.0
@@ -20,11 +21,12 @@ devDependencies:
   '@rollup/plugin-json': 4.1.0_rollup@2.60.0
   '@rollup/plugin-node-resolve': 13.0.6_rollup@2.60.0
   '@swc/core': 1.2.109
+  '@types/node': 18.0.3
   esformatter-quotes: 1.1.0
   rollup: 2.60.0
   rollup-plugin-esformatter: 2.0.1_rollup@2.60.0
   rollup-plugin-scss: 3.0.0
-  rollup-plugin-swc: 0.2.0_@swc+core@1.2.109+rollup@2.60.0
+  rollup-plugin-swc: 0.2.0_qybzqtw3egclkgauphvzxmzek4
   rollup-plugin-uglify: 6.0.4_rollup@2.60.0
   sass: 1.44.0
 
@@ -229,14 +231,14 @@ packages:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
     dev: true
 
-  /@types/node/16.11.7:
-    resolution: {integrity: sha512-QB5D2sqfSjCmTuWcBWyJ+/44bcjO7VbjSbOE0ucoVbAsSNQc4Lt6QkgkVXkTDwkL4z/beecZNDvVX15D4P8Jbw==}
+  /@types/node/18.0.3:
+    resolution: {integrity: sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==}
     dev: true
 
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 16.11.7
+      '@types/node': 18.0.3
     dev: true
 
   /acorn-to-esprima/2.0.8:
@@ -296,7 +298,7 @@ packages:
       regenerator-runtime: 0.11.1
     dev: true
 
-  /babel-traverse/6.26.0:
+  /babel-traverse/6.26.0_supports-color@7.2.0:
     resolution: {integrity: sha1-RqnL1+3MYsjlwGTi0tjQ9ANXZu4=}
     dependencies:
       babel-code-frame: 6.26.0
@@ -304,10 +306,12 @@ packages:
       babel-runtime: 6.26.0
       babel-types: 6.26.0
       babylon: 6.18.0
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@7.2.0
       globals: 9.18.0
       invariant: 2.2.4
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /babel-types/6.26.0:
@@ -433,10 +437,16 @@ packages:
     requiresBuild: true
     dev: true
 
-  /debug/2.6.9:
+  /debug/2.6.9_supports-color@7.2.0:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.0.0
+      supports-color: 7.2.0
     dev: true
 
   /debug/4.3.2_supports-color@7.2.0:
@@ -476,13 +486,15 @@ packages:
     engines: {node: '>=0.8.0'}
     dev: true
 
-  /esformatter-parser/1.0.0:
+  /esformatter-parser/1.0.0_supports-color@7.2.0:
     resolution: {integrity: sha1-CFQHLQSHU57TnK442KVDLBfsEdM=}
     dependencies:
       acorn-to-esprima: 2.0.8
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0_supports-color@7.2.0
       babylon: 6.18.0
       rocambole: 0.7.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /esformatter-quotes/1.1.0:
@@ -495,10 +507,10 @@ packages:
     hasBin: true
     dependencies:
       acorn-to-esprima: 2.0.8
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0_supports-color@7.2.0
       debug: 4.3.2_supports-color@7.2.0
       disparity: 3.2.0
-      esformatter-parser: 1.0.0
+      esformatter-parser: 1.0.0_supports-color@7.2.0
       glob: 7.2.0
       minimatch: 3.0.4
       minimist: 1.2.5
@@ -506,11 +518,11 @@ packages:
       npm-run: 5.0.1
       resolve: 1.20.0
       rocambole: 0.7.0
-      rocambole-indent: 2.0.4
-      rocambole-linebreak: 1.0.2
+      rocambole-indent: 2.0.4_supports-color@7.2.0
+      rocambole-linebreak: 1.0.2_supports-color@7.2.0
       rocambole-node: 1.0.0
       rocambole-token: 1.2.1
-      rocambole-whitespace: 1.0.0
+      rocambole-whitespace: 1.0.0_supports-color@7.2.0
       stdin: 0.0.1
       strip-json-comments: 3.1.1
       supports-color: 7.2.0
@@ -834,20 +846,24 @@ packages:
       path-parse: 1.0.7
     dev: true
 
-  /rocambole-indent/2.0.4:
+  /rocambole-indent/2.0.4_supports-color@7.2.0:
     resolution: {integrity: sha1-oYokl3ygQAuGHapGMehh3LUtCFw=}
     dependencies:
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@7.2.0
       mout: 0.11.1
       rocambole-token: 1.2.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
-  /rocambole-linebreak/1.0.2:
+  /rocambole-linebreak/1.0.2_supports-color@7.2.0:
     resolution: {integrity: sha1-A2IVFbQ7RyHJflocG8paA2Y2jy8=}
     dependencies:
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@7.2.0
       rocambole-token: 1.2.1
       semver: 4.3.6
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /rocambole-node/1.0.0:
@@ -858,12 +874,14 @@ packages:
     resolution: {integrity: sha1-x4XfdCjcPLJ614lwR71SOMwHDTU=}
     dev: true
 
-  /rocambole-whitespace/1.0.0:
+  /rocambole-whitespace/1.0.0_supports-color@7.2.0:
     resolution: {integrity: sha1-YzMJSSVrKZQfWbGQRZ+ZnGsdO/k=}
     dependencies:
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@7.2.0
       repeat-string: 1.6.1
       rocambole-token: 1.2.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /rocambole/0.7.0:
@@ -894,7 +912,7 @@ packages:
       rollup-pluginutils: 2.8.2
     dev: true
 
-  /rollup-plugin-swc/0.2.0_@swc+core@1.2.109+rollup@2.60.0:
+  /rollup-plugin-swc/0.2.0_qybzqtw3egclkgauphvzxmzek4:
     resolution: {integrity: sha512-caZSD80g4RwVxkiaeAp/TYvWGzWjzVKvJKBTSKitcKE95MQrnKm8qICLMwCOdvs4XMgc0RgcsCmVkckl8oMDCg==}
     peerDependencies:
       '@swc/core': '>=1.0'

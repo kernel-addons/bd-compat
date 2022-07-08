@@ -10,14 +10,14 @@
     "watch-main": "rollup -c -w --mode=main",
     "build-main": "rollup -c --mode=main",
     "build-preload": "rollup -c --mode=preload",
-    "dist": "npm run build-renderer && npm run build-main && npm run build-preload"
+    "build": "npm run build-renderer && npm run build-main && npm run build-preload"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/strencher-kernel/bd-compat.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Strencher, eternal",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/strencher-kernel/bd-compat/issues"
@@ -27,13 +27,14 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
     "@swc/core": "^1.2.106",
+    "@types/node": "^18.0.3",
     "esformatter-quotes": "^1.1.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esformatter": "^2.0.1",
+    "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-swc": "^0.2.0",
     "rollup-plugin-uglify": "^6.0.4",
-    "sass": "^1.44.0",
-    "rollup-plugin-scss": "^3.0.0"
+    "sass": "^1.44.0"
   },
   "dependencies": {
     "buffer": "^6.0.3"

@@ -43,6 +43,8 @@ export default class DiscordModules {
 
     static get Dispatcher() {return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch"));}
 
+    static get LayerActions() {return memoize(this, "LayerActions", () => Webpack.findByProps("popLayer"));}
+
     static get InviteActions() {return memoize(this, "InviteActions", () => Webpack.findByProps("resolveInvite"));}
 
     static get ContextMenu() {

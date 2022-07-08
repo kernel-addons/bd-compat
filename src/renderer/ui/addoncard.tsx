@@ -21,15 +21,16 @@ export function Icon({name, ...props}) {
     return React.createElement(Component, props);
 };
 
-export function ToolButton({label, icon, onClick, danger = false, disabled = false}) {
+export function ToolButton({className = null, label, icon, onClick, danger = false, disabled = false, ...rest}) {
     const Button = Components.byProps("DropdownSizes");
 
     return React.createElement(Components.get("Tooltip"), {
         text: label,
         position: "top"
     }, props => React.createElement(Button, {
+        ...rest,
         ...props,
-        className: Utilities.joinClassNames("bd-toolbutton", [danger, "bd-danger"]),
+        className: Utilities.joinClassNames("bd-toolbutton", [danger, "bd-danger"], [className, className]),
         look: Button.Looks.BLANK,
         size: Button.Sizes.NONE,
         onClick: onClick,
@@ -61,6 +62,7 @@ export function ClickableName({addon}) {
         if (addon.authorId) {
             return DiscordModules.PrivateChannelActions.ensurePrivateChannel(addon.authorId)
                 .then(() => {
+                    DiscordModules.LayerActions.popAllLayers()
                     DiscordModules.PrivateChannelActions.openPrivateChannel(addon.authorId)
                 })
                 .catch(() => {});
@@ -173,21 +175,30 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
 
     return (
         <div className={Utilities.joinClassNames("bd-addon-card")} data-addon={addon.name}>
-            <div className="bd-addoncard-header">
+            <div className="bd-addon-header">
                 <div className="bd-addoncard-info">
                     <div className="bd-addoncard-icon">
-                        {type === "theme" ? <ColorPalette /> : <Extension />}
+                        {type === "theme" ? <ColorPalette
+                            width={18}
+                            height={18}
+                        /> : <Extension
+                            width={18}
+                            height={18}
+                        />}
                     </div>
                     <div className="bd-addon-name">{addon.name ?? "???"}</div>
-                    <span className="bd-addon-version">
-                        {"v" + (addon.version ?? "Unknown")}
-                    </span>
-                    <ClickableName addon={addon} />
+                    <div className="bd-addon-details">
+                        <span className="bd-addon-version">
+                            {"v" + (addon.version ?? "Unknown")}
+                        </span>
+                        <ClickableName addon={addon} />
+                    </div>
                 </div>
                 <ButtonWrapper
                     value={manager.isEnabled(addon)}
                     onChange={() => {
                         manager.toggleAddon(addon);
+                        forceUpdate();
                     }}
                 />
             </div>
@@ -206,30 +217,25 @@ export default function AddonCard({addon, manager, openSettings, hasSettings, ty
                             onClick={() => pendingUpdate.update()}
                         />
                     )}
-                    <ToolButton
+                    {hasSettings && <ToolButton
                         label="Settings"
                         icon="Gear"
-                        disabled={!hasSettings || !manager.isEnabled(addon)}
+                        disabled={!manager.isEnabled(addon)}
                         onClick={openSettings}
-                    />
+                    />}
                     <ToolButton
                         label="Reload"
                         icon="Replay"
                         onClick={() => manager.reloadAddon(addon)}
                     />
                     <ToolButton
-                        label="Open Path"
-                        icon="Folder"
-                        onClick={() => {
-                            BDCompatNative.executeJS(`require("electron").shell.showItemInFolder(${JSON.stringify(addon.path)})`, new Error().stack);
-                        }}
-                    />
-                    <ToolButton
                         danger
                         label="Delete"
                         icon="Trash"
                         onClick={() => {
-                            Modals.showConfirmationModal("Are you sure?", `Are you sure that you want to delete the ${type} "${addon.name}"?`, {
+                            Modals.showConfirmationModal("Are You Sure?", `Are you sure you want to delete ${addon.name}? This action is irreversible, please proceed with caution.`, {
+                                danger: true,
+                                confirmText: "Delete",
                                 onConfirm: () => {
                                     BDCompatNative.executeJS(`require("electron").shell.trashItem(${JSON.stringify(addon.path)})`, new Error().stack);
                                 }

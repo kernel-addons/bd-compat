@@ -3,48 +3,45 @@
         "settings": [
             {
                 "name": "Show Toasts",
-                "note": "Show any types of toasts.",
+                "note": "Display information toasts for certain events.",
                 "value": true,
                 "id": "showToasts",
                 "type": "switch"
             },
             {
                 "name": "Use builtin toasts",
-                "note": "Makes BDCompat use discord's builtin toasts instead.",
+                "note": "Whether to use discord's builtin toasts, or our own.",
                 "value": true,
                 "id": "useBuiltinToasts",
                 "type": "switch"
+            }
+        ]
+    },
+    "Toast Events": {
+        "settings": [
+            {
+                "name": "Show Toasts on plugin start/stop",
+                "id": "showToastsPluginStartStop",
+                "type": "switch",
+                "value": true
             },
             {
-                "name": "Show Toasts on",
-                "type": "category",
-                "requires": ["showToasts"],
-                "items": [
-                    {
-                        "name": "Show Toasts on plugin start/stop",
-                        "id": "showToastsPluginStartStop",
-                        "type": "switch",
-                        "value": true
-                    },
-                    {
-                        "name": "Show Toasts on plugin load/unload",
-                        "id": "showToastsPluginLoad",
-                        "type": "switch",
-                        "value": true
-                    },
-                    {
-                        "name": "Show Toasts on plugin reload",
-                        "id": "showToastsPluginReload",
-                        "type": "switch",
-                        "value": true
-                    },
-                    {
-                        "name": "Show Toasts on plugin enable/disable",
-                        "id": "showToastsPluginState",
-                        "type": "switch",
-                        "value": true
-                    }
-                ]
+                "name": "Show Toasts on plugin load/unload",
+                "id": "showToastsPluginLoad",
+                "type": "switch",
+                "value": true
+            },
+            {
+                "name": "Show Toasts on plugin reload",
+                "id": "showToastsPluginReload",
+                "type": "switch",
+                "value": true
+            },
+            {
+                "name": "Show Toasts on plugin enable/disable",
+                "id": "showToastsPluginState",
+                "type": "switch",
+                "value": true
             }
         ]
     },
@@ -52,7 +49,6 @@
         "settings": [
             {
                 "name": "Show Debug Logs",
-                "note": "",
                 "value": false,
                 "id": "showDebug",
                 "type": "switch"

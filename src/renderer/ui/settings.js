@@ -51,22 +51,23 @@ export function Category({name, requires, items}) {
 }
 
 export default function SettingsPanel() {
-    const [FormTitle] = Components.bulk("SettingsPanel", "FormTitle");
+    const [FormTitle, Divider] = Components.bulk("SettingsPanel", "FormTitle", "FormDivider");
+    const items = Object.entries(SettingsManager.items);
 
     return DiscordModules.React.createElement("div", {
         className: "bdc-settings-panel",
         children: [
             DiscordModules.React.createElement("div", {
-                className: "bdc-title"
+                className: "bd-settings-title"
             }, "Settings"),
-            Object.entries(SettingsManager.items).map(([collection, {settings}]) => {
+            items.map(([collection, {settings}], index) => {
                 return [
-                    <FormTitle className="bd-collection-title" tag={FormTitle.Tags.H2} key={"title-" + collection}>
-                        <ChannelCategory color="var(--text-muted)" />
+                    <FormTitle tag="h5" style={{ marginTop: index === 0 ? 25 : 0, marginBottom: 15 }}>
                         {collection}
                     </FormTitle>,
-                    ...renderItems(settings)
-                ];
+                    ...renderItems(settings),
+                    items.length - 1 !== index && <div style={{ marginBottom: 25 }} />
+                ].filter(Boolean);
             })
         ]
     });

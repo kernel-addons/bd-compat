@@ -1,27 +1,44 @@
 .bd-addon-card {
     background: var(--background-secondary);
     border-radius: 4px;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     margin-bottom: 20px;
 
-    .bd-addoncard-header {
+    .bd-addon-header {
+        color: var(--header-primary);
+        background: var(--background-secondary-alt);
+        padding: 16px;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 15px;
-        background: var(--background-secondary-alt);
+        overflow: hidden;
 
         .bd-addoncard-info {
             display: inline-flex;
-    
+            align-items: center;
+
             .bd-addon-version {
                 margin: 0 4px;
                 color: var(--text-muted);
             }
-    
+
+            .bd-addon-details {
+                color: var(--channels-default);
+                font-weight: 500;
+                display: flex;
+                line-height: normal;
+                align-items: center;
+            }
+
             .bd-addon-name {
-                font-weight: 700;
-                color: var(--text-normal);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .bd-addon-author {
@@ -31,12 +48,17 @@
                     color: var(--text-muted);
                 }
 
+                span.bd-link {
+                    text-decoration: none !important;
+                    color: var(--text-muted) !important;
+                }
+
                 a:hover {
                     text-decoration: underline;
                 }
             }
         }
-    
+
         .bd-addoncard-icon {
             margin-right: 5px;
             display: inline-flex;
@@ -45,13 +67,25 @@
     }
 
     .bd-addon-description {
-        padding: 15px;
+        padding: 8px 16px 0 16px;
+        flex: 1;
+
+        div[class*="paragraph"] {
+            word-break: break-word;
+            margin-bottom: 5px;
+            padding: 5px 0;
+            overflow-y: auto;
+            max-height: 175px;
+            font-size: 14px;
+            line-height: 18px;
+            -webkit-line-clamp: 3;
+            color: var(--header-secondary);
+        }
     }
 
     .bd-addon-footer {
-        padding: 15px;
+        padding: 8px 16px 16px 16px;
         display: flex;
-        padding-top: 0;
         justify-content: space-between;
 
         .bd-toolbar {
@@ -62,16 +96,28 @@
             .bd-toolbutton {
                 padding: 5px;
                 background: #3E82E5;
+                color: #fff;
                 border-radius: 0;
                 transition: background .1s;
 
                 &:hover {
                     &.bd-danger {
-                        background: lighten(#f04747, 5%);
+                        background: #d84040;
                     }
 
+
                     &.bd-toolbutton:not(.bd-danger) {
-                        background: lighten(#3E82E5, 5%);
+                        background: #3875ce;
+                    }
+                }
+
+                &:active {
+                    &.bd-toolbutton:not(.bd-danger) {
+                        background: #3268b7;
+                    }
+
+                    &.bd-danger {
+                        background: #c03939;
                     }
                 }
 
@@ -84,6 +130,15 @@
         .bd-support-bar {
             display: flex;
             align-items: center;
+            color: var(--interactive-normal);
+
+            .bd-addon-support-button:hover {
+                color: var(--interactive-hover);
+            }
+
+            .bd-addon-support-button:active {
+                color: var(--interactive-active);
+            }
 
             .bd-addon-support-button {
                 margin-right: 5px;

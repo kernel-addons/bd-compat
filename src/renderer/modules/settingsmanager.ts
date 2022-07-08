@@ -9,7 +9,7 @@ export default class SettingsManager {
 
     static states = {};
 
-    static settings = {};
+    static settings: Record<string, any> = {};
 
     static get items() {return defaultSettings;}
 
