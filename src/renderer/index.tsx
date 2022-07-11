@@ -176,7 +176,7 @@ export default new class BDCompat {
         } else {
             BdApi.alert("Missing Dependency", <>
                 BetterDiscord Compatibility requires the <a onClick={() => {
-                    open("https://github.com/strencher-kernel/kernel-settings")
+                    open("https://github.com/strencher-kernel/settings")
                 }}>settings</a> package to register its settings tabs.
             </>);
         }
