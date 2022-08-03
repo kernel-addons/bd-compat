@@ -41,7 +41,7 @@ export default class DiscordModules {
 
     static get PrivateChannelActions() {return memoize(this, "PrivateChannelActions", () => Webpack.findByProps("openPrivateChannel"));}
 
-    static get Dispatcher() {return memoize(this, "Dispatcher", () => Webpack.findByProps("dirtyDispatch"));}
+    static get Dispatcher() {return memoize(this, "Dispatcher", () => Webpack.findByProps("_dispatch", "dispatch"));}
 
     static get LayerActions() {return memoize(this, "LayerActions", () => Webpack.findByProps("popLayer"));}
 
