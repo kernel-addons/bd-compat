@@ -11,7 +11,7 @@ import Toasts from "./toasts.js";
 import Webpack from "./webpack";
 
 const createAddonAPI = manager => new class AddonAPI {
-    get folder() {return manager.folder}
+    get folder() {return manager.folder;}
 
     isEnabled(idOrFile) {return manager.isEnabled(idOrFile);}
 
@@ -95,7 +95,7 @@ export default class BdApi {
 
     static get getData() {return this.loadData;}
 
-    static get setData() {return this.saveData};
+    static get setData() {return this.saveData;};
 
     static monkeyPatch(module, functionName, options) {
         const {before, after, instead, once = false} = options;
@@ -158,7 +158,7 @@ export default class BdApi {
             type,
             function (caller, module, functionName, callback) {return Patcher[type](caller, module, functionName, callback);}
         ]))
-    }
+    };
 
     static onRemoved(node, callback) {
         return new MutationObserver((changes, observer) => {
@@ -175,6 +175,13 @@ export default class BdApi {
             }
         }).observe(document, {childList: true, subtree: true});
     }
+
+    static Webpack = {
+        Filters: Webpack.Filters,
+        getModule: Webpack.findModule.bind(Webpack),
+        getBulk: Webpack._getBulk.bind(Webpack),
+        waitForModule: () => new Promise()
+    };
 };
 
 Object.defineProperties(BdApi, Reflect.ownKeys(BdApi).slice(2).reduce((descriptors, key) => {

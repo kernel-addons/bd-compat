@@ -3,11 +3,11 @@
 if (typeof Array.prototype.at !== "function") {
     Object.defineProperty(Array.prototype, "at", {
         value: function at(index) {
-           return index < 0 ? this[this.length - Math.abs(index)] : this[index];
+            return index < 0 ? this[this.length - Math.abs(index)] : this[index];
         },
         enumerable: false,
         configurable: true
-    })
+    });
 }
 
 if (typeof (setImmediate) === "undefined") {
@@ -16,11 +16,41 @@ if (typeof (setImmediate) === "undefined") {
 
 export class Filters {
     static byProps(...props: string[]) {
-        return (module: any) => props.every(prop => prop in module);
+        return (module: any) => props.every(prop => module[prop] !== void 0);
     }
 
     static byDisplayName(name: string, def = false) {
         return (module: any) => (def ? (module = module.default) : module) && typeof (module) === "function" && module.displayName === name;
+    }
+
+    static byPrototypeFields(...props: string[]) {
+        const filter = Filters.byProps(...props);
+        return (module: any) => module.prototype && filter(module.prototype);
+    }
+
+    static byRegex(search, filter = m => m) {
+        return (module: any) => {
+            const method = filter(module);
+            if (!method) return false;
+
+            let methodString = "";
+
+            try {
+                methodString = method.toString([]);
+            } catch (err) {
+                methodString = method.toString();
+            }
+
+            return methodString.search(search) !== -1;
+        };
+    }
+
+    static byStrings(...strings: string[]) {
+        return (module: any) => (module = module.toString()) && strings.every(str => module.indexOf(str) > -1);
+    }
+
+    static combine(...filters: ((...args: any) => any)[]) {
+        return (module: any) => filters.every(filter => filter(module));
     }
 
     static byTypeString(...strings: string[]) {
@@ -320,6 +350,65 @@ class WebpackModule {
         });
 
         return foundIndex;
+    }
+
+    _getBulk(...filters) {
+        const modules = Webpack.cache.c;
+
+        const payload = {
+            found: null,
+            res: Array(filters.length)
+        };
+
+        const ids = Object.keys(modules);
+        for (let i = 0; i < ids.length; i++) {
+            const index = ids[i];
+
+            const mdl = modules[index];
+            if (!mdl?.exports) continue;
+
+            for (let j = 0; j < filters.length; j++) {
+                payload.found = null;
+
+                const query = filters[j];
+                const {filter, first = true, defaultExport = true} = query;
+
+                if (first && payload.res[j]) {
+                    continue;
+                }
+
+                if (!first && !payload.res[j]) {
+                    payload.res[j] = [];
+                }
+
+                const wrapped = (mdl, mod, id) => {
+                    try {
+                        return filter(mdl, mod, id);
+                    } catch (e) {
+                        Logger.warn("Webpack", "Filter threw an error.", filter, e);
+                        return false;
+                    }
+                };
+
+                if (mdl.exports.__esModule && mdl.exports.default && wrapped(mdl.exports.default, mdl, index)) {
+                    payload.found = defaultExport ? mdl.exports.default : mdl.exports;
+                }
+
+                if (wrapped(mdl.exports, mdl, index)) {
+                    payload.found = mdl.exports;
+                }
+
+                if (!payload.found) continue;
+
+                if (first) {
+                    payload.res[j] = payload.found;
+                } else {
+                    payload.res[j].push(payload.found);
+                }
+            };
+        }
+
+        return payload.res;
     }
 
     atIndex(index: number) {
